@@ -9,8 +9,9 @@ Google Maps search text, and the WhatsApp number for confirmations (`rsvpPhone`,
 Set `preview: false` to remove the "preview" label.
 
 ## Files
-- `a/open.mp4`: card opening (loads first)
-- `a/s/j*.webp`: the camera journey, 280 frames (12 fps) packed 10 per sprite sheet, scrubbed 1:1 by the finger
-- `a/s/o1_*`, `a/s/o2_*`: orbit arcs behind the couple at the courtyard and darbar (drag left/right)
+- `a/open.mp4`: card opening (plays on first tap; loads first)
+- `a/j/000–351.webp`: the whole camera journey at 12 fps (540×960), built straight from the source clips; frames near the camera are kept GPU-ready while dragging
+- `a/o/c1L|c1R|c2L|c2R/`: orbit arcs behind the couple, left and right, at the courtyard (c1) and darbar (c2)
+- `a/hd/1–4.webp`: full-resolution stills shown whenever the camera comes to rest
 - `a/*.mp3`: Ik Onkar music bed, ambiences and sound effects
-- `a/f2/`: fonts (self-hosted)
+- `a/f2/`: fonts (Cormorant Garamond, Cinzel, Noto Serif Gurmukhi), self-hosted

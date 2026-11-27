@@ -9,13 +9,15 @@
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cormorant-garamond-latin-300-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cinzel-latin-500-normal.woff2" crossorigin>
 <style>
-/* ── Type system ────────────────────────────────────────────────
-   Structure: Editorial (formal, centred invitation)  ·  Surface: none (the film is the texture)
-   Two typefaces: Cormorant Garamond (display + reading) · Cinzel (small tracked labels only)
-   Gurmukhi (Noto Serif Gurmukhi) used only for ੴ, Gurbani and Fateh.
-   Scale (cqw of the 9:16 stage):  L1 names 13 · L2 title 7 · L3 reading 4.3 · L4 label 2.45 (tracked .26em)
-   Colour: ink #3b170e · maroon #551a10 (names) · gold #9a6c24 (ornament/labels) · ivory #fff6e6 on film
-   ──────────────────────────────────────────────────────────── */
+/* ── Type system (graphic-designer / graphic-design-styles) ──────────────
+   Structure: Editorial, formal centred invitation · Surface: letterpress emboss on paper, gold-foil emboss on film
+   Typefaces: Cormorant Garamond (display + reading) · Cinzel (small tracked labels only) · Noto Serif Gurmukhi (ੴ, Gurbani, Fateh)
+   Hierarchy on the card (one dominant element, clear steps):
+     1  Couple names ........ 12.6cqw  light, maroon            (dominant)
+     2  Anand Karaj ......... 6.2cqw   italic, gold, fine rules  (highlight by colour, not size)
+     3  Parents ............. 3.4cqw   regular, ink              (≈ 1/3.7 of names)
+     4  Blessing / labels ... 3.2 / 2.05cqw                      (quietest)
+   ─────────────────────────────────────────────────────────────────────── */
 @font-face{font-family:'CG';font-weight:300;font-display:swap;src:url(a/f2/cormorant-garamond-latin-300-normal.woff2) format('woff2')}
 @font-face{font-family:'CG';font-weight:300;font-style:italic;font-display:swap;src:url(a/f2/cormorant-garamond-latin-300-italic.woff2) format('woff2')}
 @font-face{font-family:'CG';font-weight:400;font-style:italic;font-display:swap;src:url(a/f2/cormorant-garamond-latin-400-italic.woff2) format('woff2')}
@@ -25,8 +27,10 @@
 @font-face{font-family:'CZ';font-weight:600;font-display:swap;src:url(a/f2/cinzel-latin-600-normal.woff2) format('woff2')}
 @font-face{font-family:'GM';font-weight:500;font-display:swap;src:url(a/f2/noto-serif-gurmukhi-gurmukhi-500-normal.woff2) format('woff2')}
 @font-face{font-family:'GM';font-weight:600;font-display:swap;src:url(a/f2/noto-serif-gurmukhi-gurmukhi-600-normal.woff2) format('woff2')}
-:root{--ink:#3b170e;--maroon:#551a10;--gold:#9a6c24;--gold-l:#e9cf95;--ivory:#fff6e6;
-  --d:'CG',Georgia,serif;--l:'CZ',Georgia,serif;--g:'GM',serif;--ease:cubic-bezier(.22,.7,.2,1)}
+:root{--ink:#3b170e;--maroon:#551a10;--gold:#9a6c24;--gold-l:#ecd49c;--ivory:#fff6e6;
+  --d:'CG',Georgia,serif;--l:'CZ',Georgia,serif;--g:'GM',serif;--ease:cubic-bezier(.22,.7,.2,1);
+  --press:0 .12cqw 0 rgba(255,255,255,.9),0 -.08cqw 0 rgba(80,36,10,.28);
+  --foil:0 -.1cqw 0 rgba(255,250,235,.35),0 .22cqw .15cqw rgba(40,16,4,.75),0 .5cqw 3cqw rgba(0,0,0,.45)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#140c07;overflow:hidden;overscroll-behavior:none}
 body{font-family:var(--d);color:var(--ivory);-webkit-font-smoothing:antialiased;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -34,8 +38,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #backdrop{position:fixed;inset:-40px;background:#140c07 url(a/poster_tiny.jpg) center/cover;filter:blur(30px) brightness(.3)}
 #stage{position:fixed;top:0;bottom:0;left:50%;width:min(100vw,56.25vh);transform:translateX(-50%);overflow:hidden;background:#140c07 url(a/poster_tiny.jpg) center/cover;container-type:inline-size;touch-action:none}
 .L{position:absolute;inset:0;width:100%;height:100%}
-#op{object-fit:cover}
+#view{position:absolute;inset:0;will-change:transform}
 #cv{opacity:0}
+#hd{object-fit:cover;opacity:0;transition:opacity .45s var(--ease);pointer-events:none}
+#op{object-fit:cover}
 #petals,#bloom,#vig,.scrim{pointer-events:none}
 #bloom{background:radial-gradient(ellipse at 50% 55%,rgba(255,236,196,.95),rgba(255,214,150,.5) 40%,rgba(255,200,130,0) 75%);opacity:0;transition:opacity .35s}
 #vig{background:radial-gradient(ellipse 120% 90% at 50% 46%,transparent 58%,rgba(10,5,2,.5))}
@@ -43,44 +49,38 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #scrimB{bottom:0;height:44%;background:linear-gradient(to top,rgba(14,7,3,.85),rgba(14,7,3,.55) 48%,rgba(14,7,3,0))}
 #scrimT{top:0;height:42%;background:linear-gradient(to bottom,rgba(6,8,22,.62),rgba(6,8,22,0))}
 #dim{background:rgba(16,8,4,.6);opacity:0;transition:opacity 1s var(--ease);pointer-events:none}
-
-/* labels: tracked caps, optically centred (padding equals tracking) */
-.lab{font:500 2.45cqw/1.6 var(--l);letter-spacing:.26em;padding-left:.26em;text-transform:uppercase}
-
-/* ── closed card ── */
+.lab{font:500 2.4cqw/1.6 var(--l);letter-spacing:.26em;padding-left:.26em;text-transform:uppercase}
 #seal{position:absolute;left:50%;top:49.6%;width:37cqw;height:37cqw;transform:translate(-50%,-50%);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4cqw;color:#5e3a14}
-#seal .mono{font:300 12.5cqw/1 var(--d);letter-spacing:.02em}
+#seal .mono{font:300 12.5cqw/1 var(--d);letter-spacing:.02em;text-shadow:var(--press)}
 #seal .mono i{font:italic 300 .62em var(--d);color:#a07634;margin:0 .1em;vertical-align:.12em}
-#seal .lab{font-size:2.1cqw;color:#7a4c1c}
+#seal .lab{font-size:2.1cqw;color:#7a4c1c;text-shadow:var(--press)}
 #seal .ring{position:absolute;inset:-1.4cqw;border-radius:50%;animation:halo 2.6s ease-in-out infinite}
 @keyframes halo{0%,100%{box-shadow:0 0 0 0 rgba(255,236,190,0)}50%{box-shadow:0 0 0 2.2cqw rgba(255,236,190,.36)}}
 #tapPill{position:absolute;left:50%;top:64.6%;transform:translateX(-50%);padding:2.8cqw 6.4cqw;border-radius:99px;background:#fbf4e4;border:1px solid #c9a35c;box-shadow:0 1.4cqw 4cqw rgba(60,30,10,.22);color:#4e2412;white-space:nowrap}
 #tapPill .lab{font-size:2.6cqw;font-weight:600}
-
-/* ── captions over film ── */
-.cap{position:absolute;left:7cqw;right:7cqw;text-align:center;opacity:0;pointer-events:none;transition:opacity .9s var(--ease),transform .9s var(--ease);transform:translateY(2.5cqw);text-shadow:0 .4cqw 3cqw rgba(0,0,0,.55),0 0 .6cqw rgba(0,0,0,.35)}
+.cap{position:absolute;left:7cqw;right:7cqw;text-align:center;opacity:0;pointer-events:none;transition:opacity .9s var(--ease),transform .9s var(--ease);transform:translateY(2.5cqw)}
 .cap.on{opacity:1;transform:none}
-.cap .lab{color:#f3e2bd;margin-bottom:2.2cqw}
-.cap .nm{font:300 13cqw/1.02 var(--d);color:var(--ivory);letter-spacing:.005em}
-.cap .nm i{display:block;font:italic 300 7cqw/1.1 var(--d);color:var(--gold-l);margin:.6cqw 0}
-#c1{bottom:12%}
-#c2{bottom:12%}
-#c2 .gur{font:600 6.8cqw/1.4 var(--g);color:#f6e2ad}
-#c2 .tr{font:italic 400 5cqw/1.3 var(--d);color:var(--ivory);margin-top:1.6cqw}
+.cap .lab{color:#f3e2bd;margin-bottom:2.2cqw;text-shadow:var(--foil)}
+.cap .nm{font:300 13cqw/1.02 var(--d);color:var(--ivory);text-shadow:var(--foil)}
+.cap .nm i{display:block;font:italic 300 6.4cqw/1.1 var(--d);color:var(--gold-l);margin:.6cqw 0}
+#c1,#c2{bottom:12%}
+#c2 .gur{font:600 6.8cqw/1.4 var(--g);color:#f6e2ad;text-shadow:var(--foil)}
+#c2 .tr{font:italic 400 5cqw/1.3 var(--d);color:var(--ivory);margin-top:1.6cqw;text-shadow:var(--foil)}
 #c2 .lab{margin:3cqw 0 0;color:#dcc492;font-size:2.2cqw}
-
-/* hint */
 #hint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 4.6cqw);display:flex;flex-direction:column;align-items:center;gap:1.8cqw;opacity:0;transition:opacity .5s;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.8)}
 #hint.on{opacity:1}
-#hint .lab{color:#fbefd6;font-size:2.35cqw}
+#hint .lab{color:#fbefd6;font-size:2.3cqw}
 #hint .row{display:flex;align-items:center;gap:3cqw}
-#hint .ic{width:6cqw;height:6cqw;stroke:#f1d79a;fill:none;stroke-width:1.6;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+#hint .ic{width:6cqw;height:6cqw;stroke:#f1d79a;fill:none;stroke-width:1.6}
 #hint .up{animation:nudU 1.6s var(--ease) infinite}
 #hint .lr{animation:nudX 2s ease-in-out infinite}
 @keyframes nudU{0%{transform:translateY(1.6cqw);opacity:0}40%{opacity:1}100%{transform:translateY(-1.6cqw);opacity:0}}
 @keyframes nudX{0%,100%{transform:translateX(-1.2cqw)}50%{transform:translateX(1.2cqw)}}
-
-/* chrome */
+#dial{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 15cqw);width:34cqw;height:9cqw;transform:translateX(-50%);opacity:0;transition:opacity .4s;pointer-events:none}
+#dial.on{opacity:1}
+#dial svg{width:100%;height:100%;overflow:visible}
+#dial path{fill:none;stroke:rgba(255,240,210,.35);stroke-width:1.2}
+#dial circle{fill:#f1d79a}
 #chrome{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 3.4cqw) 4.4cqw 0;display:flex;align-items:center;gap:3cqw;opacity:0;transition:opacity .8s;pointer-events:none}
 #chrome.on{opacity:1;pointer-events:auto}
 #prog{flex:1;display:flex;align-items:center}
@@ -92,56 +92,49 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .chip .lab{font-size:2.3cqw}
 #mute{width:8.4cqw;padding:0;justify-content:center}
 #mute svg{width:4.2cqw;height:4.2cqw}
-
-/* ── the invitation card (front/back, flips with the finger) ── */
 #cardWrap{position:absolute;left:50%;top:47.5%;width:92cqw;aspect-ratio:720/1021;transform:translate(-50%,140%);perspective:1600px;will-change:transform}
-#cardShadow{position:absolute;left:8%;right:8%;bottom:-3%;height:10%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%);transform-origin:50% 50%}
+#cardShadow{position:absolute;left:8%;right:8%;bottom:-3%;height:10%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
 #card{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
 .face{position:absolute;inset:0;background:url(a/paper.webp) center/100% 100% no-repeat;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .back{transform:rotateY(180deg)}
-.inner{position:absolute;left:21.6%;right:21.6%;top:15.6%;bottom:14.6%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink)}
-.orn{display:flex;align-items:center;gap:1.6cqw;width:70%;margin:0 auto}
+.inner{position:absolute;left:21.6%;right:21.6%;top:15.6%;bottom:14.6%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);text-shadow:var(--press)}
+.orn{display:flex;align-items:center;gap:1.6cqw;width:60%;margin:0 auto}
 .orn:before,.orn:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,#b48a3e)}
 .orn:after{background:linear-gradient(270deg,transparent,#b48a3e)}
-.orn b{width:1.3cqw;height:1.3cqw;transform:rotate(45deg);background:#b48a3e}
-/* front */
-.f-ik{font:600 5.6cqw/1 var(--g);color:#8a5e1e}
-.f-bless{font:italic 400 3.9cqw/1.25 var(--d);color:#5d2a18;margin-top:1.4cqw}
-.f-hosts{font:500 4.15cqw/1.3 var(--d);color:var(--ink)}
-.f-lab{color:var(--gold);font-size:2.2cqw;line-height:1.7}
-.f-title{font:italic 300 7.2cqw/1.05 var(--d);color:#7b4e18}
+.orn b{width:1.2cqw;height:1.2cqw;transform:rotate(45deg);background:#b48a3e}
+.f-ik{font:600 5cqw/1 var(--g);color:#8a5e1e}
+.f-bless{font:italic 400 3.2cqw/1.25 var(--d);color:#6a3a22;margin-top:1.2cqw}
+.f-par{font:500 3.4cqw/1.38 var(--d);color:#4a2416}
+.f-lab{color:var(--gold);font-size:2.05cqw;line-height:1.7}
+.f-ak{display:flex;align-items:center;gap:2.2cqw;font:italic 400 6.2cqw/1.1 var(--d);color:#9a6a22;margin:.4cqw 0}
+.f-ak:before,.f-ak:after{content:"";width:5cqw;height:1px;background:#b48a3e}
 .f-name{font:300 12.6cqw/.98 var(--d);color:var(--maroon);letter-spacing:.005em}
-.f-amp{font:italic 300 6.2cqw/1 var(--d);color:#a07634;margin:.4cqw 0 .8cqw}
-.f-par{font:500 3.9cqw/1.3 var(--d);color:var(--ink)}
-.blank{display:inline-block;width:11cqw;border-bottom:1px solid rgba(59,23,14,.45);height:.9em;vertical-align:-.1em}
+.f-with{font:italic 400 3.6cqw/1 var(--d);color:#a07634;margin:1cqw 0 1.4cqw}
 .turn{position:absolute;left:50%;top:calc(100% + 3.6cqw);transform:translateX(-50%);display:flex;align-items:center;gap:2cqw;color:#fbefd6;padding:2.4cqw 4.6cqw;border:1px solid rgba(241,215,154,.6);border-radius:99px;background:rgba(18,9,4,.55);white-space:nowrap}
 .turn svg{width:3.4cqw;height:3.4cqw;stroke:currentColor;fill:none;stroke-width:1.8}
 .turn .lab{font-size:2.3cqw;font-weight:600}
-/* back */
-.b-day{font:italic 300 6cqw/1 var(--d);color:#7b4e18;margin-top:2.6cqw}
-.b-date{font:300 27cqw/.86 var(--d);font-variant-numeric:lining-nums;color:var(--maroon);letter-spacing:-.01em;margin:1.4cqw 0 2.6cqw}
-.b-my{color:var(--ink);font-size:3cqw;font-weight:600;letter-spacing:.3em;padding-left:.3em}
-.b-time{font:italic 400 4.6cqw/1.2 var(--d);color:#5d2a18;margin-top:3.4cqw}
-.b-venue{font:600 4.5cqw/1.25 var(--d);color:var(--ink);margin-top:1.8cqw}
-.b-city{font:500 4cqw/1.25 var(--d);color:var(--ink)}
-.b-langar{font:italic 400 4cqw/1.25 var(--d);color:#7b4e18}
-.gapS{height:2.2cqw}.gapM{height:3.4cqw}.gapL{height:4.6cqw}
-
-/* ── finale ── */
+.b-day{font:italic 400 5cqw/1 var(--d);color:#7b4e18;margin-top:2.4cqw}
+.b-date{font:300 26cqw/.86 var(--d);color:var(--maroon);letter-spacing:-.01em;font-variant-numeric:lining-nums;margin:1.6cqw 0 2.4cqw}
+.b-my{color:var(--ink);font-size:2.8cqw;font-weight:600;letter-spacing:.3em;padding-left:.3em}
+.b-time{font:italic 400 4.1cqw/1.2 var(--d);color:#5d2a18;margin-top:3.6cqw}
+.b-venue{font:600 4.2cqw/1.25 var(--d);color:var(--ink);margin-top:2cqw}
+.b-city{font:500 3.6cqw/1.3 var(--d);color:#4a2416}
+.b-after{font:italic 400 3.7cqw/1.25 var(--d);color:#7b4e18}
+.gapS{height:2cqw}.gapM{height:3.2cqw}.gapL{height:4.4cqw}
 #fin{position:absolute;inset:0;pointer-events:none}
 .fx{opacity:0;transform:translateY(3cqw);transition:opacity .9s var(--ease),transform .9s var(--ease)}
 #fin.on .fx{opacity:1;transform:none}
-#fin .top{position:absolute;left:7cqw;right:7cqw;top:calc(env(safe-area-inset-top) + 15cqw);text-align:center;text-shadow:0 .4cqw 3cqw rgba(0,0,0,.5)}
-#fin .top .lab{color:#f3e2bd;margin-bottom:2cqw}
-#fin .nm{font:300 13cqw/1 var(--d);color:var(--ivory)}
+#fin .top{position:absolute;left:7cqw;right:7cqw;top:calc(env(safe-area-inset-top) + 15cqw);text-align:center}
+#fin .top .lab{color:#f3e2bd;margin-bottom:2cqw;text-shadow:var(--foil)}
+#fin .nm{font:300 13cqw/1 var(--d);color:var(--ivory);text-shadow:var(--foil)}
 #fin .nm i{font:italic 300 .55em var(--d);color:var(--gold-l);margin:0 .14em;vertical-align:.12em}
-#fin .dt{font:italic 400 4.6cqw/1.3 var(--d);color:#f6ead2;margin-top:2cqw}
+#fin .dt{font:italic 400 4.4cqw/1.3 var(--d);color:#f6ead2;margin-top:2cqw;text-shadow:var(--foil)}
 #fin .bot{position:absolute;left:6cqw;right:6cqw;bottom:calc(env(safe-area-inset-bottom) + 6cqw);display:flex;flex-direction:column;align-items:center;text-align:center}
 #count{display:flex;gap:2.4cqw}
 .arch{width:16.8cqw;padding:3.6cqw 0 2.6cqw;border-radius:8.4cqw 8.4cqw 1cqw 1cqw;background:rgba(40,12,8,.78);border:1px solid rgba(214,178,108,.85)}
-.arch b{display:block;font:300 8.4cqw/1 var(--d);color:#fff1cc;font-variant-numeric:lining-nums tabular-nums}
+.arch b{display:block;font:300 8cqw/1 var(--d);color:#fff1cc;font-variant-numeric:lining-nums tabular-nums;text-shadow:var(--foil)}
 .arch .lab{display:block;color:#e2c98f;font-size:1.9cqw;margin-top:1.2cqw}
-#note{font:italic 400 4.1cqw/1.4 var(--d);color:#fbefd6;margin-top:4.2cqw;max-width:78cqw;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+#note{font:italic 400 3.9cqw/1.4 var(--d);color:#fbefd6;margin-top:4.2cqw;max-width:78cqw;text-shadow:0 1px 4px rgba(0,0,0,.85)}
 #btns{display:flex;gap:2.8cqw;margin-top:4.6cqw;pointer-events:auto}
 .tag{display:flex;align-items:center;justify-content:center;gap:2cqw;height:11.4cqw;min-width:38cqw;padding:0 4cqw;border-radius:99px;background:#fbf3e2;border:1px solid #c9a35c;box-shadow:0 1cqw 2.4cqw rgba(0,0,0,.35);color:#4a1410;text-decoration:none;transition:transform .12s}
 .tag:active{transform:scale(.96)}
@@ -151,7 +144,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #cal.lab{font-size:2.3cqw}
 #fateh{margin-top:4.6cqw;text-shadow:0 1px 4px rgba(0,0,0,.85)}
 #fateh .g{font:500 3.6cqw/1.5 var(--g);color:#f6e2ad}
-#fateh .s{font:italic 400 3.9cqw/1.3 var(--d);color:#ead8b2;margin-top:.6cqw}
+#fateh .s{font:italic 400 3.7cqw/1.3 var(--d);color:#ead8b2;margin-top:.6cqw}
 #preview{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 1.4cqw);text-align:center;color:rgba(255,240,210,.42);pointer-events:none}
 #preview.lab{font-size:1.8cqw}
 #loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:9cqw;height:9cqw;border-radius:50%;border:2px solid rgba(255,240,210,.25);border-top-color:#f1d79a;animation:spin 1s linear infinite;opacity:0;transition:opacity .3s;pointer-events:none}
@@ -162,7 +155,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 <body>
 <div id="backdrop"></div>
 <div id="stage">
-  <canvas id="cv" class="L"></canvas>
+  <div id="view"><canvas id="cv" class="L"></canvas><img id="hd" class="L" alt=""></div>
   <video id="op" class="L" src="a/open.mp4" poster="a/poster.webp" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
   <canvas id="petals" class="L"></canvas>
   <div id="bloom" class="L"></div>
@@ -182,15 +175,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     <div class="face front"><div class="inner">
       <div class="f-ik">ੴ</div>
       <div class="f-bless">With the blessings of Waheguru Ji</div>
-      <div class="gapM"></div><div class="orn"><b></b></div><div class="gapM"></div>
-      <div class="f-hosts" id="hosts"></div>
-      <div class="gapS"></div>
-      <div class="lab f-lab">invite you to the</div>
-      <div class="f-title">Anand Karaj</div>
+      <div class="gapM"></div>
+      <div class="f-par" id="hosts"></div>
+      <div class="lab f-lab" style="margin-top:1.6cqw">invite you to the</div>
+      <div class="f-ak">Anand Karaj</div>
       <div class="lab f-lab">of their son</div>
       <div class="gapS"></div>
       <div class="f-name gN">Anhad</div>
-      <div class="f-amp">with</div>
+      <div class="f-with">with</div>
       <div class="f-name bN">Toshi</div>
       <div class="gapS"></div>
       <div class="lab f-lab">daughter of</div>
@@ -198,15 +190,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     </div></div>
     <div class="face back"><div class="inner">
       <div class="lab f-lab">The Anand Karaj</div>
-      <div class="orn" style="width:46%;margin-top:1.8cqw"><b></b></div>
-      <div class="b-day" id="bDay">Sunday</div>
-      <div class="b-date" id="bDate">14</div>
-      <div class="lab b-my" id="bMY">February 2027</div>
-      <div class="b-time" id="bTime">nine o’clock in the morning</div>
-      <div class="b-venue" id="bVenue">Gurdwara Sahib</div>
-      <div class="b-city" id="bCity">New Delhi</div>
-      <div class="gapL"></div><div class="orn" style="width:46%"><b></b></div><div class="gapM"></div>
-      <div class="b-langar">followed by Guru ka Langar</div>
+      <div class="orn" style="width:44%;margin-top:1.6cqw"><b></b></div>
+      <div class="b-day" id="bDay">Saturday</div>
+      <div class="b-date" id="bDate">27</div>
+      <div class="lab b-my" id="bMY">March 2027</div>
+      <div class="b-time" id="bTime"></div>
+      <div class="b-venue" id="bVenue"></div>
+      <div class="b-city" id="bCity"></div>
+      <div class="gapL"></div><div class="orn" style="width:44%"><b></b></div><div class="gapM"></div>
+      <div class="b-after" id="bAfter"></div>
     </div></div>
   </div><button class="turn" id="turnBtn"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 4v4h-4M20 12a8 8 0 0 1-14 5.3M4 20v-4h4"/></svg><span class="lab" id="turnT">Turn the card</span></button></div>
 
@@ -224,6 +216,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     </div>
   </div>
 
+  <div id="dial"><svg viewBox="0 0 100 26"><path d="M6 4 Q50 30 94 4"/><circle id="dialDot" cx="50" cy="17" r="2.6"/></svg></div>
   <div id="hint"><svg class="ic up" id="hUp" viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg><div class="row"><svg class="ic lr" id="hLR" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg><span class="lab" id="hintT">Swipe up</span></div></div>
 
   <div id="chrome"><div id="prog"></div><button class="chip" id="detBtn"><span class="lab">Details</span></button><button class="chip" id="mute" aria-label="Sound on or off"><svg viewBox="0 0 24 24" fill="none" stroke="#fbefd6" stroke-width="1.7"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fbefd6" stroke="none"/><path id="wave" d="M16 9c1.5 1.5 1.5 4.5 0 6M18.5 6.5c3 3 3 8 0 11"/></svg></button></div>
@@ -247,25 +240,24 @@ const INFO = {
   preview: false
 };
 
-/* ---------- sequences (12 fps frames) ---------- */
-const J_N = 280, STOPJ = [0, 135, 219, 279];          // courtyard, darbar, matha tekna, dusk
-const ORB = { 1: { n: 61 }, 2: { n: 61 } };     // orbit arcs at stop 1 & 2
-const J_STEPS = 49.5, J_HALL = 91.5, J_GURBANI = 197, J_CUT = 219.5;
+/* ---------- the camera path (12 fps frames built straight from the source clips) ---------- */
+const J_N = 352;
+const STOPJ = [0, 72, 207, 290, 351];          // 0 card · 1 courtyard · 2 darbar · 3 matha tekna · 4 dusk
+const ORB = { 1: 'c1', 2: 'c2' }, ORB_N = 41;   // arcs behind the couple, left and right
+const J_STEPS = 121, J_HALL = 163, J_GURBANI = 269, J_CUT = 291.5;
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const stage = $('#stage'), op = $('#op'), cv = $('#cv'), cx = cv.getContext('2d', { alpha: false });
+const stage = $('#stage'), op = $('#op'), cv = $('#cv'), cx = cv.getContext('2d', { alpha: false }), hd = $('#hd'), view = $('#view');
 
-/* ---------- text ---------- */
 (function fill() {
-  const bl = '<span class="blank"></span>', g = INFO.groomParents, b = INFO.brideParents;
+  const bl = '<span style="display:inline-block;width:11cqw;border-bottom:1px solid rgba(59,23,14,.45);height:.9em"></span>', g = INFO.groomParents, b = INFO.brideParents;
   $('#hosts').innerHTML = (g[0] || 'S. ' + bl) + '<br>&amp; ' + (g[1] || 'Sardarni ' + bl);
   $('#bpar').innerHTML = (b[0] || 'Shri ' + bl) + '<br>&amp; ' + (b[1] || 'Smt. ' + bl);
   $$('.gN').forEach(e => e.textContent = INFO.groom); $$('.bN').forEach(e => e.textContent = INFO.bride);
-  const d = new Date(INFO.start), tz = { timeZone: 'Asia/Kolkata' };
-  const wd = d.toLocaleDateString('en-GB', { ...tz, weekday: 'long' }), dd = d.toLocaleDateString('en-GB', { ...tz, day: 'numeric' });
-  const mo = d.toLocaleDateString('en-GB', { ...tz, month: 'long' }), yr = d.toLocaleDateString('en-GB', { ...tz, year: 'numeric' });
+  const d = new Date(INFO.start), tz = { timeZone: 'Asia/Kolkata' }, f1 = o => d.toLocaleDateString('en-GB', { ...tz, ...o });
+  const wd = f1({ weekday: 'long' }), dd = f1({ day: 'numeric' }), mo = f1({ month: 'long' }), yr = f1({ year: 'numeric' });
   $('#bDay').textContent = wd; $('#bDate').textContent = dd; $('#bMY').textContent = mo + ' ' + yr;
-  $('#bTime').textContent = INFO.timeText; $('.b-langar').textContent = INFO.after; $('#bVenue').textContent = INFO.venue; $('#bCity').textContent = INFO.city;
+  $('#bTime').textContent = INFO.timeText; $('#bVenue').textContent = INFO.venue; $('#bCity').textContent = INFO.city; $('#bAfter').textContent = INFO.after;
   $('#finDate').textContent = `${wd}, ${dd} ${mo} ${yr}`;
   $('#aMap').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(INFO.mapsQuery);
   $('#aRsvp').href = 'https://wa.me/' + INFO.rsvpPhone + '?text=' + encodeURIComponent(`Waheguru Ji Ka Khalsa, Waheguru Ji Ki Fateh! I will be attending the Anand Karaj of ${INFO.groom} & ${INFO.bride}.`);
@@ -274,142 +266,155 @@ const stage = $('#stage'), op = $('#op'), cv = $('#cv'), cx = cv.getContext('2d'
   if (!INFO.preview) $('#preview').remove();
 })();
 
-/* ---------- frame loader: 5×2 sprite sheets (10 frames each), staged ---------- */
-const FW = 432, FH = 768;
-const SEQ = { J: { pre: 'j', n: J_N, sh: [] }, 1: { pre: 'o1_', n: 61, sh: [] }, 2: { pre: 'o2_', n: 61, sh: [] } };
-const pad2 = k => String(k).padStart(2, '0');
-let queue = [], inflight = 0;
-function wantSheet(S, k) { if (S.sh[k]) return; S.sh[k] = { img: null, ok: false }; queue.push([S, k]); pump(); }
+/* =========================================================
+   FRAME CACHE — one small file per frame; frames near the camera are held
+   as GPU-ready ImageBitmaps so a drag never waits on decoding
+   ========================================================= */
+const pad = (i, n = 3) => String(i).padStart(n, '0');
+function mkSeq(n, url) { return { n, url, f: new Array(n) }; }
+const SEQ = { J: mkSeq(J_N, i => `a/j/${pad(i)}.webp`) };
+for (const k of [1, 2]) { SEQ[k + 'L'] = mkSeq(ORB_N, i => `a/o/${ORB[k]}L/${pad(i, 2)}.webp`); SEQ[k + 'R'] = mkSeq(ORB_N, i => `a/o/${ORB[k]}R/${pad(i, 2)}.webp`); }
+let queue = [], inflight = 0, dirty = true;
+const canBitmap = 'createImageBitmap' in window;
+function want(S, i, front) {
+  if (i < 0 || i >= S.n || S.f[i]) return;
+  S.f[i] = { img: null, bmp: null, ok: false };
+  front ? queue.unshift([S, i]) : queue.push([S, i]); pump();
+}
 function pump() {
-  while (inflight < 4 && queue.length) {
-    const [S, k] = queue.shift(); inflight++;
+  while (inflight < 6 && queue.length) {
+    const [S, i] = queue.shift(); inflight++;
     const im = new Image(); im.decoding = 'async';
-    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { S.sh[k].img = im; S.sh[k].ok = true; inflight--; dirty = true; pump(); }); };
-    im.onerror = () => { inflight--; pump(); };
-    im.src = `a/s/${S.pre}${pad2(k)}.webp`;
+    im.onload = () => { const e = S.f[i]; if (e) { e.img = im; e.ok = true; } inflight--; dirty = true; pump(); };
+    im.onerror = () => { inflight--; S.f[i] = null; pump(); };
+    im.src = S.url(i);
   }
 }
-function loadRange(S, a, b) { for (let k = Math.floor(a / 10); k <= Math.floor(Math.min(b, S.n - 1) / 10); k++) wantSheet(S, k); }
-function loadJ(a, b) { loadRange(SEQ.J, a, b); }
-function loadO(k) { loadRange(SEQ[k], 0, SEQ[k].n - 1); }
-function ok(S, i) { const sh = S.sh[Math.floor(i / 10)]; return !!(sh && sh.ok); }
-function frame(S, i) {
-  for (let d = 0; d < S.n; d++) for (const j of d ? [i - d, i + d] : [i]) if (j >= 0 && j < S.n && ok(S, j)) { const c = j % 10; return [S.sh[Math.floor(j / 10)].img, (c % 5) * FW, Math.floor(c / 5) * FH]; }
-  return null;
+function loadRange(S, a, b, front) { if (front) for (let i = b; i >= a; i--) want(S, i, true); else for (let i = a; i <= b; i++) want(S, i, false); }
+let bmpBusy = 0;
+function warm(S, centre, radius) {
+  if (!canBitmap) return;
+  for (let i = 0; i < S.n; i++) {
+    const e = S.f[i]; if (!e || !e.ok) continue;
+    const near = Math.abs(i - centre) <= radius;
+    if (near && !e.bmp && !e.pend && bmpBusy < 8) { e.pend = 1; bmpBusy++; createImageBitmap(e.img).then(b => { e.bmp = b; e.pend = 0; bmpBusy--; }).catch(() => { e.pend = 0; bmpBusy--; }); }
+    else if (!near && e.bmp) { e.bmp.close && e.bmp.close(); e.bmp = null; }
+  }
 }
-addEventListener('load', () => loadJ(0, 9));
+function src(S, i) { for (let d = 0; d < 24; d++) for (const j of d ? [i - d, i + d] : [i]) { const e = S.f[j]; if (e && e.ok) return e.bmp || e.img; } return null; }
 
-/* ---------- canvas ---------- */
-let W = 0, H = 0, dirty = true;
+let W = 0, H = 0;
 function size() { const r = stage.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); cx.imageSmoothingQuality = 'high'; sizePetals(); dirty = true; }
-function cover(fr, a) { if (!fr) return; const s = Math.max(W / FW, H / FH), w = FW * s, h = FH * s; cx.globalAlpha = a; cx.drawImage(fr[0], fr[1], fr[2], FW, FH, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
-function drawSeq(S, f) {
-  const i0 = Math.floor(f), a = f - i0;
-  cover(frame(S, i0), 1);
-  if (a > .02 && i0 + 1 < S.n && ok(S, i0 + 1)) cover(frame(S, i0 + 1), a);
-}
+function cover(im, a) { if (!im) return; const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
+function drawSeq(S, f) { const i0 = Math.floor(f), a = f - i0; cover(src(S, i0), 1); if (a > .03 && i0 + 1 < S.n) { const e = S.f[i0 + 1]; if (e && e.ok) cover(e.bmp || e.img, a); } }
 
 /* =========================================================
-   CAMERA STATE — P: journey frame (vertical) · Q: orbit frame (horizontal)
+   CAMERA — P: travel frame (vertical) · Q: orbit −40…+40 (horizontal)
    ========================================================= */
 let P = 0, vP = 0, tgtP = null, Q = 0, vQ = 0, orbitAt = 0, stop = 0, opened = false, phase = 'card';
 let dragging = false, lastInteract = 0;
-const VMAX = 22;              // max glide speed in frames/s (≈1.8× real time)
-function stopIndexAt(p) { for (let k = 0; k < 4; k++) if (Math.abs(p - STOPJ[k]) < .6) return k + 1; return 0; }
-
+let fastGlide = false, noAuto = false;
+function vmaxAt(p) { if (fastGlide) return 48; return p < STOPJ[1] ? 14 : (p > 150 && p < STOPJ[2] + 1) ? 12 : 20; }   // real time through the doorway: no fast-forward
+function orbSeq() { return Q < 0 ? SEQ[orbitAt + 'L'] : SEQ[orbitAt + 'R']; }
 function render() {
-  if (orbitAt && Q > .01) {
-    const S = SEQ[orbitAt];
-    if (Q < 1) { drawSeq(SEQ.J, P); if (ok(S, 1)) cover(frame(S, 1), Q); }
-    else drawSeq(S, Q);
+  if (orbitAt && Math.abs(Q) > .01) {
+    const S = orbSeq(), q = Math.abs(Q);
+    if (q < 1) { drawSeq(SEQ.J, P); const e = S.f[1]; if (e && e.ok) cover(e.bmp || e.img, q); }
+    else drawSeq(S, Math.min(q, ORB_N - 1));
   } else drawSeq(SEQ.J, P);
 }
-
-/* ---------- glide physics (critically damped toward a target stop) ---------- */
+let orbitHome = false, orbitHomeCb = null;
 function physics(dt) {
   if (!dragging && tgtP !== null) {
-    const d = tgtP - P, want = Math.sign(d) * Math.min(VMAX, Math.abs(d) * 3.2 + 1.2);
-    vP += (want - vP) * Math.min(1, dt * 5);
+    const d = tgtP - P, vm = vmaxAt(P), want = Math.sign(d) * Math.min(vm, Math.abs(d) * 2.6 + 1);
+    vP += (want - vP) * Math.min(1, dt * 4.5);
     let np = P + vP * dt;
-    if ((d > 0 && np >= tgtP) || (d < 0 && np <= tgtP) || Math.abs(d) < .02) { np = tgtP; vP = 0; const k = STOPJ.indexOf(tgtP) + 1; tgtP = null; P = np; arrive(k); }
-    setP(np);
+    if ((d > 0 && np >= tgtP) || (d < 0 && np <= tgtP) || Math.abs(d) < .02) { np = tgtP; vP = 0; fastGlide = false; const k = STOPJ.indexOf(tgtP); tgtP = null; setP(np); arrive(k); }
+    else setP(np);
   }
-  if (orbitAt && !dragging && Math.abs(vQ) > .05) { Q = clamp(Q + vQ * dt, 0, ORB[orbitAt].n - 1); vQ *= Math.pow(.06, dt); dirty = true; if (Q <= 0 || Q >= ORB[orbitAt].n - 1) vQ = 0; }
-  if (orbitAt) {
-    if (orbitHome && Q > 0) { Q = Math.max(0, Q - Math.max(30, Q * 9) * dt); dirty = true; if (Q <= 0) { orbitHome = false; if (orbitHomeCb) { const cb = orbitHomeCb; orbitHomeCb = null; cb(); } } }
+  if (orbitAt && !dragging && Math.abs(vQ) > .05) { Q = clamp(Q + vQ * dt, -(ORB_N - 1), ORB_N - 1); vQ *= Math.pow(.05, dt); dirty = true; if (Math.abs(Q) >= ORB_N - 1) vQ = 0; drawDial(); }
+  if (orbitAt && orbitHome) {
+    const s = Math.sign(Q), step = Math.max(40, Math.abs(Q) * 8) * dt;
+    Q = Math.abs(Q) <= step ? 0 : Q - s * step; dirty = true; drawDial();
+    if (Q === 0) { orbitHome = false; const cb = orbitHomeCb; orbitHomeCb = null; cb && cb(); }
   }
 }
-let orbitHome = false, orbitHomeCb = null;
-function homeOrbit(cb) { if (!orbitAt || Q <= .01) { Q = 0; cb && cb(); return; } orbitHome = true; orbitHomeCb = cb; vQ = 0; }
-
-let prevP = 0;
+function homeOrbit(cb) { if (!orbitAt || Math.abs(Q) <= .01) { Q = 0; cb && cb(); return; } orbitHome = true; orbitHomeCb = cb; vQ = 0; }
 function setP(np) {
-  if (np === P && prevP === P) return;
-  const old = P; P = clamp(np, 0, J_N - 1); dirty = true;
-  /* events by position */
+  const old = P; P = clamp(np, 0, J_N - 1); if (P === old) return; dirty = true;
   if (old < J_STEPS && P >= J_STEPS) sfx('steps', .7, false);
   if ((old < J_CUT && P >= J_CUT) || (old > J_CUT && P <= J_CUT)) flash();
-  const showG = P >= J_GURBANI && P <= STOPJ[2] + .5 && !cardUp;
-  $('#c2').classList.toggle('on', showG); if (showG) $('#scrimB').style.opacity = 1;
-  prevP = P; drawProg();
+  const showG = P >= J_GURBANI && P <= STOPJ[3] + .5 && !cardUp;
+  $('#c2').classList.toggle('on', showG); if (showG) $('#scrimB').style.opacity = 1; else if (stop < 0 && P > STOPJ[1] + 2 && P < STOPJ[4] - 1) $('#scrimB').style.opacity = 0;
+  if (phase !== 'opening') sealState(P < 6 ? 1 - P / 6 : 0);
+  drawProg(); feed();
 }
 function flash() { const b = $('#bloom'); b.style.opacity = .95; setTimeout(() => b.style.opacity = 0, 280); }
+let lastFeed = -99;
+function feed() { if (Math.abs(P - lastFeed) < 3) return; lastFeed = P; const c = Math.round(P); loadRange(SEQ.J, Math.max(0, c - 24), Math.min(J_N - 1, c + 60), true); warm(SEQ.J, c, 36); }
 
-/* ---------- arriving / leaving stops ---------- */
+/* HD still when the camera rests */
+const HD = { 0: 'a/poster.webp', 1: 'a/hd/1.webp', 2: 'a/hd/2.webp', 3: 'a/hd/3.webp', 4: 'a/hd/4.webp' };
+let hdFor = -1;
+function restHD(on, k) {
+  if (!on) { if (hdFor !== -1) { hd.style.transition = 'opacity .1s'; hd.style.opacity = 0; hdFor = -1; } return; }
+  if (k < 0 || k == null) return; hdFor = k; const url = HD[k];
+  const show = () => { if (hdFor === k && !dragging && Math.abs(Q) < .01) { hd.style.transition = 'opacity .45s cubic-bezier(.22,.7,.2,1)'; hd.style.opacity = 1; } };
+  if (hd.getAttribute('src') !== url) { hd.onload = show; hd.src = url; } else show();
+}
+
+/* stops */
+function sealState(a) { const s = $('#seal'), t = $('#tapPill'); s.style.opacity = a; t.style.opacity = a; s.style.pointerEvents = t.style.pointerEvents = a > .9 ? 'auto' : 'none'; }
 function arrive(k) {
-  stop = k; phase = 'stop'; hint(null);
-  orbitAt = ORB[k] ? k : 0; if (orbitAt) loadO(k);
-  if (k === 1) { $('#c1').classList.add('on'); $('#scrimB').style.opacity = 1; petalsT = 1; hint('lr+up', 'Drag to look around · swipe up', 1200); }
-  if (k === 2) { $('#scrimB').style.opacity = 0; hint('lr+up', 'Drag to look around · swipe up', 600); }
-  if (k === 3) { setTimeout(() => { if (stop === 3 && !dragging && tgtP === null) raiseCard(); }, 1300); }
+  stop = k; phase = 'stop'; hint(null); vP = 0;
+  orbitAt = ORB[k] ? k : 0; Q = 0;
+  restHD(true, k);
+  if (k === 0) { sealState(1); petalsT = 0; $('#scrimB').style.opacity = 0; }
+  if (k === 1) { $('#c1').classList.add('on'); $('#scrimB').style.opacity = 1; petalsT = 1; hint('lr+up', 'Drag to turn around · swipe up', 900); }
+  if (k === 2) { $('#scrimB').style.opacity = 0; hint('lr+up', 'Drag to turn around · swipe up', 500); }
+  if (k === 3) setTimeout(() => { if (stop === 3 && !dragging && tgtP === null) raiseCard(); }, 1300);
   if (k === 4) { $('#scrimT').style.opacity = 1; $('#scrimB').style.opacity = 1; $('#fin').classList.add('on'); startCount(); sfx('reveal', .4); }
+  $('#dial').classList.toggle('on', !!orbitAt); drawDial();
   lastInteract = performance.now();
-  /* load what comes next */
-  if (k === 1) { loadJ(25, 135); loadO(1); setTimeout(() => { loadJ(136, 219); loadO(2); }, 800); }
-  if (k === 2) { loadJ(136, 279); }
+  if (orbitAt) { loadRange(SEQ[k + 'L'], 0, ORB_N - 1, true); loadRange(SEQ[k + 'R'], 0, ORB_N - 1, true); setTimeout(() => { warm(SEQ[k + 'L'], 0, ORB_N); warm(SEQ[k + 'R'], 0, ORB_N); }, 500); }
+  else for (const s of ['1L', '1R', '2L', '2R']) warm(SEQ[s], -999, 0);
+  if (k === 1) setTimeout(() => loadRange(SEQ.J, 0, 71), 1500);
 }
 function leave(dir = 1) {
-  if (stop === 1) { $('#c1').classList.remove('on'); petalsT = 0; if (P > 1) $('#scrimB').style.opacity = 0; }
+  if (stop === 1) { $('#c1').classList.remove('on'); petalsT = 0; }
   if (stop === 3) lowerCard(dir > 0);
   if (stop === 4) { $('#fin').classList.remove('on'); $('#scrimT').style.opacity = 0; $('#scrimB').style.opacity = 0; }
-  stop = 0; phase = 'move'; hint(null); orbitAt = 0; Q = 0;
+  restHD(false); $('#dial').classList.remove('on');
+  stop = -1; phase = 'move'; hint(null); orbitAt = 0; Q = 0;
 }
-function goStop(k) {                       // glide to stop k (1..4)
-  k = clamp(k, 1, 4); const t = STOPJ[k - 1];
-  const doGo = () => { if (Math.abs(P - t) < .02) { arrive(k); return; } leave(t > P ? 1 : -1); tgtP = t; sfx('swoosh', .45); };
-  if (orbitAt && Q > .01) homeOrbit(doGo); else doGo();
+function goStop(k) {
+  k = clamp(k, 0, 4); const t = STOPJ[k];
+  const doGo = () => { if (Math.abs(P - t) < .02) { arrive(k); return; } leave(t > P ? 1 : -1); tgtP = t; sfx('swoosh', .4); };
+  if (orbitAt && Math.abs(Q) > .01) homeOrbit(doGo); else doGo();
 }
-
-/* ---------- hint ---------- */
 let hintTO = 0;
 function hint(kind, txt, delay = 0) {
   clearTimeout(hintTO); $('#hint').classList.remove('on'); if (!kind) return;
   hintTO = setTimeout(() => { $('#hintT').textContent = txt; $('#hUp').style.display = kind.includes('up') ? '' : 'none'; $('#hLR').style.display = kind.includes('lr') ? '' : 'none'; $('#hint').classList.add('on'); }, delay);
 }
-
-/* ---------- progress ---------- */
+function drawDial() { const t = Q / (ORB_N - 1), x = 50 + t * 44, y = 4 + 26 * (1 - t * t) * .5; $('#dialDot').setAttribute('cx', x.toFixed(1)); $('#dialDot').setAttribute('cy', y.toFixed(1)); }
 const prog = $('#prog'); for (let i = 0; i < 4; i++) prog.insertAdjacentHTML('beforeend', '<div class="seg"><i></i></div><div class="dot"></div>');
 const segs = $$('#prog .seg i'), dots = $$('#prog .dot');
-const PROG = [-60, 0, 135, 219, 279];      // card → courtyard counts as the first segment
-let opT = 0;
-function drawProg() {
-  const x = phase === 'opening' || phase === 'card' ? -60 + opT * 60 : P;
-  for (let i = 0; i < 4; i++) { const p = clamp((x - PROG[i]) / (PROG[i + 1] - PROG[i])); segs[i].style.transform = `scaleX(${p})`; dots[i].classList.toggle('on', p >= .999); }
-}
+function drawProg() { for (let i = 0; i < 4; i++) { const p = clamp((P - STOPJ[i]) / (STOPJ[i + 1] - STOPJ[i])); segs[i].style.transform = `scaleX(${p})`; dots[i].classList.toggle('on', p >= .999); } }
 
 /* =========================================================
-   TOUCH — 1:1 with the finger, axis-locked, with momentum
+   TOUCH — 1:1, axis-locked, momentum
    ========================================================= */
 let g = null;
-const PX_PER_FRAME = () => stage.clientHeight / 110;          // one screen-height ≈ 110 frames
-const PX_PER_ORB = () => stage.clientWidth * .95 / 60;        // one screen-width ≈ the whole arc
+const PX_PER_FRAME = () => stage.clientHeight / 100;
+const PX_PER_ORB = () => stage.clientWidth * .5 / 40;
 function isUI(e) { return e.target.closest('#chrome,#btns,#cal,.turn,a,#seal,#tapPill'); }
 stage.addEventListener('pointerdown', e => {
   if (!opened || phase === 'opening' || isUI(e)) return;
   stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
   const onCard = cardUp && e.target.closest('#cardWrap');
-  g = { x: e.clientX, y: e.clientY, t: performance.now(), axis: null, P0: P, Q0: Q, flip0: flipA, onCard, hist: [[performance.now(), e.clientX, e.clientY]] };
-  tgtP = null; vP = 0; vQ = 0; dragging = true; lastInteract = performance.now();
+  g = { x: e.clientX, y: e.clientY, axis: null, P0: P, Q0: Q, flip0: flipA, onCard, lastY: e.clientY, hist: [[performance.now(), e.clientX, e.clientY]] };
+  tgtP = null; vP = 0; vQ = 0; fastGlide = false; dragging = true; lastInteract = performance.now();
 });
 stage.addEventListener('pointermove', e => {
   if (!g) return;
@@ -419,58 +424,52 @@ stage.addEventListener('pointermove', e => {
     if (Math.abs(dx) > Math.abs(dy) * 1.15) g.axis = g.onCard ? 'flip' : (orbitAt ? 'orbit' : 'none');
     else {
       g.axis = 'travel'; const dir = dy < 0 ? 1 : -1;
-      if (stop) { if (orbitAt && Q > .01) { g.wait = true; const gg = g; homeOrbit(() => { if (g !== gg) return; leave(dir); g.wait = false; g.y = g.lastY; g.P0 = P; }); } else leave(dir); }
+      if (stop >= 0) { if (orbitAt && Math.abs(Q) > .01) { g.wait = true; const gg = g; homeOrbit(() => { if (g !== gg) return; leave(dir); g.wait = false; g.y = g.lastY; g.P0 = P; }); } else leave(dir); }
     }
-    hint(null);
+    hint(null); restHD(false);
   }
   g.lastY = e.clientY;
   if (g.axis === 'travel') { if (!g.wait) setP(g.P0 - (e.clientY - g.y) / PX_PER_FRAME()); }
-  else if (g.axis === 'orbit') { Q = clamp(g.Q0 - dx / PX_PER_ORB(), 0, ORB[orbitAt].n - 1); dirty = true; }
-  else if (g.axis === 'flip') { setFlip(g.flip0 + dx * .55); }
+  else if (g.axis === 'orbit') { Q = clamp(g.Q0 - dx / PX_PER_ORB(), -(ORB_N - 1), ORB_N - 1); dirty = true; drawDial(); }
+  else if (g.axis === 'flip') setFlip(g.flip0 + dx * .55);
   lastInteract = now;
 });
-function endDrag(e) {
+function endDrag() {
   if (!g) return; const s = g; g = null; dragging = false; lastInteract = performance.now();
   const h = s.hist, a = h[0], b = h[h.length - 1], dtm = Math.max(16, b[0] - a[0]);
-  const vx = (b[1] - a[1]) / dtm * 1000, vy = (b[2] - a[2]) / dtm * 1000;       // px/s
-  if (s.axis === 'travel' && s.wait) { orbitHomeCb = null; return; }
+  const vx = (b[1] - a[1]) / dtm * 1000, vy = (b[2] - a[2]) / dtm * 1000;
+  if (s.axis === 'travel' && s.wait) { orbitHomeCb = null; orbitHome = false; restHD(true, stop); return; }
   if (s.axis === 'travel') {
-    const vF = -vy / PX_PER_FRAME();                                            // frames/s
+    const vF = -vy / PX_PER_FRAME();
     const from = STOPJ.reduce((best, t) => Math.abs(t - s.P0) < Math.abs(best - s.P0) ? t : best, STOPJ[0]);
     let k;
-    if (Math.abs(vF) > 14) { if (vF > 0) { k = STOPJ.findIndex(t => t > P + .5); if (k < 0) k = 3; } else { k = -1; STOPJ.forEach((t, i) => { if (t < P - .5) k = i; }); if (k < 0) k = 0; } }
-    else { const fi = STOPJ.indexOf(from), moved = P - from; k = Math.abs(moved) > 12 ? fi + Math.sign(moved) : fi; }
-    if (s.wait) k = STOPJ.indexOf(from);
-    k = clamp(k, 0, 3); vP = clamp(vF, -VMAX, VMAX); tgtP = STOPJ[k]; if (Math.abs(tgtP - P) > 2) sfx('swoosh', .35);
-  } else if (s.axis === 'orbit') { vQ = -vx / PX_PER_ORB(); }
+    if (Math.abs(vF) > 12) { if (vF > 0) { k = STOPJ.findIndex(t => t > P + .5); if (k < 0) k = 4; } else { k = -1; STOPJ.forEach((t, i) => { if (t < P - .5) k = i; }); if (k < 0) k = 0; } }
+    else { const fi = STOPJ.indexOf(from), moved = P - from; k = Math.abs(moved) > 10 ? fi + Math.sign(moved) : fi; }
+    k = clamp(k, 0, 4); if (STOPJ[k] < s.P0 - 1) noAuto = true; vP = clamp(vF, -20, 20); tgtP = STOPJ[k]; if (Math.abs(tgtP - P) > 2) sfx('swoosh', .35);
+  } else if (s.axis === 'orbit') { vQ = -vx / PX_PER_ORB(); if (Math.abs(vQ) < 3 && Math.abs(Q) < .6) { Q = 0; dirty = true; restHD(true, stop); } }
   else if (s.axis === 'flip') { const target = Math.abs(vx) > 500 ? (vx < 0 ? (flipA <= 0 ? -180 : 0) : (flipA >= 0 ? 180 : 0)) : Math.round(flipA / 180) * 180; animFlip(target); }
-  else if (!s.axis && s.onCard === false && stop === 0 && tgtP === null) { /* a tap mid-move: settle to nearest stop */ settleNearest(); }
+  else if (!s.axis && stop >= 0 && Math.abs(Q) < .01) restHD(true, stop);
 }
-function settleNearest() { let best = 0; STOPJ.forEach((t, i) => { if (Math.abs(t - P) < Math.abs(STOPJ[best] - P)) best = i; }); tgtP = STOPJ[best]; }
 stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
-/* wheel / keys for desktop */
 let wAcc = 0, wT = 0;
 stage.addEventListener('wheel', e => {
   e.preventDefault(); if (!opened || phase === 'opening') return;
-  const n = performance.now(); if (n - wT > 280) wAcc = 0; wT = n; wAcc += e.deltaY + e.deltaX * 0;
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && orbitAt) { Q = clamp(Q + e.deltaX / PX_PER_ORB(), 0, ORB[orbitAt].n - 1); dirty = true; return; }
-  if (Math.abs(wAcc) > 45 && tgtP === null) { wAcc = 0; const k = stop || (STOPJ.findIndex(t => t >= P) + 1); goStop(k + (e.deltaY > 0 ? 1 : -1)); }
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && orbitAt) { Q = clamp(Q + e.deltaX / PX_PER_ORB(), -(ORB_N - 1), ORB_N - 1); restHD(false); dirty = true; drawDial(); return; }
+  const n = performance.now(); if (n - wT > 280) wAcc = 0; wT = n; wAcc += e.deltaY;
+  if (Math.abs(wAcc) > 45 && tgtP === null) { wAcc = 0; if (e.deltaY < 0) noAuto = true; const k = stop >= 0 ? stop : STOPJ.findIndex(t => t >= P); goStop(k + (e.deltaY > 0 ? 1 : -1)); }
 }, { passive: false });
 addEventListener('keydown', e => {
   if (!opened) { if (e.key === 'Enter' || e.key === ' ') openCard(); return; }
-  if (['ArrowDown', 'PageDown', ' '].includes(e.key) && tgtP === null) goStop((stop || 1) + 1);
-  if (['ArrowUp', 'PageUp'].includes(e.key) && tgtP === null) goStop((stop || 2) - 1);
-  if (orbitAt && e.key === 'ArrowRight') { vQ = 30; } if (orbitAt && e.key === 'ArrowLeft') { vQ = -30; }
+  if (['ArrowDown', 'PageDown', ' '].includes(e.key) && tgtP === null) goStop((stop >= 0 ? stop : 1) + 1);
+  if (['ArrowUp', 'PageUp'].includes(e.key) && tgtP === null) goStop((stop >= 0 ? stop : 1) - 1);
+  if (orbitAt && e.key === 'ArrowRight') { vQ = 30; restHD(false); } if (orbitAt && e.key === 'ArrowLeft') { vQ = -30; restHD(false); }
 });
-/* tilt adds a touch of life at rest (cheap CSS transform) */
 let tilt = { x: 0, y: 0, tx: 0, ty: 0 };
 function onTilt(e) { if (e.gamma == null) return; tilt.tx = clamp(e.gamma / 25, -1, 1); tilt.ty = clamp((e.beta - 45) / 30, -1, 1); }
 function enableTilt() { const D = window.DeviceOrientationEvent; if (!D) return; if (typeof D.requestPermission === 'function') D.requestPermission().then(s => s === 'granted' && addEventListener('deviceorientation', onTilt)).catch(() => {}); else addEventListener('deviceorientation', onTilt); }
 
-/* =========================================================
-   CARD — rises at matha tekna, flips with the finger
-   ========================================================= */
-let cardUp = false, flipA = 0, flipAnim = 0;
+/* card */
+let cardUp = false, flipA = 0, flipAnim = 0, turnedOnce = false;
 const cardWrap = $('#cardWrap'), card = $('#card');
 function raiseCard() {
   cardUp = true; $('#c2').classList.remove('on'); $('#scrimB').style.opacity = 0; $('#dim').style.opacity = .5;
@@ -483,128 +482,90 @@ function lowerCard(up) {
   if (!cardUp) return; cardUp = false; $('#dim').style.opacity = 0;
   cardWrap.animate([{ transform: 'translate(-50%,-50%)' }, { transform: up ? 'translate(-50%,-200%)' : 'translate(-50%,140%)' }], { duration: 800, easing: 'cubic-bezier(.6,0,.3,1)', fill: 'forwards' });
 }
-let turnedOnce = false;
 function setFlip(a) {
-  flipA = clamp(a, -200, 200);
-  card.style.transform = `rotateY(${flipA}deg)`; const tt = Math.abs(flipA) > 90 ? 'Turn back' : 'Turn the card'; if ($('#turnT').textContent !== tt) $('#turnT').textContent = tt;
-  const c = Math.abs(Math.cos(flipA * Math.PI / 180)); $('#cardShadow').style.transform = `scaleX(${.35 + .65 * c})`;
+  flipA = clamp(a, -200, 200); card.style.transform = `rotateY(${flipA}deg)`;
+  $('#cardShadow').style.transform = `scaleX(${.35 + .65 * Math.abs(Math.cos(flipA * Math.PI / 180))})`;
+  const tt = Math.abs(flipA) > 90 ? 'Turn back' : 'Turn the card'; if ($('#turnT').textContent !== tt) $('#turnT').textContent = tt;
 }
 function animFlip(target) {
-  cancelAnimationFrame(flipAnim); const a0 = flipA, t0 = performance.now(), D = 520;
+  cancelAnimationFrame(flipAnim); const a0 = flipA, t0 = performance.now(), D = 560;
   if (Math.abs(target - a0) > 60) sfx('paper', .5, false);
   (function st() { const p = clamp((performance.now() - t0) / D), e = 1 - Math.pow(1 - p, 3); setFlip(a0 + (target - a0) * e);
-    if (p < 1) flipAnim = requestAnimationFrame(st); else { setFlip(((target % 360) + 360) % 360 === 180 ? 180 : 0); if (Math.abs(target) === 180 && !turnedOnce) { turnedOnce = true; sfx('reveal', .6, false); setTimeout(() => cardUp && hint('up', 'Swipe up', 0), 1400); } } })();
+    if (p < 1) flipAnim = requestAnimationFrame(st); else { setFlip(Math.abs(target) === 180 ? 180 : 0); if (stop === 3) restHD(true, 3); if (Math.abs(target) === 180 && !turnedOnce) { turnedOnce = true; sfx('reveal', .6, false); setTimeout(() => cardUp && hint('up', 'Swipe up', 0), 1400); } } })();
 }
 $('#turnBtn').addEventListener('click', e => { e.stopPropagation(); animFlip(Math.abs(flipA) > 90 ? 0 : 180); });
 
-/* =========================================================
-   AUDIO — Ik Onkar bed (subtle) + ambiences + foley
-   ========================================================= */
+/* audio */
 const AC = window.AudioContext || window.webkitAudioContext;
 let ac, master, musicG, buf = {}, muted = false, amb = {};
 const getA = n => fetch('a/' + n + '.mp3').then(r => r.arrayBuffer()).then(b => [n, b]).catch(() => [n, null]);
 const early = ['card', 'swoosh'].map(getA);
 function initAudio() {
-  if (ac) return; ac = new AC();
-  master = ac.createGain(); master.connect(ac.destination);
+  if (ac) return; ac = new AC(); master = ac.createGain(); master.connect(ac.destination);
   musicG = ac.createGain(); musicG.gain.value = 0; musicG.connect(master);
   const rest = ['bed', 'steps', 'paper', 'reveal', 'amb_court', 'amb_hall', 'amb_dusk'].map(getA);
   const dec = ([n, b]) => b ? new Promise(r => ac.decodeAudioData(b, d => { buf[n] = d; r(); }, () => r())) : null;
-  Promise.all(early).then(l => Promise.all(l.map(dec)));
-  Promise.all(rest).then(l => Promise.all(l.map(dec))).then(startBeds);
+  Promise.all(early).then(l => Promise.all(l.map(dec))); Promise.all(rest).then(l => Promise.all(l.map(dec))).then(startBeds);
 }
 const LOOP = 77.2, XF = 2, MUSIC = .3;
-function musicLoop(at) {
-  const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf.bed; s.connect(gn); gn.connect(musicG);
-  gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(1, at + XF); gn.gain.setValueAtTime(1, at + LOOP - .01); gn.gain.linearRampToValueAtTime(0, at + LOOP + XF);
-  s.start(at); s.stop(at + LOOP + XF + .1); setTimeout(() => musicLoop(at + LOOP), Math.max(0, (at + LOOP - ac.currentTime - 4) * 1000));
-}
-function startBeds() {
-  const now = ac.currentTime; if (buf.bed) musicLoop(now + .05);
-  musicG.gain.setValueAtTime(0, now); musicG.gain.linearRampToValueAtTime(MUSIC, now + 3.5);
-  ['amb_court', 'amb_hall', 'amb_dusk'].forEach(n => { if (!buf[n]) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; s.loop = true; gn.gain.value = 0; s.connect(gn); gn.connect(master); s.start(now + Math.random()); amb[n] = gn; });
-}
-function sfx(n, vol = 1, duck = true) {
-  if (!ac || !buf[n] || muted) return;
-  const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; gn.gain.value = vol; s.connect(gn); gn.connect(master); s.start();
-  if (duck) { const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setTargetAtTime(MUSIC * .62, t, .08); musicG.gain.setTargetAtTime(MUSIC, t + Math.min(1.5, buf[n].duration), .5); }
-}
+function musicLoop(at) { const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf.bed; s.connect(gn); gn.connect(musicG); gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(1, at + XF); gn.gain.setValueAtTime(1, at + LOOP - .01); gn.gain.linearRampToValueAtTime(0, at + LOOP + XF); s.start(at); s.stop(at + LOOP + XF + .1); setTimeout(() => musicLoop(at + LOOP), Math.max(0, (at + LOOP - ac.currentTime - 4) * 1000)); }
+function startBeds() { const now = ac.currentTime; if (buf.bed) musicLoop(now + .05); musicG.gain.setValueAtTime(0, now); musicG.gain.linearRampToValueAtTime(MUSIC, now + 3.5); ['amb_court', 'amb_hall', 'amb_dusk'].forEach(n => { if (!buf[n]) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; s.loop = true; gn.gain.value = 0; s.connect(gn); gn.connect(master); s.start(now + Math.random()); amb[n] = gn; }); }
+function sfx(n, vol = 1, duck = true) { if (!ac || !buf[n] || muted) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; gn.gain.value = vol; s.connect(gn); gn.connect(master); s.start(); if (duck) { const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setTargetAtTime(MUSIC * .62, t, .08); musicG.gain.setTargetAtTime(MUSIC, t + Math.min(1.5, buf[n].duration), .5); } }
 let ambT = 0;
-function ambMix(now) {
-  if (!ac || now - ambT < 200) return; ambT = now;
-  const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-  const court = 1 - sm(J_HALL - 10, J_HALL, P), hall = sm(J_HALL - 10, J_HALL + 4, P) * (1 - sm(J_CUT - 1, J_CUT + 1, P)), dusk = sm(J_CUT - 1, J_CUT + 6, P);
-  const set = (n, v) => amb[n] && amb[n].gain.setTargetAtTime(v, ac.currentTime, .3);
-  set('amb_court', .55 * court); set('amb_hall', .5 * hall); set('amb_dusk', .55 * dusk);
-}
+function ambMix(now) { if (!ac || now - ambT < 200) return; ambT = now; const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); }; const court = Math.max(.3, sm(40, 72, P)) * (1 - sm(J_HALL - 10, J_HALL, P)), hall = sm(J_HALL - 10, J_HALL + 4, P) * (1 - sm(J_CUT - 1, J_CUT + 1, P)), dusk = sm(J_CUT - 1, J_CUT + 6, P); const set = (n, v) => amb[n] && amb[n].gain.setTargetAtTime(v, ac.currentTime, .3); set('amb_court', .55 * court); set('amb_hall', .5 * hall); set('amb_dusk', .55 * dusk); }
 $('#mute').addEventListener('click', e => { e.stopPropagation(); muted = !muted; if (master) master.gain.setTargetAtTime(muted ? 0 : 1, ac.currentTime, .15); $('#wave').style.opacity = muted ? 0 : 1; });
 
-/* =========================================================
-   PETALS (courtyard only, paused while dragging)
-   ========================================================= */
+/* petals */
 const pc = $('#petals'), px = pc.getContext('2d'); let PT = [], petalsOn = 0, petalsT = 0;
 function sizePetals() { const r = stage.getBoundingClientRect(); pc.width = r.width; pc.height = r.height; }
 const PCOL = ['#e8742a', '#f2a03a', '#d8344a', '#f4c25a', '#c2243c'];
-for (let i = 0; i < 18; i++) PT.push({ x: Math.random(), y: Math.random() * 1.2 - .2, s: .6 + Math.random() * .9, r: Math.random() * 6, vr: (Math.random() - .5) * .04, vy: .0009 + Math.random() * .0012, sw: Math.random() * 6, c: PCOL[i % 5] });
+for (let i = 0; i < 16; i++) PT.push({ x: Math.random(), y: Math.random() * 1.2 - .2, s: .6 + Math.random() * .9, r: Math.random() * 6, vr: (Math.random() - .5) * .04, vy: .0009 + Math.random() * .0012, sw: Math.random() * 6, c: PCOL[i % 5] });
 function drawPetals() {
-  const tgt = dragging ? 0 : petalsT; petalsOn += (tgt - petalsOn) * .05;
+  const tgt = dragging ? 0 : petalsT; petalsOn += (tgt - petalsOn) * .06;
   if (petalsOn < .01) { if (petalsOn > 0) { px.clearRect(0, 0, pc.width, pc.height); petalsOn = 0; } return; }
   const w = pc.width, h = pc.height; px.clearRect(0, 0, w, h); px.globalAlpha = petalsOn * .85;
-  for (const p of PT) { p.y += p.vy; p.sw += .02; p.r += p.vr; if (p.y > 1.1) { p.y = -.1; p.x = Math.random(); }
-    const x = (p.x + Math.sin(p.sw) * .03) * w, y = p.y * h, s = p.s * w * .012;
-    px.save(); px.translate(x, y); px.rotate(p.r); px.scale(1, .55 + .45 * Math.sin(p.sw * 1.3)); px.fillStyle = p.c; px.beginPath(); px.ellipse(0, 0, s, s * .62, 0, 0, 6.283); px.fill(); px.restore(); }
+  for (const p of PT) { p.y += p.vy; p.sw += .02; p.r += p.vr; if (p.y > 1.1) { p.y = -.1; p.x = Math.random(); } const x = (p.x + Math.sin(p.sw) * .03) * w, y = p.y * h, s = p.s * w * .012; px.save(); px.translate(x, y); px.rotate(p.r); px.scale(1, .55 + .45 * Math.sin(p.sw * 1.3)); px.fillStyle = p.c; px.beginPath(); px.ellipse(0, 0, s, s * .62, 0, 0, 6.283); px.fill(); px.restore(); }
 }
 
-/* =========================================================
-   MAIN LOOP
-   ========================================================= */
-let last = performance.now();
+/* main loop */
+let last = performance.now(), tiltSet = '';
 function loop(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   physics(dt);
-  if (phase === 'opening') { opT = clamp(op.currentTime / 5.9); drawProg(); if (op.ended || op.currentTime >= 5.88) endOpening(); }
-  /* tilt: tiny drift of the canvas so a resting frame still breathes */
+  if (phase === 'opening') { setP(clamp(op.currentTime * 12, 0, 71.9)); if (op.ended || op.currentTime >= 5.92) endOpening(); }
   tilt.x += (tilt.tx - tilt.x) * .08; tilt.y += (tilt.ty - tilt.y) * .08;
-  if (phase !== 'opening' && phase !== 'card' && (Math.abs(tilt.tx - tilt.x) > .002 || Math.abs(tilt.ty - tilt.y) > .002 || !cv._t)) cv._t = 1, cv.style.transform = `scale(1.04) translate(${(-tilt.x * 1.2).toFixed(2)}%,${(-tilt.y * .8).toFixed(2)}%)`;
-  if (dirty) { render(); dirty = false; }
-  /* auto-advance when nobody is touching */
-  if (!dragging && tgtP === null && stop && !g) {
-    const idle = now - lastInteract;
-    if ((stop === 1 && idle > 8000) || (stop === 2 && idle > 5500)) goStop(stop + 1);
-  }
+  const ts = `scale(1.035) translate(${(-tilt.x * 1.1).toFixed(2)}%,${(-tilt.y * .7).toFixed(2)}%)`; if (ts !== tiltSet) { view.style.transform = ts; tiltSet = ts; }
+  if (dirty && phase !== 'opening' && phase !== 'card') { render(); dirty = false; }
+  if (!noAuto && !dragging && tgtP === null && stop > 0 && !g) { const idle = now - lastInteract; if ((stop === 1 && idle > 9000) || (stop === 2 && idle > 6500)) goStop(stop + 1); }
   ambMix(now); drawPetals();
   requestAnimationFrame(loop);
 }
 
-/* =========================================================
-   OPENING
-   ========================================================= */
+/* opening */
 function openCard() {
-  if (opened) return; opened = true; phase = 'opening';
+  if (phase === 'opening') return;
+  if (opened && !document.getElementById('op')) { if (stop === 0) { sfx('card', .9, false); goStop(1); } return; }   // re-open after scrolling back
+  opened = true; phase = 'opening';
   initAudio(); if (ac && ac.state === 'suspended') ac.resume(); enableTilt();
-  sfx('card', .9, false);
-  ['#seal', '#tapPill'].forEach(s => { $(s).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }); $(s).style.pointerEvents = 'none'; });
-  loadJ(0, 135); loadO(1);
-  setTimeout(() => $('#chrome').classList.add('on'), 2400);
-  setTimeout(() => { petalsT = .8; }, 1600);
+  sfx('card', .9, false); sealState(0);
+  loadRange(SEQ.J, 72, 140, true);
+  setTimeout(() => $('#chrome').classList.add('on'), 2400); setTimeout(() => { petalsT = .8; }, 1600);
   const go = () => op.play().catch(() => {});
   if (op.readyState >= 3) go(); else { $('#loading').style.opacity = 1; op.addEventListener('canplay', () => { $('#loading').style.opacity = 0; go(); }, { once: true }); }
 }
 function endOpening() {
-  phase = 'stop'; P = 0; dirty = true; render(); dirty = false;
+  phase = 'stop'; P = STOPJ[1]; dirty = true; render(); dirty = false;
   cv.style.opacity = 1; op.style.transition = 'opacity .25s'; op.style.opacity = 0; setTimeout(() => op.remove(), 400);
   arrive(1);
 }
 $('#seal').addEventListener('click', openCard); $('#tapPill').addEventListener('click', openCard);
+$('#detBtn').addEventListener('click', e => { e.stopPropagation(); if (phase === 'opening' || stop === 3) return; loadRange(SEQ.J, 280, 300, true); fastGlide = true; goStop(3); });
 
-/* details shortcut → invitation */
-$('#detBtn').addEventListener('click', e => { e.stopPropagation(); if (phase === 'opening' || stop === 3) return; loadJ(200, 230); goStop(3); });
-
-/* countdown */
 let cdT = 0;
 function startCount() { const tick = () => { let s = Math.max(0, (new Date(INFO.start) - Date.now()) / 1000); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s = Math.floor(s - m * 60); [['#cd', d], ['#ch', h], ['#cm', m], ['#cs', s]].forEach(([k, v]) => $(k).textContent = String(v).padStart(2, '0')); }; tick(); clearInterval(cdT); cdT = setInterval(tick, 1000); }
 
 addEventListener('resize', size); size(); drawProg(); requestAnimationFrame(loop);
+addEventListener('load', () => loadRange(SEQ.J, 72, 84));
 </script>
 </body>
 </html>
