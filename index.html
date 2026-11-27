@@ -119,7 +119,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .turn .lab{font-size:2.3cqw;font-weight:600}
 /* back */
 .b-day{font:italic 300 6cqw/1 var(--d);color:#7b4e18;margin-top:2.6cqw}
-.b-date{font:300 27cqw/.86 var(--d);color:var(--maroon);letter-spacing:-.01em;margin:1.4cqw 0 2.6cqw}
+.b-date{font:300 27cqw/.86 var(--d);font-variant-numeric:lining-nums;color:var(--maroon);letter-spacing:-.01em;margin:1.4cqw 0 2.6cqw}
 .b-my{color:var(--ink);font-size:3cqw;font-weight:600;letter-spacing:.3em;padding-left:.3em}
 .b-time{font:italic 400 4.6cqw/1.2 var(--d);color:#5d2a18;margin-top:3.4cqw}
 .b-venue{font:600 4.5cqw/1.25 var(--d);color:var(--ink);margin-top:1.8cqw}
@@ -236,14 +236,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
    ========================================================= */
 const INFO = {
   groom: 'Anhad', bride: 'Toshi',
-  groomParents: ['', ''],        // e.g. ['S. Harpreet Singh', 'Sardarni Manpreet Kaur']
-  brideParents: ['', ''],        // e.g. ['Shri Rajesh Darode', 'Smt. Sunita Darode']
-  start: '2027-02-14T09:00:00+05:30', end: '2027-02-14T13:00:00+05:30',
-  timeText: 'nine o’clock in the morning',
-  venue: 'Gurdwara Sahib', city: 'New Delhi',
-  mapsQuery: 'Gurdwara Sahib New Delhi',
+  groomParents: ['S. Ram Gopal Singh', 'Sardarni Shakuntla Kaur'],
+  brideParents: ['Shri Rajendra Darode', 'Smt. Laxmi Darode'],
+  start: '2027-03-27T13:00:00+05:30', end: '2027-03-27T16:00:00+05:30',
+  timeText: 'one o’clock in the afternoon',
+  after: 'followed by Guru ka Langar (lunch)',
+  venue: 'Gurdwara Sikh Sangat', city: 'Green Park, New Delhi',
+  mapsQuery: 'Gurdwara Sikh Sangat Green Park New Delhi',
   rsvpPhone: '',                 // WhatsApp number with country code, no + (e.g. '919811000000')
-  preview: true
+  preview: false
 };
 
 /* ---------- sequences (12 fps frames) ---------- */
@@ -258,13 +259,13 @@ const stage = $('#stage'), op = $('#op'), cv = $('#cv'), cx = cv.getContext('2d'
 (function fill() {
   const bl = '<span class="blank"></span>', g = INFO.groomParents, b = INFO.brideParents;
   $('#hosts').innerHTML = (g[0] || 'S. ' + bl) + '<br>&amp; ' + (g[1] || 'Sardarni ' + bl);
-  $('#bpar').innerHTML = (b[0] || 'Shri ' + bl) + ' &amp; ' + (b[1] || 'Smt. ' + bl);
+  $('#bpar').innerHTML = (b[0] || 'Shri ' + bl) + '<br>&amp; ' + (b[1] || 'Smt. ' + bl);
   $$('.gN').forEach(e => e.textContent = INFO.groom); $$('.bN').forEach(e => e.textContent = INFO.bride);
   const d = new Date(INFO.start), tz = { timeZone: 'Asia/Kolkata' };
   const wd = d.toLocaleDateString('en-GB', { ...tz, weekday: 'long' }), dd = d.toLocaleDateString('en-GB', { ...tz, day: 'numeric' });
   const mo = d.toLocaleDateString('en-GB', { ...tz, month: 'long' }), yr = d.toLocaleDateString('en-GB', { ...tz, year: 'numeric' });
   $('#bDay').textContent = wd; $('#bDate').textContent = dd; $('#bMY').textContent = mo + ' ' + yr;
-  $('#bTime').textContent = INFO.timeText; $('#bVenue').textContent = INFO.venue; $('#bCity').textContent = INFO.city;
+  $('#bTime').textContent = INFO.timeText; $('.b-langar').textContent = INFO.after; $('#bVenue').textContent = INFO.venue; $('#bCity').textContent = INFO.city;
   $('#finDate').textContent = `${wd}, ${dd} ${mo} ${yr}`;
   $('#aMap').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(INFO.mapsQuery);
   $('#aRsvp').href = 'https://wa.me/' + INFO.rsvpPhone + '?text=' + encodeURIComponent(`Waheguru Ji Ka Khalsa, Waheguru Ji Ki Fateh! I will be attending the Anand Karaj of ${INFO.groom} & ${INFO.bride}.`);
