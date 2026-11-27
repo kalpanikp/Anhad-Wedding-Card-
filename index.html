@@ -248,7 +248,7 @@ const INFO = {
 
 /* ---------- sequences (12 fps frames) ---------- */
 const J_N = 280, STOPJ = [0, 135, 219, 279];          // courtyard, darbar, matha tekna, dusk
-const ORB = { 1: { dir: 'o1', n: 61 }, 2: { dir: 'o2', n: 61 } };   // orbit arcs at stop 1 & 2
+const ORB = { 1: { n: 61 }, 2: { n: 61 } };     // orbit arcs at stop 1 & 2
 const J_STEPS = 49.5, J_HALL = 91.5, J_GURBANI = 197, J_CUT = 219.5;
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -273,35 +273,39 @@ const stage = $('#stage'), op = $('#op'), cv = $('#cv'), cx = cv.getContext('2d'
   if (!INFO.preview) $('#preview').remove();
 })();
 
-/* ---------- frame loader (staged, nearest-first) ---------- */
-const J = new Array(J_N), O = { 1: [], 2: [] };
-const pad = i => String(i).padStart(3, '0');
+/* ---------- frame loader: 5×2 sprite sheets (10 frames each), staged ---------- */
+const FW = 432, FH = 768;
+const SEQ = { J: { pre: 'j', n: J_N, sh: [] }, 1: { pre: 'o1_', n: 61, sh: [] }, 2: { pre: 'o2_', n: 61, sh: [] } };
+const pad2 = k => String(k).padStart(2, '0');
 let queue = [], inflight = 0;
-function want(arr, i, src) { if (arr[i]) return; arr[i] = { img: null, ok: false }; queue.push([arr, i, src]); pump(); }
+function wantSheet(S, k) { if (S.sh[k]) return; S.sh[k] = { img: null, ok: false }; queue.push([S, k]); pump(); }
 function pump() {
-  while (inflight < 6 && queue.length) {
-    const [arr, i, src] = queue.shift(); inflight++;
+  while (inflight < 4 && queue.length) {
+    const [S, k] = queue.shift(); inflight++;
     const im = new Image(); im.decoding = 'async';
-    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { arr[i].img = im; arr[i].ok = true; inflight--; dirty = true; pump(); }); };
+    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { S.sh[k].img = im; S.sh[k].ok = true; inflight--; dirty = true; pump(); }); };
     im.onerror = () => { inflight--; pump(); };
-    im.src = src;
+    im.src = `a/s/${S.pre}${pad2(k)}.webp`;
   }
 }
-function loadJ(a, b) { for (let i = a; i <= b; i++) want(J, i, `a/j/${pad(i)}.webp`); }
-function loadO(k) { const o = ORB[k]; for (let i = 0; i < o.n; i++) want(O[k], i, `a/${o.dir}/${pad(i)}.webp`); }
-function nearest(arr, i, n) { for (let d = 0; d < n; d++) { if (arr[i - d] && arr[i - d].ok) return arr[i - d].img; if (arr[i + d] && arr[i + d].ok) return arr[i + d].img; } return null; }
-function loaded(arr, i) { return arr[i] && arr[i].ok; }
-/* start quietly with the first frames, everything else after the tap */
-addEventListener('load', () => loadJ(0, 24));
+function loadRange(S, a, b) { for (let k = Math.floor(a / 10); k <= Math.floor(Math.min(b, S.n - 1) / 10); k++) wantSheet(S, k); }
+function loadJ(a, b) { loadRange(SEQ.J, a, b); }
+function loadO(k) { loadRange(SEQ[k], 0, SEQ[k].n - 1); }
+function ok(S, i) { const sh = S.sh[Math.floor(i / 10)]; return !!(sh && sh.ok); }
+function frame(S, i) {
+  for (let d = 0; d < S.n; d++) for (const j of d ? [i - d, i + d] : [i]) if (j >= 0 && j < S.n && ok(S, j)) { const c = j % 10; return [S.sh[Math.floor(j / 10)].img, (c % 5) * FW, Math.floor(c / 5) * FH]; }
+  return null;
+}
+addEventListener('load', () => loadJ(0, 9));
 
 /* ---------- canvas ---------- */
 let W = 0, H = 0, dirty = true;
 function size() { const r = stage.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); cx.imageSmoothingQuality = 'high'; sizePetals(); dirty = true; }
-function cover(im, a) { if (!im) return; const s = Math.max(W / im.naturalWidth, H / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
-function drawSeq(arr, f, n) {
-  const i0 = Math.floor(f), a = f - i0, A = loaded(arr, i0) ? arr[i0].img : nearest(arr, i0, n);
-  cover(A, 1);
-  if (a > .02 && i0 + 1 < n && loaded(arr, i0 + 1)) cover(arr[i0 + 1].img, a);
+function cover(fr, a) { if (!fr) return; const s = Math.max(W / FW, H / FH), w = FW * s, h = FH * s; cx.globalAlpha = a; cx.drawImage(fr[0], fr[1], fr[2], FW, FH, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
+function drawSeq(S, f) {
+  const i0 = Math.floor(f), a = f - i0;
+  cover(frame(S, i0), 1);
+  if (a > .02 && i0 + 1 < S.n && ok(S, i0 + 1)) cover(frame(S, i0 + 1), a);
 }
 
 /* =========================================================
@@ -314,10 +318,10 @@ function stopIndexAt(p) { for (let k = 0; k < 4; k++) if (Math.abs(p - STOPJ[k])
 
 function render() {
   if (orbitAt && Q > .01) {
-    const o = ORB[orbitAt];
-    if (Q < 1) { drawSeq(J, P, J_N); if (loaded(O[orbitAt], 1)) cover(O[orbitAt][1].img, Q); }
-    else drawSeq(O[orbitAt], Q, o.n);
-  } else drawSeq(J, P, J_N);
+    const S = SEQ[orbitAt];
+    if (Q < 1) { drawSeq(SEQ.J, P); if (ok(S, 1)) cover(frame(S, 1), Q); }
+    else drawSeq(S, Q);
+  } else drawSeq(SEQ.J, P);
 }
 
 /* ---------- glide physics (critically damped toward a target stop) ---------- */
