@@ -382,33 +382,28 @@ const J_N = 352, F_OPEN = 72, F_BOW = 290, F_DUSK0 = 292, F_END = 351, F_GUR = 2
 const pad = i => String(i).padStart(3, '0');
 const LO = { a: new Array(J_N), q: [], fl: 0, max: 5, src: i => `a/j/${pad(i)}.webp` };
 const HI = { a: new Array(J_N), q: [], fl: 0, max: 3, src: i => `a/k/${pad(i)}.avif`, on: false };
-let P = 0, Pt = 0, Pprev = 0, dirty = true, hiMix = 0;
+let P = 0, Pt = 0, Pprev = 0, camV = 0, dirty = true, hiMix = 0;
 (() => { const t = new Image(); t.onload = () => { HI.on = t.width > 0; }; t.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAJQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAAgAAAAIAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAALW1kYXQSAAoIGAA2iAhoNCAyFxlHh4Yhh5555oAAAJBAyRjbu51tkhGY'; })();
-function want(T, i) { if (i < 0 || i >= J_N || T.a[i]) return; T.a[i] = { img: null, bmp: null, ok: false }; T.q.push(i); pump(T); }
+function want(T, i) { if (i < 0 || i >= J_N || T.a[i]) return; T.a[i] = { img: null, im: null, ok: false }; T.q.push(i); pump(T); }
 function pump(T) {
   while (T.fl < T.max && T.q.length) {
     let bi = 0, bp = Infinity; for (let k = 0; k < T.q.length; k++) { const d = T.q[k] - Pt, p = d >= 0 ? d : -d * 1.3; if (p < bp) { bp = p; bi = k; } }
     const i = T.q.splice(bi, 1)[0], e = T.a[i]; if (!e) continue; T.fl++;
-    const im = new Image(); im.decoding = 'async';
-    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { T.fl--; if (T.a[i] === e) { e.img = im; e.ok = true; dirty = true; } pump(T); }); };
-    im.onerror = () => { T.fl--; if (T.a[i] === e) T.a[i] = null; pump(T); };
+    const im = new Image(); im.decoding = 'async'; e.im = im;
+    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { if (!e.dead) { T.fl--; e.img = im; e.ok = true; dirty = true; } pump(T); }); };
+    im.onerror = () => { if (e.dead) return; T.fl--; if (T.a[i] === e) T.a[i] = null; pump(T); };
     im.src = T.src(i);
   }
 }
 const loadRange = (a, b) => { for (let i = a; i <= b; i++) want(LO, i); };
-let bmpBusy = 0;
-function bmpWindow(T, c, r) {
-  if (!('createImageBitmap' in window)) return;
-  for (let i = 0; i < J_N; i++) { const e = T.a[i]; if (!e || !e.ok) continue; const near = Math.abs(i - c) <= r;
-    if (near && !e.bmp && !e.pend && bmpBusy < 6) { e.pend = 1; bmpBusy++; createImageBitmap(e.img).then(b => { if (T.a[i] === e) e.bmp = b; else b.close && b.close(); e.pend = 0; bmpBusy--; dirty = true; }).catch(() => { e.pend = 0; bmpBusy--; }); }
-    else if (!near && e.bmp) { e.bmp.close && e.bmp.close(); e.bmp = null; } }
-}
-function hiFeed(c) {
+/* sharp frames are 8 MB each once decoded: keep at most ~9 alive, only around a slow or resting camera */
+function drop(T, i) { const e = T.a[i]; if (!e) return; if (!e.ok && e.im) T.fl--; e.dead = true; if (e.im) { e.im.onload = e.im.onerror = null; e.im.src = ''; } e.im = e.img = null; T.a[i] = undefined; }
+function hiFeed(c, slow) {
   if (!HI.on) return;
-  for (let i = c - 8; i <= c + 22; i++) want(HI, i);
-  HI.q = HI.q.filter(i => { if (Math.abs(i - c) > 30) { HI.a[i] = undefined; return false; } return true; });
-  for (let i = 0; i < J_N; i++) { const e = HI.a[i]; if (e && e.ok && Math.abs(i - c) > 48) { e.bmp && e.bmp.close && e.bmp.close(); HI.a[i] = undefined; } }
-  bmpWindow(HI, c, 5);
+  HI.q = HI.q.filter(i => { if (Math.abs(i - c) > 5 || !slow) { HI.a[i] = undefined; return false; } return true; });
+  for (let i = 0; i < J_N; i++) if (HI.a[i] && Math.abs(i - c) > 5) drop(HI, i);
+  if (slow) for (let i = c - 3; i <= c + 4; i++) want(HI, i);
+  pump(HI);
 }
 const cv = $('#cv'), cx = cv.getContext('2d', { alpha: false }), cam = $('#cam'), hd = $('#hd'), op = $('#op');
 let W = 0, H = 0, CS = 1;
@@ -421,12 +416,12 @@ function size() {
   if (W && nw === W && Math.abs(nh - H) / H < .2) return; W = cv.width = nw; H = cv.height = nh; cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high'; sizeFx(); dirty = true;
 }
 function cover(im, a) { const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
-const src = e => e && e.ok ? (e.bmp || e.img) : null;
+const src = e => e && e.ok ? e.img : null;
 function pickLo(i) { for (const j of [i, i - 1, i + 1, i - 2, i + 2]) { const s = src(LO.a[j]); if (s) return s; } return null; }
 function render() {
   const i0 = Math.floor(P), a = P - i0, cut = i0 === F_BOW + 1, blend = a > .03 && !cut;
   const h0 = src(HI.a[i0]), h1 = blend ? src(HI.a[i0 + 1]) : h0, hiOK = h0 && h1;
-  const speed = Math.abs(P - Pprev); Pprev = P;
+  const speed = camV;
   const tgt = hiOK && speed < .5 ? 1 : 0; hiMix += (tgt - hiMix) * (tgt ? .22 : .5); if (Math.abs(tgt - hiMix) < .02) hiMix = tgt; else dirty = true;
   if (hiMix >= 1 && hiOK) { cover(h0, 1); if (blend) cover(h1, a); return true; }
   const A = pickLo(i0); if (!A && !hiOK) return false;
@@ -458,21 +453,19 @@ let lastY = -1, restT = 0, wasCut = false;
 function frameLoop(now) {
   if (opened) {
     const y = scrollY; Pt = targetFrame(y); for (const k of [0, 72, 207, 290, 351]) if (Math.abs(Pt - k) < .7) Pt = k;
-    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * .2; if (Math.abs(Pt - P) < .01) P = Pt;
+    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * .2; if (Math.abs(Pt - P) < .01) P = Pt; camV = camV * .7 + Math.abs(P - Pprev) * .3; Pprev = P;
     if (Math.abs(diff) > .005 || y !== lastY) { dirty = true; feed(); restT = now; hdShow(false); }
-    else if (now - restT > 260) hdShow(true);
+    else { if (now - restT > 260) hdShow(true); if (now - lastHi > 300) { lastHi = now; hiFeed(Math.round(P), true); } }
     lastY = y; layers(y);
     if (dirty && render()) dirty = false;
   }
   fx(); requestAnimationFrame(frameLoop);
 }
-let lastFeed = -99;
+let lastFeed = -99, lastHi = 0;
 function feed() {
-  const c = Math.round(P);
-  if (Math.abs(Pt - lastFeed) >= 3) { lastFeed = Pt; const t = Math.round(Pt); loadRange(Math.max(0, t - 30), Math.min(J_N - 1, t + 90)); bmpWindow(LO, c, 36); }
-  hiFeed(Math.round(Pt));
+  if (Math.abs(Pt - lastFeed) >= 3) { lastFeed = Pt; const t = Math.round(Pt); loadRange(Math.max(0, t - 35), Math.min(J_N - 1, t + 65)); LO.q = LO.q.filter(i => { if (Math.abs(i - t) > 75) { LO.a[i] = undefined; return false; } return true; }); for (let i = 0; i < J_N; i++) if (LO.a[i] && LO.a[i].ok && Math.abs(i - t) > 80) drop(LO, i); }
+  const now = performance.now(); if (now - lastHi > 120) { lastHi = now; hiFeed(Math.round(P), camV < .35 && Math.abs(Pt - P) < 6); }
 }
-
 /* full-resolution 1440px still whenever the camera rests on a key frame */
 const HDF = { 0: 'a/poster.webp', 72: 'a/hd/1.webp', 207: 'a/hd/2.webp', 290: 'a/hd/3.webp', 351: 'a/hd/4.webp' };
 let hdOn = false;
@@ -496,7 +489,7 @@ function layers(y) {
   const bkA = sm(zF1 + vh * .3, zF1 + vh * 1.1, y) * (1 - sm(zC0 - vh * .2, zC0 + vh * .5, y));
   setS(bk, 'opacity', bkA.toFixed(3)); setS(veil, 'opacity', (bkA * .3).toFixed(3));
   const sa = 1 - sm(1, 8, P); setS(sealW, 'opacity', sa.toFixed(3)); setS(tapHint, 'opacity', (sa * (sealW.classList.contains('press') ? 0 : 1)).toFixed(3));
-  if (P < 1.5 && sealW.classList.contains('split')) resetSeal();
+  if (P < 5 && sealW.classList.contains('split')) resetSeal();
   sealW.style.pointerEvents = sa > .9 ? 'auto' : 'none';
   petalsT = P > F_OPEN - 12 && P < F_OPEN + 22 ? 1 : 0;
   setS($('#scrollHint'), 'opacity', Math.abs(P - F_OPEN) < .5 && Math.abs(y - yOpen()) < 30 ? '1' : '0');
@@ -603,10 +596,10 @@ op.addEventListener('ended', endOpening);
 function endOpening() {
   if (opened) return; opened = true;
   document.body.classList.remove('locked'); measure(); scrollTo(0, yOpen());
-  P = Pt = Pprev = F_OPEN; lastY = scrollY; dirty = true; hiFeed(F_OPEN); render();
+  P = Pt = Pprev = F_OPEN; lastY = scrollY; dirty = true; hiFeed(F_OPEN, true); render();
   op.style.transition = 'opacity .3s'; op.style.opacity = 0; setTimeout(() => op.remove(), 400);
   $('#chrome').classList.add('on');
-  setTimeout(() => loadRange(0, J_N - 1), 700);
+  setTimeout(() => loadRange(Math.max(0, F_OPEN - 72), F_OPEN + 100), 700);
 }
 $('#seal').addEventListener('click', openCard);
 $('#detBtn').addEventListener('click', () => { if (opened) scrollTo({ top: suiteTop + vh * .12, behavior: 'smooth' }); });
