@@ -10,7 +10,9 @@ Set `preview: false` to remove the "preview" label.
 
 ## Files
 - `a/open.mp4`: card opening (plays on first tap; loads first)
-- `a/j/000–351.webp`: the whole camera journey at 12 fps (540×960), built straight from the source clips; frames near the camera are kept GPU-ready while dragging
+- `a/j/000–351.webp`: the camera journey at 540×960 (fast tier, always loaded), from the 2K-upscaled clips
+- `a/k/000–351.avif`: the same frames at 1080×1920 (sharp tier, streamed around the camera)
+- `a/seal.webp`, `a/blank.webp`, `a/gurill.webp`, `a/bk.webp`: gold seal, cotton paper, gold-foil Gurdwara, blurred backdrop
 - `a/hd/1–4.webp`: full-resolution stills shown whenever the camera comes to rest
 - `a/*.mp3`: Ik Onkar music bed, ambiences and sound effects
 - `a/f2/`: fonts (Cormorant Garamond, Cinzel, Noto Serif Gurmukhi), self-hosted
