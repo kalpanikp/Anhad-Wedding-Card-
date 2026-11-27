@@ -312,7 +312,7 @@ function warm(S, centre, radius) {
 function src(S, i) { for (const j of [i, i - 1, i + 1, i - 2, i + 2]) { const e = S.f[j]; if (e && e.ok) return e.bmp || e.img; } return null; }
 
 let W = 0, H = 0;
-function size() { const r = stage.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); cx.imageSmoothingQuality = 'high'; sizePetals(); dirty = true; }
+function size() { const r = stage.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1), nw = Math.round(r.width * d), nh = Math.round(r.height * d); if (W && nw === W && Math.abs(nh - H) / H < .2) return; W = cv.width = nw; H = cv.height = nh; cx.imageSmoothingQuality = 'high'; sizePetals(); dirty = true; }
 function cover(im, a) { if (!im) return; const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
 function drawSeq(S, f) {
   const i0 = Math.floor(f), a = f - i0, A = src(S, i0);
@@ -372,7 +372,7 @@ function feed() { if (Math.abs(P - lastFeed) < 3) return; lastFeed = P; const c 
 const HD = { 0: 'a/poster.webp', 1: 'a/hd/1.webp', 2: 'a/hd/2.webp', 3: 'a/hd/3.webp', 4: 'a/hd/4.webp' };
 let hdFor = -1;
 function restHD(on, k) {
-  if (!on) { if (hdFor !== -1) { hd.style.transition = 'opacity .1s'; hd.style.opacity = 0; hdFor = -1; } return; }
+  if (!on) { if (hdFor !== -1) { hd.style.transition = 'none'; hd.style.opacity = 0; hdFor = -1; } return; }
   if (k < 0 || k == null) return; hdFor = k; const url = HD[k];
   const show = () => { if (hdFor === k && !dragging && Math.abs(Q) < .01) { hd.style.transition = 'opacity .45s cubic-bezier(.22,.7,.2,1)'; hd.style.opacity = 1; } };
   if (hd.getAttribute('src') !== url) { hd.onload = show; hd.src = url; } else show();
@@ -456,12 +456,16 @@ function endDrag() {
   const vx = (b[1] - a[1]) / dtm * 1000, vy = (b[2] - a[2]) / dtm * 1000;
   if (s.axis === 'travel' && s.wait) { orbitHomeCb = null; orbitHome = false; restHD(true, stop); return; }
   if (s.axis === 'travel') {
-    const vF = -vy / PX_PER_FRAME();
-    const from = STOPJ.reduce((best, t) => Math.abs(t - s.P0) < Math.abs(best - s.P0) ? t : best, STOPJ[0]);
+    /* never pull the camera back against the finger: settle on the next stop in the direction it was moving */
+    const vF = -vy / PX_PER_FRAME(), moved = P - s.P0;
+    const dir = Math.abs(vF) > 4 ? Math.sign(vF) : Math.sign(moved);
     let k;
-    if (Math.abs(vF) > 12) { if (vF > 0) { k = STOPJ.findIndex(t => t > P + .5); if (k < 0) k = 4; } else { k = -1; STOPJ.forEach((t, i) => { if (t < P - .5) k = i; }); if (k < 0) k = 0; } }
-    else { const fi = STOPJ.indexOf(from), moved = P - from; k = Math.abs(moved) > 10 ? fi + Math.sign(moved) : fi; }
-    k = clamp(k, 0, 4); if (STOPJ[k] < s.P0 - 1) noAuto = true; vP = clamp(vF, -20, 20); tgtP = STOPJ[k]; if (Math.abs(tgtP - P) > 2) sfx('swoosh', .35);
+    if (Math.abs(moved) < 1.5 && Math.abs(vF) < 4) { k = 0; STOPJ.forEach((t, i) => { if (Math.abs(t - P) < Math.abs(STOPJ[k] - P)) k = i; }); }
+    else if (dir > 0) { k = STOPJ.findIndex(t => t >= P - .01); if (k < 0) k = 4; }
+    else { k = 0; STOPJ.forEach((t, i) => { if (t <= P + .01) k = i; }); }
+    k = clamp(k, 0, 4); if (STOPJ[k] < s.P0 - 1) noAuto = true;
+    vP = Math.sign(STOPJ[k] - P) === Math.sign(vF) ? clamp(vF, -20, 20) : 0;
+    tgtP = STOPJ[k]; if (Math.abs(tgtP - P) > 2) sfx('swoosh', .35);
   } else if (s.axis === 'orbit') { vQ = -vx / PX_PER_ORB(); if (Math.abs(vQ) < 3 && Math.abs(Q) < .6) { Q = 0; dirty = true; restHD(true, stop); } }
   else if (s.axis === 'flip') { const target = Math.abs(vx) > 500 ? (vx < 0 ? (flipA <= 0 ? -180 : 0) : (flipA >= 0 ? 180 : 0)) : Math.round(flipA / 180) * 180; animFlip(target); }
   else if (!s.axis && stop >= 0 && Math.abs(Q) < .01) restHD(true, stop);
@@ -551,7 +555,7 @@ function loop(now) {
   if (phase === 'opening') { setP(clamp(op.currentTime * 12, 0, 71.9)); if (op.ended || op.currentTime >= 5.92) endOpening(); }
   tilt.x += (tilt.tx - tilt.x) * .08; tilt.y += (tilt.ty - tilt.y) * .08;
   const resting = stop >= 0 && !dragging && tgtP === null && Math.abs(Q) < .01 && phase === 'stop';
-  rz += ((resting ? 1 : 0) - rz) * (resting ? dt * .12 : dt * 5);
+  rz += ((resting ? 1 : 0) - rz) * (resting ? dt * .12 : dt * 1.4);
   const ts = `scale(${(1.035 + .045 * rz).toFixed(4)}) translate(${(-tilt.x * 1.1).toFixed(2)}%,${(-tilt.y * .7).toFixed(2)}%)`; if (ts !== tiltSet) { view.style.transform = ts; tiltSet = ts; }
   if (dirty && phase !== 'opening' && phase !== 'card') { render(); dirty = false; }
   if (!noAuto && !dragging && tgtP === null && stop > 0 && !g) { const idle = now - lastInteract; if ((stop === 1 && idle > 9000) || (stop === 2 && idle > 6500)) goStop(stop + 1); }
