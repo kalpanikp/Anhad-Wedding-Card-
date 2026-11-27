@@ -277,21 +277,28 @@ const SEQ = { J: mkSeq(J_N, i => `a/j/${pad(i)}.webp`) };
 for (const k of [1, 2]) { SEQ[k + 'L'] = mkSeq(ORB_N, i => `a/o/${ORB[k]}L/${pad(i, 2)}.webp`); SEQ[k + 'R'] = mkSeq(ORB_N, i => `a/o/${ORB[k]}R/${pad(i, 2)}.webp`); }
 let queue = [], inflight = 0, dirty = true;
 const canBitmap = 'createImageBitmap' in window;
-function want(S, i, front) {
+function want(S, i) {
   if (i < 0 || i >= S.n || S.f[i]) return;
   S.f[i] = { img: null, bmp: null, ok: false };
-  front ? queue.unshift([S, i]) : queue.push([S, i]); pump();
+  queue.push([S, i]); pump();
+}
+function prio(S, i) {
+  if (S === SEQ.J) { const d = i - P; return d >= 0 ? d : -d * 1.4; }
+  if (orbitAt && (S === SEQ[orbitAt + 'L'] || S === SEQ[orbitAt + 'R'])) return Math.abs(i - Math.abs(Q)) * .4 - 50;
+  return 5000 + i;
 }
 function pump() {
   while (inflight < 6 && queue.length) {
-    const [S, i] = queue.shift(); inflight++;
+    let bi = 0, bp = Infinity;
+    for (let k = 0; k < queue.length; k++) { const p = prio(queue[k][0], queue[k][1]); if (p < bp) { bp = p; bi = k; } }
+    const [S, i] = queue.splice(bi, 1)[0]; inflight++;
     const im = new Image(); im.decoding = 'async';
-    im.onload = () => { const e = S.f[i]; if (e) { e.img = im; e.ok = true; } inflight--; dirty = true; pump(); };
+    im.onload = () => { (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => { const e = S.f[i]; if (e) { e.img = im; e.ok = true; } inflight--; dirty = true; pump(); }); };
     im.onerror = () => { inflight--; S.f[i] = null; pump(); };
     im.src = S.url(i);
   }
 }
-function loadRange(S, a, b, front) { if (front) for (let i = b; i >= a; i--) want(S, i, true); else for (let i = a; i <= b; i++) want(S, i, false); }
+function loadRange(S, a, b) { for (let i = a; i <= b; i++) want(S, i); }
 let bmpBusy = 0;
 function warm(S, centre, radius) {
   if (!canBitmap) return;
@@ -302,12 +309,19 @@ function warm(S, centre, radius) {
     else if (!near && e.bmp) { e.bmp.close && e.bmp.close(); e.bmp = null; }
   }
 }
-function src(S, i) { for (let d = 0; d < 24; d++) for (const j of d ? [i - d, i + d] : [i]) { const e = S.f[j]; if (e && e.ok) return e.bmp || e.img; } return null; }
+function src(S, i) { for (const j of [i, i - 1, i + 1, i - 2, i + 2]) { const e = S.f[j]; if (e && e.ok) return e.bmp || e.img; } return null; }
 
 let W = 0, H = 0;
 function size() { const r = stage.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); cx.imageSmoothingQuality = 'high'; sizePetals(); dirty = true; }
 function cover(im, a) { if (!im) return; const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
-function drawSeq(S, f) { const i0 = Math.floor(f), a = f - i0; cover(src(S, i0), 1); if (a > .03 && i0 + 1 < S.n) { const e = S.f[i0 + 1]; if (e && e.ok) cover(e.bmp || e.img, a); } }
+function drawSeq(S, f) {
+  const i0 = Math.floor(f), a = f - i0, A = src(S, i0);
+  if (!A) return false;                                   // keep the last good picture on screen
+  cover(A, 1);
+  const e0 = S.f[i0], e1 = S.f[i0 + 1];
+  if (a > .03 && e0 && e0.ok && e1 && e1.ok) cover(e1.bmp || e1.img, a);   // blend only true neighbours
+  return true;
+}
 
 /* =========================================================
    CAMERA — P: travel frame (vertical) · Q: orbit −40…+40 (horizontal)
@@ -320,8 +334,8 @@ function orbSeq() { return Q < 0 ? SEQ[orbitAt + 'L'] : SEQ[orbitAt + 'R']; }
 function render() {
   if (orbitAt && Math.abs(Q) > .01) {
     const S = orbSeq(), q = Math.abs(Q);
-    if (q < 1) { drawSeq(SEQ.J, P); const e = S.f[1]; if (e && e.ok) cover(e.bmp || e.img, q); }
-    else drawSeq(S, Math.min(q, ORB_N - 1));
+    if (q < 1) { if (drawSeq(SEQ.J, P)) { const e = S.f[1]; if (e && e.ok) cover(e.bmp || e.img, q); } }
+    else if (!drawSeq(S, Math.min(q, ORB_N - 1))) return false;
   } else drawSeq(SEQ.J, P);
 }
 let orbitHome = false, orbitHomeCb = null;
@@ -352,7 +366,7 @@ function setP(np) {
 let lastG = false, scrimBv = -1; function setScrimB(v) { if (v !== scrimBv) { scrimBv = v; $('#scrimB').style.opacity = v; } }
 function flash() { const b = $('#bloom'); b.style.opacity = .95; setTimeout(() => b.style.opacity = 0, 280); }
 let lastFeed = -99;
-function feed() { if (Math.abs(P - lastFeed) < 3) return; lastFeed = P; const c = Math.round(P); loadRange(SEQ.J, Math.max(0, c - 30), Math.min(J_N - 1, c + 90), true); warm(SEQ.J, c, 40); }
+function feed() { if (Math.abs(P - lastFeed) < 3) return; lastFeed = P; const c = Math.round(P); loadRange(SEQ.J, Math.max(0, c - 40), Math.min(J_N - 1, c + 90)); warm(SEQ.J, c, 40); }
 
 /* HD still when the camera rests */
 const HD = { 0: 'a/poster.webp', 1: 'a/hd/1.webp', 2: 'a/hd/2.webp', 3: 'a/hd/3.webp', 4: 'a/hd/4.webp' };
@@ -379,7 +393,7 @@ function arrive(k) {
   lastInteract = performance.now();
   if (orbitAt) { loadRange(SEQ[k + 'L'], 0, ORB_N - 1, true); loadRange(SEQ[k + 'R'], 0, ORB_N - 1, true); setTimeout(() => { warm(SEQ[k + 'L'], 0, ORB_N); warm(SEQ[k + 'R'], 0, ORB_N); }, 500); }
   else for (const s of ['1L', '1R', '2L', '2R']) warm(SEQ[s], -999, 0);
-  if (k === 1) setTimeout(() => { loadRange(SEQ.J, 72, J_N - 1); loadRange(SEQ.J, 0, 71); }, 1200);
+  if (k === 1) setTimeout(() => loadRange(SEQ.J, 0, J_N - 1), 900);
 }
 function leave(dir = 1) {
   if (stop === 1) { $('#c1').classList.remove('on'); petalsT = 0; }
