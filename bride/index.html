@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Toshi & Anhad · Anand Karaj</title>
 <meta name="theme-color" content="#140c07">
-<link rel="preload" as="image" href="a/poster.webp">
+<link rel="preload" as="image" href="a/poster.webp?v=8">
 <link rel="preload" as="image" href="a/seal.webp">
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cormorant-garamond-latin-300-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cinzel-latin-500-normal.woff2" crossorigin>
@@ -37,14 +37,14 @@ body{font-family:var(--d);color:var(--ivory);-webkit-font-smoothing:antialiased;
 body.locked{overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit}
-#backdrop{position:fixed;inset:-40px;background:#140c07 url(a/poster_tiny.jpg) center/cover;filter:blur(30px) brightness(.3);z-index:0}
+#backdrop{position:fixed;inset:-40px;background:#140c07 url(a/poster_tiny.jpg?v=8) center/cover;filter:blur(30px) brightness(.3);z-index:0}
 #col{position:relative;width:var(--W);margin:0 auto;z-index:1;container-type:inline-size}
 .lab{font:500 2.4cqw/1.6 var(--l);letter-spacing:.26em;padding-left:.26em;text-transform:uppercase}
 .L{position:absolute;inset:0;width:100%;height:100%}
 .foil{background:var(--goldfoil);background-size:260% 100%;background-position:calc(var(--sh,0) * 100%) 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:none;filter:drop-shadow(0 .12cqw 0 rgba(255,255,255,.85)) drop-shadow(0 -.05cqw 0 rgba(70,40,10,.3))}
 
 /* the camera: one sticky layer behind the whole page */
-#cam{position:sticky;top:0;height:100vh;overflow:hidden;margin-bottom:-100vh;background:#140c07 url(a/poster_tiny.jpg) center/cover;z-index:0}
+#cam{position:sticky;top:0;height:100vh;overflow:hidden;margin-bottom:-100vh;background:#140c07 url(a/poster_tiny.jpg?v=8) center/cover;z-index:0}
 #cam canvas,#cam img.L,#cam video{position:absolute;inset:0;width:100%;height:100%}
 #cam img.L,#cam video{object-fit:cover}
 #hd{opacity:0}
@@ -130,7 +130,7 @@ a{color:inherit}
 #rail .dm.now:before{transform:rotate(45deg) scale(1.25);background:#fff0c4;box-shadow:0 0 8px 2px rgba(255,214,140,.8)}
 #rail .rl{position:absolute;right:13px;top:0;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;white-space:nowrap;padding:14px 0;font:600 9.5px/1 var(--l);letter-spacing:.26em;text-transform:uppercase;color:#fbefd6;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.4);opacity:0;transition:opacity .5s,transform .5s var(--ease)}
 #rail .rl.show{opacity:1}
-#filmZone{height:760vh}
+#filmZone{height:640vh}
 
 /* ── the stationery suite: cotton-paper cards that stack as you scroll ── */
 #suite{position:relative;z-index:1;padding-top:0}
@@ -264,7 +264,7 @@ a{color:inherit}
     <div id="rig" class="L"><canvas id="cv"></canvas>
     <img id="hd" class="L" alt=""></div>
     <img id="bk" class="L" src="a/bk.webp" alt="">
-    <video id="op" src="a/open.mp4" poster="a/poster.webp" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
+    <video id="op" src="a/open.mp4?v=8" poster="a/poster.webp?v=8" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
     <div id="seam"></div>
     <div id="sheen" class="L"></div>
     <canvas id="petals" class="L"></canvas>
@@ -411,14 +411,14 @@ const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 
    LO (540px) for the whole film, always ready, smooth while moving;
    HI (1080px AVIF) streamed around the camera, takes over as it slows.
    ========================================================= */
-const J_N = 463, F_OPEN = 55, F_BOW = 414, F_DUSK0 = 415, F_END = 462, F_GUR = 362, OPEN_SHARE = .13;
-/* one continuous shot: box 0–55 · pull back to her room 55–116 · mother lowers the chunni 116–177 · into her veil 177–186 · twirl 181–241 · Ganesh 241–354 · mother's palla 354–414 · resting on the palla 415–462 */
-const F_TW0 = 183, F_TW1 = 241, F_POV = 241, F_PAL = 354, F_MID = 150;
+const J_N = 475, F_OPEN = 60, F_BOW = 414, F_DUSK0 = 415, F_END = 474, F_GUR = 282, OPEN_SHARE = .13;
+/* one continuous shot: veil curtains part 0–60 · drift to her 60–67 · mother's chunni over her eyes 67–117 · twirl 117–178 · Ganesh 178–273 · mother's palla 273–333 · the palla leads to him 333–358 · walking to the Gurdwara together 358–414 · Gurdwara at sunset 415–474 */
+const F_TW0 = 121, F_TW1 = 178, F_POV = 178, F_PAL = 273, F_MID = 90;
 const pad = i => String(i).padStart(3, '0');
-const LO = { a: new Array(J_N), q: [], fl: 0, max: 5, src: i => `a/j/${pad(i)}.webp` };
-const HI = { a: new Array(J_N), q: [], fl: 0, max: 3, src: i => `a/k/${pad(i)}.avif`, on: false };
+const AV = '8';
+const LO = { a: new Array(J_N), q: [], fl: 0, max: 6, src: i => `a/j/${pad(i)}.webp?v=${AV}` };
+const HI = { a: new Array(J_N), q: [], fl: 0, max: 3, src: i => `a/k/${pad(i)}.webp?v=${AV}`, on: true };
 let P = 0, Pt = 0, Pprev = 0, camV = 0, dirty = true, hiMix = 0;
-(() => { const t = new Image(); t.onload = () => { HI.on = t.width > 0; }; t.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAJQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAAgAAAAIAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAALW1kYXQSAAoIGAA2iAhoNCAyFxlHh4Yhh5555oAAAJBAyRjbu51tkhGY'; })();
 function want(T, i) { if (i < 0 || i >= J_N || T.a[i]) return; T.a[i] = { img: null, im: null, ok: false }; T.q.push(i); pump(T); }
 function pump(T) {
   while (T.fl < T.max && T.q.length) {
@@ -447,7 +447,7 @@ function size() {
   CS = Math.max(r.width / 1080, r.height / 1920);
   const sw = $('#sealW'); sw.style.width = (380 * CS) + 'px'; sw.style.left = (r.width / 2) + 'px'; sw.style.top = (r.height / 2 + 5 * CS) + 'px';
   $('#tapHint').style.top = (r.height / 2 + 330 * CS) + 'px';
-  let nw = Math.round(r.width * d), nh = Math.round(r.height * d); const k = Math.min(1, 1440 / nw); nw = Math.round(nw * k); nh = Math.round(nh * k);
+  let nw = Math.round(r.width * d), nh = Math.round(r.height * d); const k = Math.min(1, 1200 / nw); nw = Math.round(nw * k); nh = Math.round(nh * k);
   if (W && nw === W && Math.abs(nh - H) / H < .2) return; W = cv.width = nw; H = cv.height = nh; cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high'; sizeFx(); dirty = true;
 }
 function cover(im, a) { const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
@@ -518,11 +518,11 @@ function frameLoop(now) {
 }
 let lastFeed = -99, lastHi = 0;
 function feed() {
-  if (Math.abs(Pt - lastFeed) >= 3) { lastFeed = Pt; const t = Math.round(Pt); loadRange(Math.max(0, t - 35), Math.min(J_N - 1, t + 65)); LO.q = LO.q.filter(i => { if (Math.abs(i - t) > 75) { LO.a[i] = undefined; return false; } return true; }); for (let i = 0; i < J_N; i++) if (LO.a[i] && LO.a[i].ok && Math.abs(i - t) > 80) drop(LO, i); }
+  if (Math.abs(Pt - lastFeed) >= 3) { lastFeed = Pt; const t = Math.round(Pt); loadRange(Math.max(0, t - 30), Math.min(J_N - 1, t + 80)); LO.q = LO.q.filter(i => { if (Math.abs(i - t) > 90) { LO.a[i] = undefined; return false; } return true; }); for (let i = 0; i < J_N; i++) if (LO.a[i] && LO.a[i].ok && Math.abs(i - t) > 95) drop(LO, i); }
   const now = performance.now(); if (now - lastHi > 120) { lastHi = now; hiFeed(Math.round(P), camV < .35 && Math.abs(Pt - P) < 6); }
 }
 /* full-resolution 1440px still whenever the camera rests on a key frame */
-const HDF = { 0: 'a/poster.webp', [F_OPEN]: 'a/hd/1.webp', [F_MID]: 'a/hd/2.webp', [F_BOW]: 'a/hd/3.webp', [F_END]: 'a/hd/4.webp' };
+const HDF = { 0: 'a/poster.webp?v=' + AV, [F_OPEN]: 'a/hd/1.webp?v=' + AV, [F_MID]: 'a/hd/2.webp?v=' + AV, [F_BOW]: 'a/hd/3.webp?v=' + AV, [F_END]: 'a/hd/4.webp?v=' + AV };
 let hdOn = false;
 function hdShow(on) {
   const key = Object.keys(HDF).find(k => Math.abs(P - k) < .02);
@@ -763,7 +763,7 @@ function openCard() {
   setTimeout(() => { const go = () => op.play().catch(() => {}); if (op.readyState >= 3) go(); else op.addEventListener('canplay', go, { once: true }); }, 820);
 }
 let dustGo = false;
-op.addEventListener('timeupdate', () => { if (!dustGo && op.currentTime > 3.0) { dustGo = true; play($('#c1')); } if (op.currentTime > 4.5) endOpening(); });
+op.addEventListener('timeupdate', () => { if (!dustGo && op.currentTime > 3.0) { dustGo = true; play($('#c1')); } if (op.currentTime > 4.9) endOpening(); });
 op.addEventListener('ended', endOpening);
 function endOpening() {
   if (opened) return; opened = true;
