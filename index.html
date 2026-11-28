@@ -136,7 +136,8 @@ a{color:inherit}
 #suite{position:relative;z-index:1;padding-top:0}
 .sheet{--h:124.8cqw;position:sticky;top:calc(50vh - var(--h) / 2 + var(--i) * 1.3vh);width:88cqw;height:var(--h);margin:0 auto 62vh;transform-origin:50% 0;will-change:transform}
 .sheet:last-child{margin-bottom:14vh}
-.sheet .pp{position:absolute;inset:0;transform:rotate(var(--r));filter:drop-shadow(0 .5cqw .6cqw rgba(0,0,0,.35)) drop-shadow(0 3cqw 5cqw rgba(0,0,0,.45))}
+.sheet:before{content:"";position:absolute;left:3%;right:3%;top:2.5%;bottom:1.5%;transform:rotate(var(--r));box-shadow:0 .6cqw 1.2cqw rgba(0,0,0,.32),0 3.4cqw 6cqw rgba(0,0,0,.42);border-radius:1cqw}
+.sheet .pp{position:absolute;inset:0;transform:rotate(var(--r))}
 .sheet .bgp{position:absolute;inset:0;background:url(a/blank.webp) center/100% 100% no-repeat}
 .sheet .shade{position:absolute;inset:0;background:#120804;opacity:0;pointer-events:none;-webkit-mask:url(a/blank.webp) center/100% 100% no-repeat;mask:url(a/blank.webp) center/100% 100% no-repeat}
 .sheet .ct{position:absolute;left:11%;right:11%;top:9%;bottom:8.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);text-shadow:var(--press)}
@@ -283,7 +284,7 @@ a{color:inherit}
 
   <div id="suite">
     <div class="sheet" id="sh1" style="--i:0;--r:-.6deg">
-      <div class="pp" style="filter:drop-shadow(0 .5cqw .6cqw rgba(0,0,0,.35)) drop-shadow(0 3cqw 5cqw rgba(0,0,0,.45))"><div id="cardWrap"><div id="card">
+      <div class="pp"><div id="cardWrap"><div id="card">
         <div class="face front"><div class="inner">
           <div class="f-ik">ੴ</div>
           <div class="f-bless">With the blessings of Waheguru Ji</div>
