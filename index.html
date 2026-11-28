@@ -536,7 +536,7 @@ function layers(y) {
       const sh = clamp(1 - (r.top - stick) / vh); const shv = sh.toFixed(2); if (s._sh !== shv) { s._sh = shv; s.style.setProperty('--sh', shv); if (i === 2) s.style.setProperty('--sh3', (1.15 - sh * 1.3).toFixed(2)); }
     }
   }
-  $('#fin').classList.toggle('in', y > zC0 + vh * .7); dustFin.p = sm(zC0 + vh * .5, zC0 + vh * 1.05, y);
+  $('#fin').classList.toggle('in', y > zC0 + vh * .7); dustFin.p = sm(zC0 + vh * .3, zC0 + vh * 1.5, y);
   ambMix();
 }
 function flash() { const b = $('#bloom'); b.style.opacity = .9; setTimeout(() => b.style.opacity = 0, 260); }
@@ -660,56 +660,74 @@ class Dust {
   step(now) {
     if (this.anim) { this.p = clamp((now - this.anim.t0) / this.anim.dur); if (this.p >= 1) this.anim = null; }
     const P = this.p, Q = this.q;
-    const op = P < 1 ? sm(.74, .93, P) : 1 - sm(.02, .22, Q);
-    const g = P < 1 ? sm(.7, .88, P) * (1 - sm(.88, 1, P)) : sm(0, .06, Q) * (1 - sm(.06, .22, Q));
+    // timeline: 0–.5 the dust drifts in and gathers · .5–.62 it hangs, held · .62–.82 it settles · .76–.9 the letters appear · .86–1 a gleam
+    const op = P < 1 ? sm(.76, .9, P) : 1 - sm(.02, .25, Q);
+    const g = P < 1 ? sm(.78, .88, P) * (1 - sm(.9, 1, P)) * .6 : 0;
     const key = op.toFixed(3) + '|' + g.toFixed(2);
-    if (key !== this.lastKey) { this.lastKey = key; const f = g > .01 ? `brightness(${(1 + g * 1.6).toFixed(2)}) drop-shadow(0 0 ${(g * 10).toFixed(1)}px rgba(255,222,150,${(g * .95).toFixed(2)}))` : '';
+    if (key !== this.lastKey) { this.lastKey = key; const f = g > .01 ? `brightness(${(1 + g * 1.2).toFixed(2)}) drop-shadow(0 0 ${(g * 9).toFixed(1)}px rgba(255,226,160,${(g * .9).toFixed(2)}))` : '';
       this.items.forEach(it => { it.el.style.opacity = op.toFixed(3); it.el.style.filter = f; }); }
     return (P > 0 && P < 1) || (P >= 1 && Q > 0 && Q < 1);
   }
   draw(ctx, gx, col) {
     if (!this.parts) { if (document.fonts && document.fonts.status !== 'loaded') return; this.sample(); }
     const o = this.o, rects = new Map(), A = this.p < 1, P = this.p, Q = this.q, T = performance.now() / 1000;
-    const sun = o.from === 'sun' ? (() => { const r = cam.getBoundingClientRect(); return [r.left - col.left + r.width * .70, r.top + r.height * .40]; })() : null;
+    let field; // where the dust starts: spread across the sky / around the card
+    if (o.from === 'sun') { const r = cam.getBoundingClientRect(); field = [r.left - col.left, r.top + r.height * .03, r.width, r.height * .46]; }
     const NG = this.pals.length, B = this.B || (this.B = Array.from({ length: NG * NB * NA }, () => [])); B.forEach(b => b.length = 0);
     const G = this.G || (this.G = [[], [], []]); G.forEach(b => b.length = 0);
-    const pos = (pt, tx, ty, k, phase) => {
-      if (phase) { // gather: a spiralling stream that tightens onto the letter
-        let ox, oy; if (sun) { const an = pt.r2 * 6.283, rr = 4 + pt.r3 * 26; ox = sun[0] + Math.cos(an) * rr; oy = sun[1] + Math.sin(an) * rr; }
-        else { const an = pt.r2 * 6.283, rr = 90 + pt.r3 * 220; ox = tx + Math.cos(an) * rr; oy = ty + Math.sin(an) * rr * .6 + 60; }
-        const e = eio(k), sw = Math.pow(1 - k, 1.6) * (30 + pt.r4 * 110), an2 = pt.r5 * 6.283 + k * (4 + pt.r1 * 5) * (pt.r4 > .5 ? 1 : -1);
-        return [ox + (tx - ox) * e + Math.cos(an2) * sw, oy + (ty - oy) * e + Math.sin(an2) * sw * .7 - Math.sin(k * 3.1416) * (1 - k) * (60 + pt.r3 * 110)];
-      }
-      const kk = k * k, an2 = pt.r5 * 6.283 + k * (3 + pt.r1 * 4), sw = k * (8 + pt.r4 * 26); // dissolve: embers lift on a slow curl
-      return [tx + (pt.r2 - .45) * 70 * kk + Math.cos(an2) * sw, ty - (30 + pt.r3 * 170) * kk + Math.sin(an2) * sw * .5];
-    };
+    const gather = sm(0, .5, P), held = P > .5 && P < .62;
+    const gx0 = .86, gleam = P > gx0 ? (P - gx0) / (1 - gx0) : -1;
+    const glints = [];
     for (const pt of this.parts) {
       let rc = rects.get(pt.el); if (!rc) { rc = pt.el.getBoundingClientRect(); rects.set(pt.el, rc); }
-      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty; let k, a, ci;
-      if (A) { const dl = o.from === 'sun' ? (1 - pt.u) * .22 + pt.r1 * .26 : pt.r1 * .42; k = clamp((P - dl) / .5); if (k <= 0) continue;
-        a = sm(0, .1, k) * (1 - sm(.7, 1, k)) * (1 - sm(.86, .97, P)) * (.55 + .45 * Math.sin(T * 9 + pt.r5 * 40)); ci = Math.min(4, Math.floor(Math.pow(k, 1.6) * 5)); }
-      else { const e = pt.u * .3 + pt.r1 * .4; k = clamp((Q - e) / .55); if (k <= 0 || k >= 1) continue;
-        a = (1 - k) * (.55 + .45 * Math.sin(T * 11 + pt.r4 * 30)); ci = Math.min(5, Math.floor(k * 6)); }
+      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty;
+      const hx = Math.sin(T * (.35 + pt.r1 * .4) + pt.r5 * 6.283) * (4 + pt.r3 * 7), hy = Math.cos(T * (.3 + pt.r2 * .35) + pt.r4 * 6.283) * (3 + pt.r2 * 6);
+      let x, y, a, ci, sz;
+      if (A) {
+        if (P > .9 && gleam < 0) continue;
+        if (P >= .84) { // the gleam: light slides across the finished letters
+          const band = (pt.u + (pt.ty / Math.max(1, rc.height)) * .25) - (gleam * 1.6 - .3), w = Math.exp(-band * band / .012);
+          if (w < .05) continue; x = tx; y = ty; a = w * .9 * (1 - sm(.96, 1, P)); ci = 0; sz = .9;
+          if (pt.r5 > .9985) glints.push([tx, ty, w]);
+        } else {
+          let ox, oy; if (field) { ox = field[0] + pt.r2 * field[2]; oy = field[1] + pt.r3 * field[3]; }
+          else { ox = tx + (pt.r2 - .5) * rc.width * 1.5; oy = ty + (pt.r3 - .5) * 260; }
+          const ge = .5 - .5 * Math.cos(gather * Math.PI), halo = .38 + pt.r4 * .2;      // inhale: drift two-thirds of the way in
+          const hxp = ox + (tx - ox) * (1 - halo) * ge, hyp = oy + (ty - oy) * (1 - halo) * ge;
+          const sk = clamp((P - .62 - pt.r1 * .06) / .2), se = .5 - .5 * Math.cos(sk * Math.PI);  // settle: all together, softly
+          x = hxp + (tx - hxp) * se + hx * (1 - se); y = hyp + (ty - hyp) * se + hy * (1 - se);
+          const tw = .6 + .4 * Math.sin(T * (1.4 + pt.r4 * 2) + pt.r5 * 30);
+          a = sm(0, .28, P) * (.55 + .45 * se) * tw * (1 - sm(.8, .88, P)) * (held ? 1 : 1);
+          ci = Math.min(4, 2 + Math.floor(se * se * 2.9)); sz = (.7 + pt.lw * .9) * (1.15 - se * .35);
+        }
+      } else { // exhale: the letters loosen into a slow golden drift
+        const e = pt.u * .25 + pt.r1 * .35, k = clamp((Q - e) / .6); if (k <= 0 || k >= 1) continue;
+        const ek = 1 - Math.pow(1 - k, 2), cx = rc.left - col.left + rc.width / 2, cy = rc.top + rc.height / 2;
+        let dx = tx - cx, dy = ty - cy; const dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+        x = tx + dx * (14 + pt.r3 * 50) * ek + hx * k; y = ty + dy * (8 + pt.r3 * 26) * ek - (12 + pt.r2 * 50) * ek + hy * k;
+        a = (1 - k) * (.6 + .4 * Math.sin(T * 2 + pt.r4 * 20)); ci = Math.min(5, 1 + Math.floor(k * 4)); sz = .6 + pt.lw * .8;
+      }
       if (a < .03) continue;
-      const p1 = pos(pt, tx, ty, k, A), p0 = pos(pt, tx, ty, Math.max(0, k - (A ? .018 : .03)), A);
-      B[(pt.gi * NB + ci) * NA + Math.min(NA - 1, Math.floor(a * NA))].push(p0[0], p0[1], p1[0], p1[1]);
-      if (pt.r3 < .45 && (A ? k < .9 : true)) G[Math.min(2, Math.floor(pt.r2 * 3))].push(p1[0], p1[1]);
+      B[(pt.gi * NB + ci) * NA + Math.min(NA - 1, Math.floor(a * NA))].push(x, y, sz);
+      if (pt.r3 < .35) G[Math.min(2, Math.floor(pt.r2 * 3))].push(x, y, a);
     }
-    ctx.lineCap = 'round';
     for (let g = 0; g < NG; g++) for (let ci = 0; ci < NB; ci++) for (let ai = 0; ai < NA; ai++) {
       const L = B[(g * NB + ci) * NA + ai]; if (!L.length) continue;
-      ctx.globalAlpha = (ai + .7) / NA; ctx.strokeStyle = (A ? this.pals[g] : this.diss[g])[ci]; ctx.lineWidth = .55 * DDP; ctx.beginPath();
-      for (let i = 0; i < L.length; i += 4) { ctx.moveTo(L[i] * DDP, L[i + 1] * DDP); ctx.lineTo(L[i + 2] * DDP + .01, L[i + 3] * DDP); }
-      ctx.stroke();
+      ctx.globalAlpha = (ai + .7) / NA; ctx.fillStyle = (A ? (P >= .84 ? ['#fffaf0'] : this.pals[g]) : this.diss[g])[A && P >= .84 ? 0 : ci]; ctx.beginPath();
+      for (let i = 0; i < L.length; i += 3) { const r = L[i + 2] * DDP * .5; ctx.rect(L[i] * DDP - r, L[i + 1] * DDP - r, r * 2, r * 2); }
+      ctx.fill();
     }
     gx.globalCompositeOperation = 'lighter';
-    for (let gi = 0; gi < 3; gi++) { const L = G[gi]; if (!L.length) continue; gx.globalAlpha = .22; gx.fillStyle = GLOWC[gi]; gx.beginPath();
-      for (let i = 0; i < L.length; i += 2) { gx.moveTo(L[i] * GS + 1.6, L[i + 1] * GS); gx.arc(L[i] * GS, L[i + 1] * GS, 1.6, 0, 6.283); } gx.fill(); }
+    for (let gi = 0; gi < 3; gi++) { const L = G[gi]; if (!L.length) continue; gx.globalAlpha = .16; gx.fillStyle = GLOWC[gi]; gx.beginPath();
+      for (let i = 0; i < L.length; i += 3) { gx.moveTo(L[i] * GS + 2, L[i + 1] * GS); gx.arc(L[i] * GS, L[i + 1] * GS, 2, 0, 6.283); } gx.fill(); }
+    // a few star-glints on the gleam
+    for (const [x, y, w] of glints) { const L = 9 * w; ctx.globalAlpha = w * .9; ctx.strokeStyle = '#fffaf0'; ctx.lineWidth = .8 * DDP; ctx.beginPath(); ctx.moveTo((x - L) * DDP, y * DDP); ctx.lineTo((x + L) * DDP, y * DDP); ctx.moveTo(x * DDP, (y - L) * DDP); ctx.lineTo(x * DDP, (y + L) * DDP); ctx.stroke();
+      gx.globalAlpha = w * .5; gx.fillStyle = '#fff2cc'; gx.beginPath(); gx.arc(x * GS, y * GS, 4, 0, 6.283); gx.fill(); }
     gx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = gx.globalAlpha = 1;
   }
 }
-const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014' }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18' }], { from: 'sun', budget: 5200, dur: 3200 });
-const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'scatter', budget: 3400, dur: 2600 });
+const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014' }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18' }], { from: 'sun', budget: 4600, dur: 5600 });
+const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'scatter', budget: 3000, dur: 4400 });
 const dustFin = new Dust([{ el: $('#fin .gN'), c: '#fff6e6' }, { el: $('#fin .nm i'), c: '#ecd49c' }, { el: $('#fin .bN'), c: '#fff6e6' }], { from: 'scatter', budget: 4200 });
 window.dustCard = dustCard;
 const DUSTS = [dustFilm, dustCard, dustFin];
