@@ -48,6 +48,7 @@ a{color:inherit}
 #cam canvas,#cam img.L,#cam video{position:absolute;inset:0;width:100%;height:100%}
 #cam img.L,#cam video{object-fit:cover}
 #hd{opacity:0}
+#rig{will-change:transform;transform-origin:50% 46%}
 #bk{opacity:0;transform:scale(1.08)}
 #op{z-index:3}
 #veil{background:rgba(18,8,4,1);opacity:0;pointer-events:none}
@@ -132,9 +133,9 @@ a{color:inherit}
 #filmZone{height:520vh}
 
 /* ── the stationery suite: cotton-paper cards that stack as you scroll ── */
-#suite{position:relative;z-index:1;padding-top:12vh}
-.sheet{--h:124.8cqw;position:sticky;top:calc(50vh - var(--h) / 2 + var(--i) * 1.3vh);width:88cqw;height:var(--h);margin:0 auto 78vh;transform-origin:50% 0;will-change:transform}
-.sheet:last-child{margin-bottom:34vh}
+#suite{position:relative;z-index:1;padding-top:0}
+.sheet{--h:124.8cqw;position:sticky;top:calc(50vh - var(--h) / 2 + var(--i) * 1.3vh);width:88cqw;height:var(--h);margin:0 auto 62vh;transform-origin:50% 0;will-change:transform}
+.sheet:last-child{margin-bottom:14vh}
 .sheet .pp{position:absolute;inset:0;transform:rotate(var(--r));filter:drop-shadow(0 .5cqw .6cqw rgba(0,0,0,.35)) drop-shadow(0 3cqw 5cqw rgba(0,0,0,.45))}
 .sheet .bgp{position:absolute;inset:0;background:url(a/blank.webp) center/100% 100% no-repeat}
 .sheet .shade{position:absolute;inset:0;background:#120804;opacity:0;pointer-events:none;-webkit-mask:url(a/blank.webp) center/100% 100% no-repeat;mask:url(a/blank.webp) center/100% 100% no-repeat}
@@ -219,7 +220,7 @@ a{color:inherit}
 #cal{color:var(--gold);text-decoration:none;margin-top:4cqw;padding-bottom:.6cqw;border-bottom:1px solid rgba(154,108,36,.45);font-size:2.1cqw;font-weight:600}
 
 /* closing over the dusk */
-#closeZone{height:200vh;position:relative;z-index:1}
+#closeZone{height:150vh;position:relative;z-index:1}
 #fin{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:22cqw 7cqw calc(env(safe-area-inset-bottom) + 14cqw);text-align:center;pointer-events:none}
 #fin .kick{color:#e6cf9c;font-size:2.3cqw;text-shadow:var(--foil)}
 #fin .nm{font:300 13cqw/1 var(--d);color:var(--ivory);text-shadow:var(--foil);margin-top:2cqw}
@@ -256,8 +257,8 @@ a{color:inherit}
 <div id="backdrop"></div>
 <div id="col">
   <div id="cam">
-    <canvas id="cv"></canvas>
-    <img id="hd" class="L" alt="">
+    <div id="rig" class="L"><canvas id="cv"></canvas>
+    <img id="hd" class="L" alt=""></div>
     <img id="bk" class="L" src="a/bk.webp" alt="">
     <video id="op" src="a/open.mp4" poster="a/poster.webp" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
     <div id="seam"></div>
@@ -463,8 +464,8 @@ const filmZone = $('#filmZone'), closeZone = $('#closeZone'), suite = $('#suite'
 let opened = false, vh = innerHeight, zF0 = 0, zF1 = 1, zC0 = 0, zC1 = 1, suiteTop = 0;
 function measure() {
   vh = innerHeight; const y = scrollY;
-  const fr = filmZone.getBoundingClientRect(); zF0 = fr.top + y; zF1 = zF0 + fr.height - vh * 1.05;
-  const cr = closeZone.getBoundingClientRect(); zC0 = cr.top + y - vh * .8; zC1 = cr.top + y + cr.height - vh;
+  const fr = filmZone.getBoundingClientRect(); zF0 = fr.top + y; zF1 = zF0 + fr.height - vh * .55;
+  const cr = closeZone.getBoundingClientRect(); zC0 = cr.top + y - vh * .6; zC1 = cr.top + y + cr.height - vh;
   suiteTop = suite.getBoundingClientRect().top + y;
   if (typeof chMeasure === 'function' && window.sheetsReady) chMeasure();
 }
@@ -476,15 +477,32 @@ function targetFrame(y) {
   return F_DUSK0 + (F_END - F_DUSK0) * clamp((y - zC0) / (zC1 - zC0));
 }
 let lastY = -1, restT = 0, wasCut = false, lastT = 0;
+/* CAMERA RIG — a virtual operator on top of the footage: scrolling speed pushes the lens in,
+   banks the horizon into the move and lifts the frame; springs give it weight and a soft settle */
+const rig = $('#rig'), RG = { v: 0, z: 1.05, zv: 0, r: 0, rv: 0, y: 0, yv: 0, x: 0, xv: 0 };
+function spring(k, t, kk = .055, d = .8) { RG[k + 'v'] = (RG[k + 'v'] + (t - RG[k]) * kk) * d; RG[k] += RG[k + 'v']; }
+function rigStep(y, dt, filmW) {
+  const v = RG.py === undefined ? 0 : (y - RG.py) * 16.7 / Math.max(8, dt); RG.py = y; RG.v += (clamp(v, -90, 90) - RG.v) * .14;
+  const s = RG.v * filmW, a = Math.abs(s);
+  spring('z', 1.05 + Math.min(.16, a * .0032) + Math.sin(P * .045) * .012);
+  spring('r', clamp(s * .042, -2.8, 2.8));
+  spring('y', clamp(-s * .5, -36, 36));
+  spring('x', Math.sin(P * .06) * 7 * filmW + clamp(s * .12, -10, 10));
+  const w = cam.clientWidth || 1, h = cam.clientHeight || 1, rr = Math.abs(RG.r) * Math.PI / 180;
+  const need = Math.cos(rr) + (h / w) * Math.sin(rr) + 2 * Math.max(Math.abs(RG.x) / w, Math.abs(RG.y) / h) + .01;
+  const z = Math.max(RG.z, need);
+  const t = `translate3d(${RG.x.toFixed(2)}px,${RG.y.toFixed(2)}px,0) rotate(${RG.r.toFixed(3)}deg) scale(${z.toFixed(4)})`;
+  if (t !== rigStep.l) { rigStep.l = t; rig.style.transform = t; }
+}
 function frameLoop(now) {
   const dt = Math.min(50, now - (lastT || now)); lastT = now;
   if (opened) {
     const y = scrollY; Pt = targetFrame(y); for (const k of [0, 72, 207, 290, 351]) if (Math.abs(Pt - k) < .7) Pt = k;
-    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * (1 - Math.exp(-dt / 80)); if (Math.abs(Pt - P) < .01) P = Pt; camV = camV * .7 + Math.abs(P - Pprev) * .3; Pprev = P;
+    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * (1 - Math.exp(-dt / 60)); if (Math.abs(Pt - P) < .01) P = Pt; camV = camV * .7 + Math.abs(P - Pprev) * .3; Pprev = P;
     if (Math.abs(diff) > .005 || y !== lastY) { dirty = true; feed(); restT = now; hdShow(false); if (intro && lastY >= 0 && Math.abs(y - lastY) > 2) settleMusic(); }
     else { if (now - restT > 260) hdShow(true); if (now - lastHi > 300) { lastHi = now; hiFeed(Math.round(P), true); } }
     lastY = y; layers(y);
-    railUpdate(y, now);
+    railUpdate(y, now); rigStep(y, dt, 1 - clamp(+bk.style.opacity || 0));
     if (dirty && render()) dirty = false;
   }
   fx(); requestAnimationFrame(frameLoop);
@@ -510,11 +528,11 @@ const Lc = {};
 function setS(el, k, v) { const key = (el.id || el.className) + k; if (Lc[key] === v) return; Lc[key] = v; el.style[k] = v; }
 function layers(y) {
   const a1 = sm(F_OPEN - 10, F_OPEN, P) * (1 - sm(F_OPEN + 6, F_OPEN + 26, P));
-  const g = sm(F_GUR, F_GUR + 10, P), a2 = g * (1 - sm(zF1 + vh * .25, zF1 + vh * .7, y));
+  const g = sm(F_GUR, F_GUR + 10, P), a2 = g * (1 - sm(zF1 - vh * .1, zF1 + vh * .22, y));
   const qF = Math.max(sm(F_OPEN + 1, F_OPEN + 22, P), sm(F_OPEN - 1, F_OPEN - 18, P)); setS(c1, 'opacity', (1 - qF).toFixed(3)); setS(c1, 'transform', `translate3d(0,${(-(P - F_OPEN) * .32).toFixed(2)}cqw,0) scale(${(1 - qF * .05).toFixed(4)})`); setS(c1, 'visibility', P > F_OPEN - 22 && P < F_OPEN + 28 ? 'visible' : 'hidden');
   setS(c2, 'opacity', a2.toFixed(3)); setS(c2, 'transform', `translateY(${((1 - g) * 4).toFixed(2)}cqw)`);
   setS(scrimB, 'opacity', a2.toFixed(3));
-  const bkA = sm(zF1 + vh * .3, zF1 + vh * 1.1, y) * (1 - sm(zC0 - vh * .2, zC0 + vh * .5, y));
+  const bkA = sm(zF1 + vh * .05, zF1 + vh * .55, y) * (1 - sm(zC0 - vh * .2, zC0 + vh * .5, y));
   setS(bk, 'opacity', bkA.toFixed(3)); setS(veil, 'opacity', (bkA * .3).toFixed(3));
   const sa = 1 - sm(1, 8, P); setS(sealW, 'opacity', sa.toFixed(3)); setS(tapHint, 'opacity', (sa * (sealW.classList.contains('press') ? 0 : 1)).toFixed(3));
   if (P < 5 && sealW.classList.contains('split')) resetSeal();
