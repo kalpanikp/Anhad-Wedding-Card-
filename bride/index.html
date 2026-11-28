@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Toshi & Anhad · Anand Karaj</title>
 <meta name="theme-color" content="#140c07">
-<link rel="preload" as="image" href="a/poster.webp?v=9">
+<link rel="preload" as="image" href="a/poster.webp?v=10">
 <link rel="preload" as="image" href="a/seal.webp">
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cormorant-garamond-latin-300-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="a/f2/cinzel-latin-500-normal.woff2" crossorigin>
@@ -37,21 +37,21 @@ body{font-family:var(--d);color:var(--ivory);-webkit-font-smoothing:antialiased;
 body.locked{overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit}
-#backdrop{position:fixed;inset:-40px;background:#140c07 url(a/poster_tiny.jpg?v=9) center/cover;filter:blur(30px) brightness(.3);z-index:0}
+#backdrop{position:fixed;inset:-40px;background:#140c07 url(a/poster_tiny.jpg?v=10) center/cover;filter:blur(30px) brightness(.3);z-index:0}
 #col{position:relative;width:var(--W);margin:0 auto;z-index:1;container-type:inline-size}
 .lab{font:500 2.4cqw/1.6 var(--l);letter-spacing:.26em;padding-left:.26em;text-transform:uppercase}
 .L{position:absolute;inset:0;width:100%;height:100%}
 .foil{background:var(--goldfoil);background-size:260% 100%;background-position:calc(var(--sh,0) * 100%) 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:none;filter:drop-shadow(0 .12cqw 0 rgba(255,255,255,.85)) drop-shadow(0 -.05cqw 0 rgba(70,40,10,.3))}
 
 /* the camera: one sticky layer behind the whole page */
-#cam{position:sticky;top:0;height:100vh;overflow:hidden;margin-bottom:-100vh;background:#140c07 url(a/poster_tiny.jpg?v=9) center/cover;z-index:0}
+#cam{position:sticky;top:0;height:100vh;overflow:hidden;margin-bottom:-100vh;background:#140c07 url(a/poster_tiny.jpg?v=10) center/cover;z-index:0}
 #cam canvas,#cam img.L,#cam video{position:absolute;inset:0;width:100%;height:100%}
 #cam img.L,#cam video{object-fit:cover}
 #hd{opacity:0}
 #rig{will-change:transform;transform-origin:50% 46%}
 #bk{opacity:0;transform:scale(1.08);animation:bkd 26s ease-in-out infinite alternate;will-change:transform}
 @keyframes bkd{from{transform:scale(1.08) translate3d(0,0,0)}to{transform:scale(1.17) translate3d(0,-1.6%,0)}}
-#op{z-index:3}
+#film{object-fit:cover;background:#140c07}
 #veil{background:rgba(18,8,4,1);opacity:0;pointer-events:none}
 #bloom{background:radial-gradient(ellipse at 50% 55%,rgba(255,236,196,.95),rgba(255,214,150,.5) 40%,rgba(255,200,130,0) 75%);opacity:0;transition:opacity .3s;pointer-events:none}
 #vig{background:radial-gradient(ellipse 120% 90% at 50% 46%,transparent 58%,rgba(10,5,2,.5));pointer-events:none}
@@ -132,7 +132,7 @@ a{color:inherit}
 #rail .dm.now:before{transform:rotate(45deg) scale(1.25);background:#fff0c4;box-shadow:0 0 8px 2px rgba(255,214,140,.8)}
 #rail .rl{position:absolute;right:13px;top:0;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;white-space:nowrap;padding:14px 0;font:600 9.5px/1 var(--l);letter-spacing:.26em;text-transform:uppercase;color:#fbefd6;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.4);opacity:0;transition:opacity .5s,transform .5s var(--ease)}
 #rail .rl.show{opacity:1}
-#filmZone{height:640vh}
+#filmZone{height:520vh}
 
 /* ── the stationery suite: cotton-paper cards that stack as you scroll ── */
 #suite{position:relative;z-index:1;padding-top:0}
@@ -263,10 +263,9 @@ a{color:inherit}
 <div id="backdrop"></div>
 <div id="col">
   <div id="cam">
-    <div id="rig" class="L"><canvas id="cv"></canvas>
+    <div id="rig" class="L"><video id="film" class="L" src="a/film.mp4?v=10" poster="a/poster.webp?v=10" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
     <img id="hd" class="L" alt=""></div>
     <img id="bk" class="L" src="a/bk.webp?v=9" alt="">
-    <video id="op" src="a/open.mp4?v=9" poster="a/poster.webp?v=9" playsinline webkit-playsinline muted preload="auto" disablepictureinpicture></video>
     <div id="seam"></div>
     <div id="sheen" class="L"></div>
     <canvas id="petals" class="L"></canvas>
@@ -413,75 +412,29 @@ const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 
    LO (540px) for the whole film, always ready, smooth while moving;
    HI (1080px AVIF) streamed around the camera, takes over as it slows.
    ========================================================= */
-const J_N = 475, F_OPEN = 60, F_BOW = 414, F_DUSK0 = 415, F_END = 474, F_GUR = 282, OPEN_SHARE = .13;
+const J_N = 475, F_OPEN = 61, F_BOW = 414.5, F_DUSK0 = 415, F_END = 474, F_GUR = 282, OPEN_SHARE = .13;
 /* one continuous shot: veil curtains part 0–60 · drift to her 60–67 · mother's chunni over her eyes 67–117 · twirl 117–178 · Ganesh 178–273 · mother's palla 273–333 · the palla leads to him 333–358 · walking to the Gurdwara together 358–414 · Gurdwara at sunset 415–474 */
 const F_TW0 = 121, F_TW1 = 178, F_POV = 178, F_PAL = 273, F_MID = 90;
 const pad = i => String(i).padStart(3, '0');
 /* =========================================================
-   FRAMES — one tier (720px). Compressed frames stream in the
-   background (all of them, nearest first, starting during the
-   intro); a small ring around the camera is decoded off the main
-   thread into ImageBitmaps, so drawing never stalls the scroll.
+   FILM — one streamed video (like a reel: starts in a second, no big
+   download). Scroll moves between chapters; each chapter then plays as
+   real 24 fps video and rests on its last frame. Scrolling back seeks
+   to the previous rest.
    ========================================================= */
-const AV = '9';
-const FB = new Array(J_N), FM = new Array(J_N), FP = new Set();
-const fsrc = i => `a/f/${pad(i)}.webp?v=${AV}`;
-let P = 0, Pt = 0, Pprev = 0, camV = 0, dirty = true;
-let netQ = [], netFl = 0; const NET_MAX = 6;
-function netPump() {
-  while (netFl < NET_MAX && netQ.length) {
-    const i = netQ.shift(); if (FB[i] || FP.has(i)) continue; FP.add(i); netFl++;
-    fetch(fsrc(i)).then(r => r.ok ? r.blob() : Promise.reject()).then(b => { FB[i] = b; if (Math.abs(i - P) < 40) decWant(true); })
-      .catch(() => {}).finally(() => { FP.delete(i); netFl--; netPump(); });
-  }
-}
-function netPlan(c) {
-  c = Math.round(c); const o = [], seen = new Set(), add = i => { if (i >= 0 && i < J_N && !seen.has(i)) { seen.add(i); o.push(i); } };
-  for (let k = 0; k < J_N; k++) { add(c + k); if (k % 3 === 0) add(c - 1 - k / 3); }
-  for (let i = J_N - 1; i >= 0; i--) add(i);
-  netQ = o.filter(i => !FB[i] && !FP.has(i)); netPump();
-}
-function loadRange(a, b) { const f = []; for (let i = Math.max(0, a); i <= Math.min(J_N - 1, b); i++) if (!FB[i] && !FP.has(i)) f.push(i); netQ = f.concat(netQ.filter(i => i < a || i > b)); netPump(); }
-const RB = 10, RF = 24, DEC_MAX = 3; let decFl = 0, decC = -1;
-const toBmp = b => window.createImageBitmap ? createImageBitmap(b) : new Promise((res, rej) => { const im = new Image(), u = URL.createObjectURL(b); im.onload = () => (im.decode ? im.decode() : Promise.resolve()).then(() => res(im), () => res(im)); im.onerror = rej; im.src = u; });
-function decWant(force) {
-  const c = Math.round(P); if (!force && c === decC && decFl >= DEC_MAX) return; decC = c;
-  const dir = Pt >= P ? 1 : -1, lo = c - (dir > 0 ? RB : RF) - 4, hi = c + (dir > 0 ? RF : RB) + 4;
-  for (let i = 0; i < J_N; i++) { const b = FM[i]; if (b && b !== 1 && (i < lo || i > hi)) { if (b.close) b.close(); FM[i] = null; } }
-  for (let k = 0; k <= RF && decFl < DEC_MAX; k++) for (const i of k <= RB ? [c + k * dir, c - k * dir] : [c + k * dir]) {
-    if (decFl >= DEC_MAX) break; if (i < 0 || i >= J_N || FM[i] || !FB[i]) continue;
-    FM[i] = 1; decFl++;
-    toBmp(FB[i]).then(bm => { if (FM[i] === 1) { FM[i] = bm; dirty = true; } else if (bm.close) bm.close(); }, () => { FM[i] = null; })
-      .finally(() => { decFl--; decWant(true); });
-  }
-}
-const hiFeed = () => {}, hdShow = () => {};
-const cv = $('#cv'), cx = cv.getContext('2d', { alpha: false }), cam = $('#cam'), hd = $('#hd'), op = $('#op');
+const film = $('#film'), cam = $('#cam'), hd = $('#hd'), op = film;
+const STOPS = [5.08, 9.75, 14.83, 22.75, 27.79, 34.54, 39.5];
+const NCH = 5, FPS12 = 12;
+let P = 0, Pt = 0, Pprev = 0, camV = 0, dirty = false;
+const loadRange = () => {}, netPlan = () => {}, decWant = () => {}, hiFeed = () => {}, hdShow = () => {}, render = () => true;
 let W = 0, H = 0, CS = 1;
 function size() {
-  const r = cam.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+  const r = cam.getBoundingClientRect();
   CS = Math.max(r.width / 1080, r.height / 1920);
   const sw = $('#sealW'); sw.style.width = (380 * CS) + 'px'; sw.style.left = (r.width / 2) + 'px'; sw.style.top = (r.height / 2 + 5 * CS) + 'px';
   $('#tapHint').style.top = (r.height / 2 + 330 * CS) + 'px';
-  let nw = Math.round(r.width * d), nh = Math.round(r.height * d); const k = Math.min(1, 1080 / nw); nw = Math.round(nw * k); nh = Math.round(nh * k);
-  if (W && nw === W && Math.abs(nh - H) / H < .2) return; W = cv.width = nw; H = cv.height = nh; cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high'; sizeFx(); dirty = true;
+  if (W === Math.round(r.width) && H && Math.abs(r.height - H) / H < .2) return; W = Math.round(r.width); H = Math.round(r.height); sizeFx();
 }
-function cover(im, a) { const iw = im.width || im.naturalWidth, ih = im.height || im.naturalHeight, s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s; cx.globalAlpha = a; cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); cx.globalAlpha = 1; }
-const bm = i => { const b = FM[i]; return b && b !== 1 ? b : null; };
-function near(i) { for (let k = 1; k < 10; k++) { const a = bm(i - k) || bm(i + k); if (a) return a; } return null; }
-let shown = -1;
-function render() {
-  const i0 = Math.floor(P), a = P - i0, cut = i0 === F_BOW;
-  const A = bm(i0); const B = a > .015 && !cut ? bm(i0 + 1) : null;
-  if (!A) { const n = near(i0); if (!n) return false; cover(n, 1); return false; }
-  cover(A, 1); if (B) cover(B, a); shown = i0;
-  return !(a > .015 && !cut && !B);
-}
-
-/* =========================================================
-   SCROLL → CAMERA. The phone's own scroll sets the target; the
-   camera glides to it (critically damped), frames cross-blend.
-   ========================================================= */
 const filmZone = $('#filmZone'), closeZone = $('#closeZone'), suite = $('#suite');
 let opened = false, vh = innerHeight, zF0 = 0, zF1 = 1, zC0 = 0, zC1 = 1, suiteTop = 0;
 function measure() {
@@ -492,30 +445,34 @@ function measure() {
   if (typeof chMeasure === 'function' && window.sheetsReady) chMeasure();
 }
 const yOpen = () => zF0 + (zF1 - zF0) * OPEN_SHARE;
-function targetFrame(y) {
-  if (y < yOpen()) return F_OPEN * clamp((y - zF0) / (yOpen() - zF0));
-  if (y <= zF1) return F_OPEN + (F_BOW - F_OPEN) * clamp((y - yOpen()) / (zF1 - yOpen()));
-  if (y < zC0) return F_BOW;
-  return F_DUSK0 + (F_END - F_DUSK0) * clamp((y - zC0) / (zC1 - zC0));
+/* a small scroll (about a fifth of a screen) is enough to start the next chapter */
+function stopFor(y) {
+  if (y <= zF1) return Math.min(NCH, Math.max(0, Math.floor(clamp((y - yOpen()) / (zF1 - yOpen())) * NCH + .8)));
+  return y < zC0 ? NCH : NCH + 1;
 }
-let lastY = -1, restT = 0, wasCut = false, lastT = 0, lastPlan = -99;
-/* a calm lens: one slow push-in across the film, nothing driven by finger speed */
+const yStop = k => yOpen() + k / NCH * (zF1 - yOpen());
+const targetFrame = y => STOPS[stopFor(y)] * FPS12;
+let lastY = -1, restT = 0, wasCut = false, lastT = 0, goal = STOPS[0], seeking = false;
+function drive() {
+  const t = film.currentTime;
+  if (goal < t - .08) { if (!seeking) { film.pause(); seeking = true; film.currentTime = goal; film.addEventListener('seeked', () => { seeking = false; }, { once: true }); } return; }
+  if (goal > t + .03) { const gap = goal - t, r = gap > 10 ? 3 : gap > 6 ? 2 : 1; if (film.playbackRate !== r) film.playbackRate = r; if (film.paused && !seeking) film.play().catch(() => {}); }
+  else if (!film.paused) film.pause();
+}
+/* a calm lens: one slow push-in across the film */
 const rig = $('#rig');
-function rigStep() { const z = (1.02 + .03 * clamp((P - F_OPEN) / (F_BOW - F_OPEN))).toFixed(4); if (z !== rigStep.l) { rigStep.l = z; rig.style.transform = `scale(${z})`; } }
+function rigStep() { const z = (1.0 + .035 * clamp((P - F_OPEN) / (F_BOW - F_OPEN))).toFixed(4); if (z !== rigStep.l) { rigStep.l = z; rig.style.transform = `scale(${z})`; } }
 function frameLoop(now) {
-  const dt = Math.min(48, now - (lastT || now)); lastT = now;
+  lastT = now;
   if (opened) {
-    const y = scrollY; Pt = targetFrame(y);
-    const diff = Pt - P; P = Math.abs(diff) > 70 ? Pt : P + diff * (1 - Math.exp(-dt / 105)); if (Math.abs(Pt - P) < .003) P = Pt;
-    camV = camV * .8 + Math.abs(P - Pprev) * .2; Pprev = P;
-    if (Math.abs(diff) > .003 || y !== lastY) { dirty = true; feed(); restT = now; if (intro && lastY >= 0 && Math.abs(y - lastY) > 2) settleMusic(); }
+    const y = scrollY; goal = STOPS[stopFor(y)]; drive();
+    P = film.currentTime * FPS12; Pt = goal * FPS12; camV = Math.abs(P - Pprev); Pprev = P;
+    if (y !== lastY && intro && lastY >= 0 && Math.abs(y - lastY) > 2) settleMusic();
     lastY = y; layers(y);
     railUpdate(y, now); rigStep();
-    if (dirty && render()) dirty = false;
   }
   fx(); requestAnimationFrame(frameLoop);
 }
-function feed() { const c = Math.round(Pt); if (Math.abs(c - lastPlan) >= 24) { lastPlan = c; netPlan(c); } decWant(false); }
 
 /* captions, backdrop, seal, stacked sheets, foil — all from scroll position */
 const c1 = $('#c1'), c2 = $('#c2'), veil = $('#veil'), scrimB = $('#scrimB'), bk = $('#bk'), sealW = $('#sealW'), tapHint = $('#tapHint');
@@ -610,7 +567,7 @@ CH.forEach((n, i) => { const d = document.createElement('button'); d.className =
   d.addEventListener('click', () => { if (opened && chY.length) { scrollTo({ top: chY[i], behavior: 'smooth' }); if (navigator.vibrate) navigator.vibrate(6); } }); rail.appendChild(d); });
 const dms = [...rail.querySelectorAll('.dm')], rl = rail.querySelector('.rl'), rdot = rail.querySelector('.dot'), rfill = rail.querySelector('.fill');
 function chMeasure() {
-  const yAt = f => yOpen() + (f - F_OPEN) / (F_BOW - F_OPEN) * (zF1 - yOpen());
+  const yAt = f => yStop(Math.max(0, STOPS.findIndex(s => Math.abs(s * 12 - f) < 2)));
   chY = [yOpen(), yAt(F_POV), ...sheets.map((sh, i) => suiteTop + sh.offsetTop - (vh / 2 - sh.offsetHeight / 2 + i * .013 * vh) + 2)];
 }
 function railUpdate(y, now) {
@@ -744,20 +701,20 @@ function openCard() {
   if (opened) { if (P < 8) { sfx('card', .9, false); scrollTo({ top: yOpen(), behavior: 'smooth' }); } return; }
   if (op.dataset.go) return; op.dataset.go = 1;
   initAudio(); if (ac && ac.state === 'suspended') ac.resume(); startMusic();
-  netPlan(F_OPEN); if (op.readyState < 2) op.load();
+  try { film.currentTime = 0; } catch (e) {} if (op.readyState < 2) op.load();
   sealW.classList.add('press'); if (navigator.vibrate) navigator.vibrate(12); setS(tapHint, 'opacity', '0');
   setTimeout(() => { sealW.classList.add('crack'); sfx('card', .42, false); if (navigator.vibrate) navigator.vibrate(10); }, 180);
   setTimeout(() => { sealW.classList.add('split'); burstDust(); $('#seam').classList.add('go'); $('#sheen').classList.add('go'); sfx('swoosh', .2, false); }, 620);
   setTimeout(() => { const go = () => op.play().catch(() => {}); if (op.readyState >= 3) go(); else op.addEventListener('canplay', go, { once: true }); }, 820);
 }
 let dustGo = false;
-op.addEventListener('timeupdate', () => { if (!dustGo && op.currentTime > 3.0) { dustGo = true; play($('#c1')); } if (op.currentTime > 4.9) endOpening(); });
+op.addEventListener('timeupdate', () => { if (opened) return; if (!dustGo && op.currentTime > 3.0) { dustGo = true; play($('#c1')); } if (op.currentTime >= STOPS[0] - .06) endOpening(); });
 op.addEventListener('ended', endOpening);
 function endOpening() {
   if (opened) return; opened = true;
   document.body.classList.remove('locked'); measure(); scrollTo(0, yOpen());
   P = Pt = Pprev = F_OPEN; lastY = scrollY; dirty = true; decWant(true); render();
-  op.style.transition = 'opacity .3s'; op.style.opacity = 0; setTimeout(() => op.remove(), 400);
+  film.pause();
   $('#chrome').classList.add('on'); window.sheetsReady = 1; chMeasure(); rail.classList.add('on'); if (!dustGo) { dustGo = true; play($('#c1')); }
   setTimeout(() => netPlan(P), 300);
 }
