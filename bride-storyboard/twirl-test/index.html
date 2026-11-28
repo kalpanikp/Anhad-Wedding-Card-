@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Twirl test · Toshi & Anhad</title>
+<style>
+  html,body{margin:0;background:#f3ebe3;color:#5a2a2a;font-family:Georgia,'Times New Roman',serif}
+  #track{height:520vh;position:relative}
+  #cam{position:sticky;top:0;height:100vh;height:100svh;width:100%;overflow:hidden}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .cap{position:absolute;left:0;right:0;text-align:center;letter-spacing:.32em;text-transform:uppercase;font-size:11px;opacity:.75;pointer-events:none;transition:opacity .5s}
+  #top{top:calc(env(safe-area-inset-top) + 22px);color:#fff;text-shadow:0 1px 8px rgba(80,30,20,.45)}
+  #hint{bottom:calc(env(safe-area-inset-bottom) + 26px);color:#fff;text-shadow:0 1px 8px rgba(80,30,20,.45)}
+  #load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#f3ebe3;z-index:9;letter-spacing:.3em;font-size:11px;text-transform:uppercase;transition:opacity .6s}
+  .end{height:60vh;display:flex;align-items:center;justify-content:center;font-style:italic;font-size:22px}
+</style>
+</head>
+<body>
+<div id="load">loading <span id="pct">0</span>%</div>
+<div id="track">
+  <div id="cam">
+    <canvas id="c"></canvas>
+    <div class="cap" id="top">Twirl · scroll test</div>
+    <div class="cap" id="hint">scroll to spin ↓</div>
+  </div>
+</div>
+<div class="end">…and then, the Gurdwara</div>
+<script>
+const N=61, imgs=[]; let loaded=0;
+const pct=document.getElementById('pct'), load=document.getElementById('load');
+for(let i=0;i<N;i++){const im=new Image();im.decoding='async';im.src='f/'+String(i+1).padStart(3,'0')+'.webp';
+  im.onload=im.onerror=()=>{loaded++;pct.textContent=Math.round(loaded/N*100);if(loaded===N){load.style.opacity=0;setTimeout(()=>load.remove(),700)}};imgs.push(im);}
+
+const cv=document.getElementById('c'), cx=cv.getContext('2d'), track=document.getElementById('track'), hint=document.getElementById('hint');
+let W=0,H=0,dpr=1;
+function size(){dpr=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;}
+addEventListener('resize',size);size();
+
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function target(){const r=track.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight),0,1);}
+
+const sm=document.createElement('canvas');sm.width=27;sm.height=48;const sx=sm.getContext('2d');
+let P=0,last=performance.now(),prevA=0,vel=0;
+const L=document.createElement('canvas'),lx=L.getContext('2d');
+function buildLayer(f,m){
+  const i0=Math.floor(f),i1=Math.min(N-1,i0+1),k=f-i0,a=imgs[i0],b=imgs[i1];
+  if(!a||!a.naturalWidth)return false;
+  const iw=a.naturalWidth,ih=a.naturalHeight; if(L.width!==iw){L.width=iw;L.height=ih;}
+  lx.globalCompositeOperation='source-over';lx.globalAlpha=1;lx.clearRect(0,0,iw,ih);lx.drawImage(a,0,0);
+  if(k>0.02&&b&&b.naturalWidth){lx.globalAlpha=k;lx.drawImage(b,0,0);lx.globalAlpha=1;}
+  if(m>0.01){ // feather all four edges
+    lx.globalCompositeOperation='destination-out';
+    const ex=iw*0.24*m, ey=ih*0.24*m*iw/ih*1.0;
+    const edge=(x0,y0,x1,y1,rx,ry,rw,rh)=>{const g=lx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');lx.fillStyle=g;lx.fillRect(rx,ry,rw,rh);};
+    edge(0,0,ex,0,0,0,ex,ih); edge(iw,0,iw-ex,0,iw-ex,0,ex,ih);
+    edge(0,0,0,ey,0,0,iw,ey); edge(0,ih,0,ih-ey,0,ih-ey,iw,ey);
+    lx.globalCompositeOperation='source-over';
+  }
+  return true;
+}
+function drawLayer(ang,sc,alpha){
+  const iw=L.width,ih=L.height,cover=Math.max(W/iw,H/ih)*sc,dw=iw*cover,dh=ih*cover;
+  cx.save();cx.translate(W/2,H/2);cx.rotate(ang);cx.globalAlpha=alpha;cx.drawImage(L,-dw/2,-dh/2,dw,dh);cx.restore();
+}
+// smallest zoom that keeps a rotated cover-fit image filling the screen
+function needScale(ang){const c=Math.abs(Math.cos(ang)),s=Math.abs(Math.sin(ang));
+  return Math.max((W*c+H*s)/W,(W*s+H*c)/H);}
+
+function tick(now){
+  const dt=Math.min(64,now-last);last=now;
+  P+=(target()-P)*(1-Math.exp(-dt/60));
+  // spin window: 12% → 88% of the section
+  const q=clamp((P-.12)/.76,0,1), e=ease(q);
+  const ang=e*Math.PI*2;
+  vel+=((ang-prevA)/Math.max(dt,1)*16-vel)*.35; prevA=ang;
+  const f=P*(N-1);
+  const full=needScale(ang);
+  const sc=Math.min(full,1.32)*(1+0.03*Math.sin(Math.PI*q));
+  cx.setTransform(dpr,0,0,dpr,0,0);cx.globalAlpha=1;cx.fillStyle='#e9d9cc';cx.fillRect(0,0,W,H);
+  // soft fill behind: tiny copy scaled up = natural blur (works in Safari, no ctx.filter)
+  if(full>sc+0.01){const a=imgs[Math.round(f)];if(a&&a.naturalWidth){sx.clearRect(0,0,sm.width,sm.height);sx.drawImage(a,0,0,sm.width,sm.height);
+    const cover=Math.max(W/sm.width,H/sm.height)*full*1.04,dw=sm.width*cover,dh=sm.height*cover;
+    cx.save();cx.translate(W/2,H/2);cx.rotate(ang);cx.imageSmoothingQuality='high';cx.drawImage(sm,-dw/2,-dh/2,dw,dh);cx.restore();}}
+  const m=clamp((full-sc)/0.25,0,1), blur=clamp(Math.abs(vel)*1.2,0,0.10);
+  if(buildLayer(f,m)){
+    drawLayer(ang,sc,1);
+    if(blur>0.004){const steps=4;for(let s=1;s<=steps;s++)drawLayer(ang-Math.sign(vel)*blur*s/steps,sc,0.2);}
+  }
+  // soft vignette, stronger while spinning
+  const g=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.25,W/2,H/2,Math.hypot(W,H)/2);
+  g.addColorStop(0,'rgba(60,25,15,0)');g.addColorStop(1,'rgba(60,25,15,'+(0.18+Math.min(.25,blur*1.6))+')');
+  cx.globalAlpha=1;cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  hint.style.opacity=P<.03?.75:0;
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
