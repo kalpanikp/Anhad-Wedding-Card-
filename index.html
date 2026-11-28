@@ -134,8 +134,9 @@ a{color:inherit}
 
 /* ── the stationery suite: cotton-paper cards that stack as you scroll ── */
 #suite{position:relative;z-index:1;padding-top:0}
-.sheet{--h:124.8cqw;position:sticky;top:calc(50vh - var(--h) / 2 + var(--i) * 1.3vh);width:88cqw;height:var(--h);margin:0 auto 62vh;transform-origin:50% 0;will-change:transform}
-.sheet:last-child{margin-bottom:14vh}
+.sheet{--h:124.8cqw;position:sticky;top:calc(50vh - var(--h) / 2 + var(--i) * 1.3vh);width:88cqw;height:var(--h);margin:0 auto;transform-origin:50% 0;will-change:transform}
+.gap{height:62vh}
+.gap.end{height:14vh}
 .sheet:before{content:"";position:absolute;left:3%;right:3%;top:2.5%;bottom:1.5%;transform:rotate(var(--r));box-shadow:0 .6cqw 1.2cqw rgba(0,0,0,.32),0 3.4cqw 6cqw rgba(0,0,0,.42);border-radius:1cqw}
 .sheet .pp{position:absolute;inset:0;transform:rotate(var(--r))}
 .sheet .bgp{position:absolute;inset:0;background:url(a/blank.webp) center/100% 100% no-repeat}
@@ -305,6 +306,7 @@ a{color:inherit}
       <div class="shade" style="-webkit-mask-image:url(a/paper.webp);mask-image:url(a/paper.webp)"></div>
     </div>
 
+    <div class="gap"></div>
     <div class="sheet" id="sh2" style="--i:1;--r:.7deg">
       <div class="pp"><div class="bgp"></div><div class="ct">
         <div class="lab k-lab rv">The day</div>
@@ -327,6 +329,7 @@ a{color:inherit}
       <div class="shade"></div>
     </div>
 
+    <div class="gap"></div>
     <div class="sheet" id="sh3" style="--i:2;--r:-.5deg">
       <div class="pp"><div class="bgp"></div><div class="ct">
         <div class="lab k-lab rv">The venue</div>
@@ -340,6 +343,7 @@ a{color:inherit}
       <div class="shade"></div>
     </div>
 
+    <div class="gap"></div>
     <div class="sheet" id="sh4" style="--i:3;--r:.5deg">
       <div class="pp"><div class="bgp"></div><div class="ct">
         <div class="lab k-lab rv">Kindly respond</div>
@@ -350,6 +354,7 @@ a{color:inherit}
       </div></div>
       <div class="shade"></div>
     </div>
+  <div class="gap end"></div>
   </div>
 
   <div id="closeZone">
