@@ -232,6 +232,8 @@ a{color:inherit}
 #fin .s{font:italic 400 4cqw/1.3 var(--d);color:#ead8b2;margin-top:1cqw;text-shadow:0 1px 4px rgba(0,0,0,.85)}
 .fx{opacity:0;transform:translateY(3cqw);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
 #fin.in .fx{opacity:1;transform:none}
+#fin:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(26,10,6,.72) 0%,rgba(26,10,6,.35) 26%,transparent 42%,transparent 62%,rgba(26,10,6,.4) 80%,rgba(26,10,6,.78) 100%);opacity:0;transition:opacity 1.2s}
+#fin.in:before{opacity:1}
 #fin.in .fx.d2{transition-delay:.5s}
 /* ── cinematic type: letters rise out of soft focus, foil lines are laid left to right, rules draw from the centre ── */
 .w{display:inline-block;white-space:nowrap}
@@ -277,7 +279,7 @@ a{color:inherit}
     <div id="tapHint"><span class="lab">Touch the seal</span></div>
     <canvas id="dust" class="L"></canvas>
     <div class="cap" id="c1"><div class="lab">The Anand Karaj of</div><div class="nm"><span class="bN">Toshi</span><i>&amp;</i><span class="gN">Anhad</span></div><div class="dt" id="c1d"></div></div>
-    <div class="cap" id="c2"><div class="gur">ਏਕ ਜੋਤਿ ਦੁਇ ਮੂਰਤੀ</div><div class="tr">One light, in two forms</div><div class="lab">Sri Guru Granth Sahib Ji · Ang 788</div></div>
+    <div class="cap" id="c2"><div class="tr">With her father’s blessing,<br>a new beginning</div><div class="lab">The palla</div></div>
     <div id="scrollHint"><svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg><span class="lab">Scroll to enter</span></div>
   </div>
 
@@ -409,9 +411,9 @@ const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 
    LO (540px) for the whole film, always ready, smooth while moving;
    HI (1080px AVIF) streamed around the camera, takes over as it slows.
    ========================================================= */
-const J_N = 421, F_OPEN = 55, F_BOW = 360, F_DUSK0 = 361, F_END = 420, F_GUR = 310, OPEN_SHARE = .14;
-/* chapters of her film: box 0–55 · getting ready 56–104 · twirl 99–159 · steps 156–194 · darbar 192–305 · palla 301–360 · dusk 361–420 */
-const F_TW0 = 99, F_TW1 = 159, F_POV = 157, F_C3 = 192, F_MID = 268;
+const J_N = 399, F_OPEN = 54, F_BOW = 350, F_DUSK0 = 351, F_END = 398, F_GUR = 296, OPEN_SHARE = .15;
+/* one continuous shot: box 0–54 · her room & mother 54–114 · into her eyes 114–125 · twirl 120–179 · Ganesh 179–290 · palla 290–350 · finale 351–398 */
+const F_TW0 = 120, F_TW1 = 179, F_POV = 179, F_PAL = 290, F_MID = 150;
 const pad = i => String(i).padStart(3, '0');
 const LO = { a: new Array(J_N), q: [], fl: 0, max: 5, src: i => `a/j/${pad(i)}.webp` };
 const HI = { a: new Array(J_N), q: [], fl: 0, max: 3, src: i => `a/k/${pad(i)}.avif`, on: false };
@@ -612,9 +614,9 @@ const front = $('.face.front .inner');
 $$('.f-ak .foil,.k-ak .foil').forEach(f => { const p = f.closest('.f-ak,.k-ak'); });
 
 /* =========================================================
-   SIDE MARKER — chapters: Her day · Gurdwara · Invitation · The day · Venue · RSVP
+   SIDE MARKER — chapters: Her day · Blessings · Invitation · The day · Venue · RSVP
    ========================================================= */
-const rail = $('#rail'), CH = ['Her day', 'Gurdwara', 'Invitation', 'The day', 'Venue', 'RSVP'], RN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+const rail = $('#rail'), CH = ['Her day', 'Blessings', 'Invitation', 'The day', 'Venue', 'RSVP'], RN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
 let chY = [], chNow = -1, railT = 0, rlT = 0;
 CH.forEach((n, i) => { const d = document.createElement('button'); d.className = 'dm'; d.setAttribute('aria-label', n); d.style.top = (i / (CH.length - 1) * 100) + '%';
   d.addEventListener('click', () => { if (opened && chY.length) { scrollTo({ top: chY[i], behavior: 'smooth' }); if (navigator.vibrate) navigator.vibrate(6); } }); rail.appendChild(d); });
@@ -722,7 +724,7 @@ function settleMusic() { if (!intro || !ac) return; intro = false; const t = ac.
 function startBeds() { const now = ac.currentTime; ['amb_court', 'amb_hall', 'amb_dusk'].forEach(n => { if (!buf[n]) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; s.loop = true; gn.gain.value = 0; s.connect(gn); gn.connect(master); s.start(now + Math.random()); amb[n] = gn; }); }
 function sfx(n, vol = 1, duck = true) { if (!ac || !buf[n] || muted) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; gn.gain.value = vol; s.connect(gn); gn.connect(master); s.start(); if (duck && !intro) { const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setTargetAtTime(MUSIC * .62, t, .08); musicG.gain.setTargetAtTime(MUSIC, t + Math.min(1.5, buf[n].duration), .5); } }
 let ambT = 0;
-function ambMix() { if (!ac) return; const now = performance.now(); if (now - ambT < 200) return; ambT = now; const court = sm(F_POV - 8, F_POV + 2, P) * (1 - sm(F_C3, F_C3 + 10, P)), hall = sm(F_C3, F_C3 + 14, P) * (1 - sm(F_BOW, F_DUSK0, P)), dusk = sm(F_BOW, F_DUSK0 + 6, P); const set = (n, v) => amb[n] && amb[n].gain.setTargetAtTime(v, ac.currentTime, .3); set('amb_court', .5 * court); set('amb_hall', .45 * hall); set('amb_dusk', .5 * dusk); }
+function ambMix() { if (!ac) return; const now = performance.now(); if (now - ambT < 200) return; ambT = now; const court = 1 - sm(F_PAL - 6, F_PAL + 4, P), hall = sm(F_PAL - 4, F_PAL + 8, P) * (1 - sm(F_BOW, F_DUSK0, P)), dusk = sm(F_BOW, F_DUSK0 + 6, P); const set = (n, v) => amb[n] && amb[n].gain.setTargetAtTime(v, ac.currentTime, .3); set('amb_court', .5 * court); set('amb_hall', .45 * hall); set('amb_dusk', .5 * dusk); }
 $('#mute').addEventListener('click', () => { muted = !muted; if (master) master.gain.setTargetAtTime(muted ? 0 : 1, ac.currentTime, .15); $('#wave').style.opacity = muted ? 0 : 1; });
 
 /* fx — petals in the courtyard, gold leaf as the seal lifts */
