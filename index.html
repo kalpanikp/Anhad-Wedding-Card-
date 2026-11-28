@@ -100,6 +100,7 @@ a{color:inherit}
 #c1 .nm i{color:#a2701e;text-shadow:0 0 1cqw rgba(255,240,205,.95),0 0 4cqw rgba(255,220,170,.6)}
 #c1 .dt{font:italic 400 4.4cqw/1.3 var(--d);color:#5d2a18;margin-top:2.6cqw;text-shadow:0 0 1cqw rgba(255,240,212,.95),0 0 4cqw rgba(255,226,180,.6)}
 #c1 .dz{opacity:0}
+#c1 .nm span,#fin .nm span{display:inline-block}
 #dustG{position:fixed;top:0;left:50%;transform:translateX(-50%);width:var(--W);height:100vh;pointer-events:none;z-index:15;filter:blur(3px);mix-blend-mode:screen;opacity:.95}
 #dustT{position:fixed;top:0;left:50%;transform:translateX(-50%);width:var(--W);height:100vh;pointer-events:none;z-index:15}
 .f-name.dz,#fin .nm .dz{opacity:0}
@@ -656,51 +657,75 @@ class Dust {
     }
     this.parts = parts;
   }
-  play(delay = 0) { this.p = 0; this.q = 0; this.anim = { t0: performance.now() + delay, dur: this.o.dur || 2600 }; }
+  play(delay = 0) { this.p = 0; this.q = 0; this.anim = { t0: performance.now() + delay, dur: this.o.dur || 4400 }; }
+  /* timeline: 0–.12 light gathers at the source · .12–.84 the quill writes, item by item, left to right
+     · .84–.9 the ribbon thins away · .86–1 one gleam across the names */
+  slots() {
+    if (this._slots) return this._slots;
+    const ws = this.items.map(it => Math.max(.35, it.el.getBoundingClientRect().width / 100) * (it.w || 1)), tot = ws.reduce((a, b) => a + b, 0);
+    let t = .12; this._slots = ws.map(w => { const len = .72 * w / tot, sl = [t, len]; t += len; return sl; }); return this._slots;
+  }
   step(now) {
     if (this.anim) { this.p = clamp((now - this.anim.t0) / this.anim.dur); if (this.p >= 1) this.anim = null; }
-    const P = this.p, Q = this.q;
-    // timeline: 0–.5 the dust drifts in and gathers · .5–.62 it hangs, held · .62–.82 it settles · .76–.9 the letters appear · .86–1 a gleam
-    const op = P < 1 ? sm(.76, .9, P) : 1 - sm(.02, .25, Q);
-    const g = P < 1 ? sm(.78, .88, P) * (1 - sm(.9, 1, P)) * .6 : 0;
-    const key = op.toFixed(3) + '|' + g.toFixed(2);
-    if (key !== this.lastKey) { this.lastKey = key; const f = g > .01 ? `brightness(${(1 + g * 1.2).toFixed(2)}) drop-shadow(0 0 ${(g * 9).toFixed(1)}px rgba(255,226,160,${(g * .9).toFixed(2)}))` : '';
-      this.items.forEach(it => { it.el.style.opacity = op.toFixed(3); it.el.style.filter = f; }); }
+    const P = this.p, Q = this.q, S = this.slots();
+    const st = (P < 1 ? 'w' : 'd') + (P < 1 ? P.toFixed(3) : Q.toFixed(3));
+    if (st === this.lastKey) return (P > 0 && P < 1) || (P >= 1 && Q > 0 && Q < 1); this.lastKey = st;
+    this.items.forEach((it, i) => {
+      const el = it.el;
+      if (P < 1) { // the letters appear just behind the nib, through a feathered mask
+        const pr = clamp((P - S[i][0]) / S[i][1] - .04);
+        if (!el._mk) { el._mk = 1; el.style.webkitMaskImage = el.style.maskImage = 'linear-gradient(90deg,#000 44%,transparent 56%)'; el.style.webkitMaskSize = el.style.maskSize = '300% 100%'; el.style.webkitMaskRepeat = el.style.maskRepeat = 'no-repeat'; }
+        const mp = (100 - pr * 100).toFixed(1) + '% 0'; el.style.webkitMaskPosition = el.style.maskPosition = mp;
+        el.style.opacity = pr > 0 ? '1' : '0';
+        const g = sm(0, .25, pr) * (1 - sm(.6, 1, clamp((P - S[i][0] - S[i][1]) / .12)));
+        el.style.filter = g > .02 ? `brightness(${(1 + g * .9).toFixed(2)}) drop-shadow(0 0 ${(g * 7).toFixed(1)}px rgba(255,222,150,${(g * .8).toFixed(2)}))` : '';
+      } else {
+        if (el._mk) { el._mk = 0; el.style.webkitMaskImage = el.style.maskImage = ''; }
+        el.style.filter = ''; el.style.opacity = (1 - sm(.02, .25, Q)).toFixed(3);
+      }
+    });
     return (P > 0 && P < 1) || (P >= 1 && Q > 0 && Q < 1);
   }
   draw(ctx, gx, col) {
     if (!this.parts) { if (document.fonts && document.fonts.status !== 'loaded') return; this.sample(); }
-    const o = this.o, rects = new Map(), A = this.p < 1, P = this.p, Q = this.q, T = performance.now() / 1000;
-    let field; // where the dust starts: spread across the sky / around the card
-    if (o.from === 'sun') { const r = cam.getBoundingClientRect(); field = [r.left - col.left, r.top + r.height * .03, r.width, r.height * .46]; }
+    const o = this.o, rects = new Map(), A = this.p < 1, P = this.p, Q = this.q, T = performance.now() / 1000, S = this.slots();
+    const r0 = this.items[0].el.getBoundingClientRect();
+    let src;
+    if (o.from === 'sun') { const r = cam.getBoundingClientRect(); src = [r.left - col.left + r.width * .70, r.top + r.height * .40]; }
+    else if (o.from === 'top') src = [r0.left - col.left + r0.width * .5, r0.top - 160];
+    else src = [r0.left - col.left - 30, r0.top - 90];
     const NG = this.pals.length, B = this.B || (this.B = Array.from({ length: NG * NB * NA }, () => [])); B.forEach(b => b.length = 0);
     const G = this.G || (this.G = [[], [], []]); G.forEach(b => b.length = 0);
-    const gather = sm(0, .5, P), held = P > .5 && P < .62;
-    const gx0 = .86, gleam = P > gx0 ? (P - gx0) / (1 - gx0) : -1;
-    const glints = [];
+    const gleam = P > .86 ? (P - .86) / .14 : -1, glints = [], FL = .2;
+    let nib = null, nibW = -1;
     for (const pt of this.parts) {
       let rc = rects.get(pt.el); if (!rc) { rc = pt.el.getBoundingClientRect(); rects.set(pt.el, rc); }
-      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty;
-      const hx = Math.sin(T * (.35 + pt.r1 * .4) + pt.r5 * 6.283) * (4 + pt.r3 * 7), hy = Math.cos(T * (.3 + pt.r2 * .35) + pt.r4 * 6.283) * (3 + pt.r2 * 6);
-      let x, y, a, ci, sz;
+      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty; let x, y, a, ci, sz;
       if (A) {
-        if (P > .9 && gleam < 0) continue;
-        if (P >= .84) { // the gleam: light slides across the finished letters
-          const band = (pt.u + (pt.ty / Math.max(1, rc.height)) * .25) - (gleam * 1.6 - .3), w = Math.exp(-band * band / .012);
-          if (w < .05) continue; x = tx; y = ty; a = w * .9 * (1 - sm(.96, 1, P)); ci = 0; sz = .9;
-          if (pt.r5 > .9985) glints.push([tx, ty, w]);
+        const sl = S[pt.gi], w = sl[0] + pt.u * sl[1];             // the moment the nib passes this point
+        if (gleam >= 0) {
+          const band = (pt.u + (pt.ty / Math.max(1, rc.height)) * .25) - (gleam * 1.6 - .3), bw = Math.exp(-band * band / .012);
+          if (bw < .05) continue; x = tx; y = ty; a = bw * .85 * (1 - sm(.95, 1, P)); ci = 0; sz = .9; if (pt.r5 > .9985) glints.push([tx, ty, bw]);
         } else {
-          let ox, oy; if (field) { ox = field[0] + pt.r2 * field[2]; oy = field[1] + pt.r3 * field[3]; }
-          else { ox = tx + (pt.r2 - .5) * rc.width * 1.5; oy = ty + (pt.r3 - .5) * 260; }
-          const ge = .5 - .5 * Math.cos(gather * Math.PI), halo = .38 + pt.r4 * .2;      // inhale: drift two-thirds of the way in
-          const hxp = ox + (tx - ox) * (1 - halo) * ge, hyp = oy + (ty - oy) * (1 - halo) * ge;
-          const sk = clamp((P - .62 - pt.r1 * .06) / .2), se = .5 - .5 * Math.cos(sk * Math.PI);  // settle: all together, softly
-          x = hxp + (tx - hxp) * se + hx * (1 - se); y = hyp + (ty - hyp) * se + hy * (1 - se);
-          const tw = .6 + .4 * Math.sin(T * (1.4 + pt.r4 * 2) + pt.r5 * 30);
-          a = sm(0, .28, P) * (.55 + .45 * se) * tw * (1 - sm(.8, .88, P)) * (held ? 1 : 1);
-          ci = Math.min(4, 2 + Math.floor(se * se * 2.9)); sz = (.7 + pt.lw * .9) * (1.15 - se * .35);
+          const s0 = (P - (w - FL)) / FL;                          // 0→1 along the ribbon, landing at w
+          if (s0 < -.02) { // waiting at the source: a soft gathering of light
+            if (P > .14 || pt.r3 > .25) continue; const an = pt.r2 * 6.283 + T * (.6 + pt.r1), rr = 4 + pt.r4 * 16 * sm(0, .12, P);
+            x = src[0] + Math.cos(an) * rr; y = src[1] + Math.sin(an) * rr * .7; a = sm(0, .1, P) * .7; ci = 1; sz = .8;
+          } else if (s0 < 1) { // in the ribbon: one silk-like S-curve, all particles sharing it
+            const k = clamp(s0), e = k * k * (3 - 2 * k), ik = 1 - e;
+            const c1x = src[0] - 70, c1y = src[1] - 150, c2x = tx + 60, c2y = ty - 110;
+            x = ik * ik * ik * src[0] + 3 * ik * ik * e * c1x + 3 * ik * e * e * c2x + e * e * e * tx;
+            y = ik * ik * ik * src[1] + 3 * ik * ik * e * c1y + 3 * ik * e * e * c2y + e * e * e * ty;
+            const bell = Math.sin(Math.PI * k), wave = Math.sin(k * 7 - T * 2.2) * 7 * bell;   // the whole ribbon breathes as one
+            x += (pt.r4 - .5) * 16 * bell + wave * .6; y += (pt.r2 - .5) * 10 * bell + wave;
+            a = (.55 + .45 * bell) * (1 - sm(.84, .9, P)) * (.8 + .2 * Math.sin(T * 8 + pt.r5 * 30)); ci = Math.min(3, 1 + Math.floor(k * 2.4)); sz = .65 + pt.lw * .8;
+            if (k > .9 && w > nibW && P < .86) { nibW = w; nib = [tx, ty]; }
+          } else { // landed: a glint that cools into the ink as the letter appears
+            const lk = (P - w) / .08; if (lk >= 1) continue; x = tx + (pt.r4 - .5) * 2 * (1 - lk); y = ty; a = (1 - lk) * .9; ci = 3 + Math.floor(lk * 2); sz = .7 + pt.lw * .5;
+          }
         }
       } else { // exhale: the letters loosen into a slow golden drift
+        const hx = Math.sin(T * (.35 + pt.r1 * .4) + pt.r5 * 6.283) * 6, hy = Math.cos(T * (.3 + pt.r2 * .35) + pt.r4 * 6.283) * 5;
         const e = pt.u * .25 + pt.r1 * .35, k = clamp((Q - e) / .6); if (k <= 0 || k >= 1) continue;
         const ek = 1 - Math.pow(1 - k, 2), cx = rc.left - col.left + rc.width / 2, cy = rc.top + rc.height / 2;
         let dx = tx - cx, dy = ty - cy; const dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
@@ -709,26 +734,29 @@ class Dust {
       }
       if (a < .03) continue;
       B[(pt.gi * NB + ci) * NA + Math.min(NA - 1, Math.floor(a * NA))].push(x, y, sz);
-      if (pt.r3 < .35) G[Math.min(2, Math.floor(pt.r2 * 3))].push(x, y, a);
+      if (pt.r3 < .45) G[Math.min(2, Math.floor(pt.r2 * 3))].push(x, y, a);
     }
     for (let g = 0; g < NG; g++) for (let ci = 0; ci < NB; ci++) for (let ai = 0; ai < NA; ai++) {
       const L = B[(g * NB + ci) * NA + ai]; if (!L.length) continue;
-      ctx.globalAlpha = (ai + .7) / NA; ctx.fillStyle = (A ? (P >= .84 ? ['#fffaf0'] : this.pals[g]) : this.diss[g])[A && P >= .84 ? 0 : ci]; ctx.beginPath();
+      ctx.globalAlpha = (ai + .7) / NA; ctx.fillStyle = A ? (gleam >= 0 ? '#fffaf0' : this.pals[g][ci]) : this.diss[g][ci]; ctx.beginPath();
       for (let i = 0; i < L.length; i += 3) { const r = L[i + 2] * DDP * .5; ctx.rect(L[i] * DDP - r, L[i + 1] * DDP - r, r * 2, r * 2); }
       ctx.fill();
     }
     gx.globalCompositeOperation = 'lighter';
     for (let gi = 0; gi < 3; gi++) { const L = G[gi]; if (!L.length) continue; gx.globalAlpha = .16; gx.fillStyle = GLOWC[gi]; gx.beginPath();
       for (let i = 0; i < L.length; i += 3) { gx.moveTo(L[i] * GS + 2, L[i + 1] * GS); gx.arc(L[i] * GS, L[i + 1] * GS, 2, 0, 6.283); } gx.fill(); }
-    // a few star-glints on the gleam
+    if (A && P < .14) { gx.globalAlpha = sm(0, .1, P) * (1 - sm(.1, .16, P)) * .8; gx.fillStyle = '#fff1c8'; gx.beginPath(); gx.arc(src[0] * GS, src[1] * GS, 9, 0, 6.283); gx.fill(); }
+    if (nib) { // the nib: a small bright point of light writing
+      gx.globalAlpha = .9; gx.fillStyle = '#fff6dc'; gx.beginPath(); gx.arc(nib[0] * GS, nib[1] * GS, 5, 0, 6.283); gx.fill();
+      ctx.globalAlpha = .95; ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.arc(nib[0] * DDP, nib[1] * DDP, 1.6 * DDP, 0, 6.283); ctx.fill(); }
     for (const [x, y, w] of glints) { const L = 9 * w; ctx.globalAlpha = w * .9; ctx.strokeStyle = '#fffaf0'; ctx.lineWidth = .8 * DDP; ctx.beginPath(); ctx.moveTo((x - L) * DDP, y * DDP); ctx.lineTo((x + L) * DDP, y * DDP); ctx.moveTo(x * DDP, (y - L) * DDP); ctx.lineTo(x * DDP, (y + L) * DDP); ctx.stroke();
       gx.globalAlpha = w * .5; gx.fillStyle = '#fff2cc'; gx.beginPath(); gx.arc(x * GS, y * GS, 4, 0, 6.283); gx.fill(); }
     gx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = gx.globalAlpha = 1;
   }
 }
-const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014' }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18' }], { from: 'sun', budget: 4600, dur: 5600 });
-const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'scatter', budget: 3000, dur: 4400 });
-const dustFin = new Dust([{ el: $('#fin .gN'), c: '#fff6e6' }, { el: $('#fin .nm i'), c: '#ecd49c' }, { el: $('#fin .bN'), c: '#fff6e6' }], { from: 'scatter', budget: 4200 });
+const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014', w: .55 }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18', w: .55 }], { from: 'sun', budget: 4200, dur: 4600 });
+const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'corner', budget: 2800, dur: 3600 });
+const dustFin = new Dust([{ el: $('#fin .gN'), c: '#fff6e6' }, { el: $('#fin .nm i'), c: '#ecd49c' }, { el: $('#fin .bN'), c: '#fff6e6' }], { from: 'top', budget: 3400 });
 window.dustCard = dustCard;
 const DUSTS = [dustFilm, dustCard, dustFin];
 let dustWas = false;
@@ -738,7 +766,7 @@ function dustLoop(now) {
   else if (dustWas) { dctx.clearRect(0, 0, DW, DH); gctx.clearRect(0, 0, glowCv.width, glowCv.height); dustWas = false; }
   requestAnimationFrame(dustLoop);
 }
-addEventListener('resize', () => { dustSize(); DUSTS.forEach(d => d.parts = null); });
+addEventListener('resize', () => { dustSize(); DUSTS.forEach(d => { d.parts = null; d._slots = null; }); });
 dustSize(); requestAnimationFrame(dustLoop);
 
 /* =========================================================
@@ -853,14 +881,15 @@ function openCard() {
   setTimeout(() => { sealW.classList.add('split'); burstDust(); $('#seam').classList.add('go'); $('#sheen').classList.add('go'); sfx('swoosh', .2, false); }, 620);
   setTimeout(() => { const go = () => op.play().catch(() => {}); if (op.readyState >= 3) go(); else op.addEventListener('canplay', go, { once: true }); }, 820);
 }
-op.addEventListener('timeupdate', () => { if (op.currentTime > 5.8) endOpening(); });
+let dustGo = false;
+op.addEventListener('timeupdate', () => { if (!dustGo && op.currentTime > 2.6) { dustGo = true; dustFilm.play(0); } if (op.currentTime > 5.8) endOpening(); });
 op.addEventListener('ended', endOpening);
 function endOpening() {
   if (opened) return; opened = true;
   document.body.classList.remove('locked'); measure(); scrollTo(0, yOpen());
   P = Pt = Pprev = F_OPEN; lastY = scrollY; dirty = true; hiFeed(F_OPEN, true); render();
   op.style.transition = 'opacity .3s'; op.style.opacity = 0; setTimeout(() => op.remove(), 400);
-  $('#chrome').classList.add('on'); dustFilm.play(250);
+  $('#chrome').classList.add('on'); if (!dustGo) { dustGo = true; dustFilm.play(0); }
   setTimeout(() => loadRange(Math.max(0, F_OPEN - 72), F_OPEN + 100), 700);
 }
 $('#seal').addEventListener('click', openCard);
