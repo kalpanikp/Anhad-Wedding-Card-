@@ -100,6 +100,7 @@ a{color:inherit}
 #c1 .nm i{color:#a2701e;text-shadow:0 0 1cqw rgba(255,240,205,.95),0 0 4cqw rgba(255,220,170,.6)}
 #c1 .dt{font:italic 400 4.4cqw/1.3 var(--d);color:#5d2a18;margin-top:2.6cqw;text-shadow:0 0 1cqw rgba(255,240,212,.95),0 0 4cqw rgba(255,226,180,.6)}
 #c1 .dz{opacity:0}
+#dustG{position:fixed;top:0;left:50%;transform:translateX(-50%);width:var(--W);height:100vh;pointer-events:none;z-index:15;filter:blur(3px);mix-blend-mode:screen;opacity:.95}
 #dustT{position:fixed;top:0;left:50%;transform:translateX(-50%);width:var(--W);height:100vh;pointer-events:none;z-index:15}
 .f-name.dz,#fin .nm .dz{opacity:0}
 #c2 .gur{font:600 6.8cqw/1.4 var(--g);color:#f6e2ad;text-shadow:var(--foil)}
@@ -360,7 +361,8 @@ a{color:inherit}
   </div>
 </div>
 
-<canvas id="dustT"></canvas>
+<audio id="bgm" src="a/bed.mp3" preload="auto" playsinline loop></audio>
+<canvas id="dustG"></canvas><canvas id="dustT"></canvas>
 <div id="chrome"><button class="chip" id="detBtn"><span class="lab">Details</span></button><button class="chip" id="mute" aria-label="Sound on or off"><svg viewBox="0 0 24 24" fill="none" stroke="#fbefd6" stroke-width="1.7"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fbefd6" stroke="none"/><path id="wave" d="M16 9c1.5 1.5 1.5 4.5 0 6M18.5 6.5c3 3 3 8 0 11"/></svg></button></div>
 
 <script>
@@ -477,12 +479,13 @@ function targetFrame(y) {
   if (y < zC0) return F_BOW;
   return F_DUSK0 + (F_END - F_DUSK0) * clamp((y - zC0) / (zC1 - zC0));
 }
-let lastY = -1, restT = 0, wasCut = false;
+let lastY = -1, restT = 0, wasCut = false, lastT = 0;
 function frameLoop(now) {
+  const dt = Math.min(50, now - (lastT || now)); lastT = now;
   if (opened) {
     const y = scrollY; Pt = targetFrame(y); for (const k of [0, 72, 207, 290, 351]) if (Math.abs(Pt - k) < .7) Pt = k;
-    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * .2; if (Math.abs(Pt - P) < .01) P = Pt; camV = camV * .7 + Math.abs(P - Pprev) * .3; Pprev = P;
-    if (Math.abs(diff) > .005 || y !== lastY) { dirty = true; feed(); restT = now; hdShow(false); }
+    const diff = Pt - P; P = Math.abs(diff) > 40 ? Pt : P + diff * (1 - Math.exp(-dt / 80)); if (Math.abs(Pt - P) < .01) P = Pt; camV = camV * .7 + Math.abs(P - Pprev) * .3; Pprev = P;
+    if (Math.abs(diff) > .005 || y !== lastY) { dirty = true; feed(); restT = now; hdShow(false); if (intro && lastY >= 0 && Math.abs(y - lastY) > 2) settleMusic(); }
     else { if (now - restT > 260) hdShow(true); if (now - lastHi > 300) { lastHi = now; hiFeed(Math.round(P), true); } }
     lastY = y; layers(y);
     if (dirty && render()) dirty = false;
@@ -530,9 +533,7 @@ function layers(y) {
       let p = 0; if (i < sheets.length - 1) { const n = sheets[i + 1].getBoundingClientRect().top, ns = vh / 2 - sH / 2 + (i + 1) * .013 * vh; p = clamp(1 - (n - ns) / (vh * .85)); }
       setS(s, 'transform', p ? `translateY(${(-p * 3.2).toFixed(2)}cqw) scale(${(1 - p * .06).toFixed(4)})` : 'none');
       setS(shades[i], 'opacity', (p * .42).toFixed(3));
-      const sh = clamp(1 - (r.top - stick) / vh); if (i === 0) document.documentElement.style.setProperty('--sh', sh.toFixed(3));
-      if (i === 2) document.documentElement.style.setProperty('--sh3', (1.15 - sh * 1.3).toFixed(3));
-      if (i === 1 || i === 3) s.style.setProperty('--sh', sh.toFixed(3));
+      const sh = clamp(1 - (r.top - stick) / vh); const shv = sh.toFixed(2); if (s._sh !== shv) { s._sh = shv; s.style.setProperty('--sh', shv); if (i === 2) s.style.setProperty('--sh3', (1.15 - sh * 1.3).toFixed(2)); }
     }
   }
   $('#fin').classList.toggle('in', y > zC0 + vh * .7); dustFin.p = sm(zC0 + vh * .5, zC0 + vh * 1.05, y);
@@ -618,15 +619,18 @@ tick(); setInterval(tick, 1000);
    sunlit dust and dissolve back into it. Every particle's position is a
    pure function of progress, so scrolling back plays it in reverse.
    ========================================================= */
-const dustCv = $('#dustT'), dctx = dustCv.getContext('2d');
-let DW = 0, DH = 0, DDP = 1;
-function dustSize() { const r = dustCv.getBoundingClientRect(); DDP = Math.min(2, devicePixelRatio || 1); DW = dustCv.width = Math.round(r.width * DDP); DH = dustCv.height = Math.round(r.height * DDP); }
+const dustCv = $('#dustT'), dctx = dustCv.getContext('2d'), glowCv = $('#dustG'), gctx = glowCv.getContext('2d');
+let DW = 0, DH = 0, DDP = 1, GS = .5;
+function dustSize() { const r = dustCv.getBoundingClientRect(); DDP = Math.min(2, devicePixelRatio || 1); DW = dustCv.width = Math.round(r.width * DDP); DH = dustCv.height = Math.round(r.height * DDP); glowCv.width = Math.round(r.width * GS); glowCv.height = Math.round(r.height * GS); }
 const hexRGB = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 const mixC = (a, b, t) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`;
-const HOT = hexRGB('#fff6dc'), SPARK = hexRGB('#ffe3a0'), GOLDD = hexRGB('#d9a443');
+const HOT = hexRGB('#fffaf0'), GOLDD = hexRGB('#f0c46a'), EMBER = hexRGB('#ffd98a');
+const GLOWC = ['#fff4d6', '#ffe2a0', '#f7c76a'];
 function rnd(seed) { let x = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const NB = 6, NA = 4;
 class Dust {
-  constructor(items, o) { this.items = items; this.o = o; this.parts = null; this.p = 0; this.q = 0; this.anim = null; this.last = -1; }
+  constructor(items, o) { this.items = items; this.o = o; this.parts = null; this.p = 0; this.q = 0; this.anim = null; }
   sample() {
     const tot = [], o = this.o;
     for (const it of this.items) {
@@ -638,65 +642,82 @@ class Dust {
       let t = el.textContent; if (cs.textTransform === 'uppercase') t = t.toUpperCase();
       x.fillText(t, w / 2, h / 2 + parseFloat(cs.fontSize) * .04);
       const d = x.getImageData(0, 0, w * k, h * k).data, pts = [];
-      for (let yy = 0; yy < h * k; yy += 2) for (let xx = 0; xx < w * k; xx += 2) if (d[(yy * w * k + xx) * 4 + 3] > 140) pts.push([xx / k - pad, yy / k - pad]);
+      for (let yy = 0; yy < h * k; yy++) for (let xx = (yy & 1); xx < w * k; xx += 2) if (d[(yy * w * k + xx) * 4 + 3] > 120) pts.push([xx / k - pad, yy / k - pad]);
       tot.push({ it, pts, w: r.width });
     }
-    const all = tot.reduce((a, b) => a + b.pts.length, 0), budget = o.budget;
-    const parts = []; let seed = 1;
-    for (const g of tot) {
-      const n = Math.round(budget * g.pts.length / Math.max(1, all)), fin = hexRGB(g.it.c);
+    const all = tot.reduce((a, b) => a + b.pts.length, 0), parts = []; let seed = 1; this.pals = []; this.diss = [];
+    for (const [gi, g] of tot.entries()) {
+      const n = Math.round(o.budget * g.pts.length / Math.max(1, all)), fin = hexRGB(g.it.c);
+      const pal = [0, 1, 2, 3, 4, 5].map(i => i < 4 ? mixC(HOT, GOLDD, i / 3) : mixC(GOLDD, fin, (i - 3) / 2)), dis = [0, 1, 2, 3, 4, 5].map(i => i < 2 ? mixC(GOLDD, EMBER, i) : mixC(EMBER, HOT, (i - 1) / 4)); this.pals.push(pal); this.diss.push(dis);
       for (let j = 0; j < n; j++) {
         const pt = g.pts[Math.floor(rnd(seed++) * g.pts.length)]; if (!pt) continue; const s = seed++;
-        parts.push({ el: g.it.el, tx: pt[0], ty: pt[1], u: pt[0] / Math.max(1, g.w), r1: rnd(s), r2: rnd(s + .3), r3: rnd(s + .7), r4: rnd(s + 1.1),
-          pal: [0, 1, 2, 3, 4, 5].map(i => i < 4 ? mixC(HOT, GOLDD, i / 3) : mixC(GOLDD, fin, (i - 3) / 2)), dis: [0, 1, 2, 3, 4, 5].map(i => mixC(fin, SPARK, i / 5)), sz: .8 + rnd(s + 2) * 1.3 });
+        parts.push({ gi, el: g.it.el, tx: pt[0], ty: pt[1], u: pt[0] / Math.max(1, g.w), r1: rnd(s), r2: rnd(s + .3), r3: rnd(s + .7), r4: rnd(s + 1.1), r5: rnd(s + 1.9), pal, dis, lw: .45 + rnd(s + 2) * .6 });
       }
     }
     this.parts = parts;
   }
-  play(delay = 0) { this.p = 0; this.q = 0; this.anim = { t0: performance.now() + delay, dur: this.o.dur || 2200 }; }
-  textOpacity() { return this.p < 1 ? sm(.84, 1, this.p) : 1 - sm(0, .2, this.q); }
+  play(delay = 0) { this.p = 0; this.q = 0; this.anim = { t0: performance.now() + delay, dur: this.o.dur || 2600 }; }
   step(now) {
     if (this.anim) { this.p = clamp((now - this.anim.t0) / this.anim.dur); if (this.p >= 1) this.anim = null; }
-    const op = this.textOpacity().toFixed(3); if (op !== this.lastOp) { this.lastOp = op; this.items.forEach(it => it.el.style.opacity = op); }
-    return (this.p > 0 && this.p < 1) || (this.p >= 1 && this.q > 0 && this.q < 1);
+    const P = this.p, Q = this.q;
+    const op = P < 1 ? sm(.74, .93, P) : 1 - sm(.02, .22, Q);
+    const g = P < 1 ? sm(.7, .88, P) * (1 - sm(.88, 1, P)) : sm(0, .06, Q) * (1 - sm(.06, .22, Q));
+    const key = op.toFixed(3) + '|' + g.toFixed(2);
+    if (key !== this.lastKey) { this.lastKey = key; const f = g > .01 ? `brightness(${(1 + g * 1.6).toFixed(2)}) drop-shadow(0 0 ${(g * 10).toFixed(1)}px rgba(255,222,150,${(g * .95).toFixed(2)}))` : '';
+      this.items.forEach(it => { it.el.style.opacity = op.toFixed(3); it.el.style.filter = f; }); }
+    return (P > 0 && P < 1) || (P >= 1 && Q > 0 && Q < 1);
   }
-  draw(ctx, col) {
+  draw(ctx, gx, col) {
     if (!this.parts) { if (document.fonts && document.fonts.status !== 'loaded') return; this.sample(); }
-    const o = this.o, rects = new Map(), A = this.p < 1, P = this.p, Q = this.q;
+    const o = this.o, rects = new Map(), A = this.p < 1, P = this.p, Q = this.q, T = performance.now() / 1000;
     const sun = o.from === 'sun' ? (() => { const r = cam.getBoundingClientRect(); return [r.left - col.left + r.width * .70, r.top + r.height * .40]; })() : null;
+    const NG = this.pals.length, B = this.B || (this.B = Array.from({ length: NG * NB * NA }, () => [])); B.forEach(b => b.length = 0);
+    const G = this.G || (this.G = [[], [], []]); G.forEach(b => b.length = 0);
+    const pos = (pt, tx, ty, k, phase) => {
+      if (phase) { // gather: a spiralling stream that tightens onto the letter
+        let ox, oy; if (sun) { const an = pt.r2 * 6.283, rr = 4 + pt.r3 * 26; ox = sun[0] + Math.cos(an) * rr; oy = sun[1] + Math.sin(an) * rr; }
+        else { const an = pt.r2 * 6.283, rr = 90 + pt.r3 * 220; ox = tx + Math.cos(an) * rr; oy = ty + Math.sin(an) * rr * .6 + 60; }
+        const e = eio(k), sw = Math.pow(1 - k, 1.6) * (30 + pt.r4 * 110), an2 = pt.r5 * 6.283 + k * (4 + pt.r1 * 5) * (pt.r4 > .5 ? 1 : -1);
+        return [ox + (tx - ox) * e + Math.cos(an2) * sw, oy + (ty - oy) * e + Math.sin(an2) * sw * .7 - Math.sin(k * 3.1416) * (1 - k) * (60 + pt.r3 * 110)];
+      }
+      const kk = k * k, an2 = pt.r5 * 6.283 + k * (3 + pt.r1 * 4), sw = k * (8 + pt.r4 * 26); // dissolve: embers lift on a slow curl
+      return [tx + (pt.r2 - .45) * 70 * kk + Math.cos(an2) * sw, ty - (30 + pt.r3 * 170) * kk + Math.sin(an2) * sw * .5];
+    };
     for (const pt of this.parts) {
       let rc = rects.get(pt.el); if (!rc) { rc = pt.el.getBoundingClientRect(); rects.set(pt.el, rc); }
-      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty; let x, y, a, c, s;
-      if (A) {
-        const dl = o.from === 'sun' ? (1 - pt.u) * .28 + pt.r1 * .2 : pt.r1 * .4, k0 = clamp((P - dl) / .52), k = 1 - Math.pow(1 - k0, 3);
-        if (k0 <= 0) continue;
-        let ox, oy; if (sun) { const an = pt.r2 * 6.283, rr = 10 + pt.r3 * 46; ox = sun[0] + Math.cos(an) * rr; oy = sun[1] + Math.sin(an) * rr; }
-        else { const an = pt.r2 * 6.283, rr = 60 + pt.r3 * 150; ox = tx + Math.cos(an) * rr; oy = ty + Math.sin(an) * rr * .7 + 40; }
-        const mx = (ox + tx) / 2 + (pt.r4 - .5) * 170, my = (oy + ty) / 2 - 40 - pt.r1 * 90, ik = 1 - k;
-        x = ik * ik * ox + 2 * ik * k * mx + k * k * tx; y = ik * ik * oy + 2 * ik * k * my + k * k * ty;
-        a = sm(0, .18, k0) * (1 - sm(.88, 1, P)) * (.55 + .45 * k); c = pt.pal[Math.min(5, Math.floor(Math.pow(k, 2.2) * 6))]; s = pt.sz * (2.3 - k * 1.3);
-      } else {
-        const e = pt.u * .32 + pt.r1 * .38, k = clamp((Q - e) / .5); if (k <= 0 || k >= 1) continue;
-        const kk = k * k, sw = Math.sin(k * 5 + pt.r2 * 6) * 10 * k;
-        x = tx + (pt.r2 - .4) * 90 * kk + sw; y = ty - (40 + pt.r3 * 150) * kk;
-        a = (1 - k) * (.6 + .4 * Math.sin(k * 20 + pt.r4 * 9)); c = pt.dis[Math.min(5, Math.floor(k * 6))]; s = pt.sz * (1.2 + k * .6);
-      }
-      if (a <= .01) continue;
-      ctx.globalAlpha = a; ctx.fillStyle = c; ctx.fillRect((x - s / 2) * DDP, (y - s / 2) * DDP, s * DDP, s * DDP);
+      const tx = rc.left - col.left + pt.tx, ty = rc.top + pt.ty; let k, a, ci;
+      if (A) { const dl = o.from === 'sun' ? (1 - pt.u) * .22 + pt.r1 * .26 : pt.r1 * .42; k = clamp((P - dl) / .5); if (k <= 0) continue;
+        a = sm(0, .1, k) * (1 - sm(.7, 1, k)) * (1 - sm(.86, .97, P)) * (.55 + .45 * Math.sin(T * 9 + pt.r5 * 40)); ci = Math.min(4, Math.floor(Math.pow(k, 1.6) * 5)); }
+      else { const e = pt.u * .3 + pt.r1 * .4; k = clamp((Q - e) / .55); if (k <= 0 || k >= 1) continue;
+        a = (1 - k) * (.55 + .45 * Math.sin(T * 11 + pt.r4 * 30)); ci = Math.min(5, Math.floor(k * 6)); }
+      if (a < .03) continue;
+      const p1 = pos(pt, tx, ty, k, A), p0 = pos(pt, tx, ty, Math.max(0, k - (A ? .018 : .03)), A);
+      B[(pt.gi * NB + ci) * NA + Math.min(NA - 1, Math.floor(a * NA))].push(p0[0], p0[1], p1[0], p1[1]);
+      if (pt.r3 < .45 && (A ? k < .9 : true)) G[Math.min(2, Math.floor(pt.r2 * 3))].push(p1[0], p1[1]);
     }
-    ctx.globalAlpha = 1;
+    ctx.lineCap = 'round';
+    for (let g = 0; g < NG; g++) for (let ci = 0; ci < NB; ci++) for (let ai = 0; ai < NA; ai++) {
+      const L = B[(g * NB + ci) * NA + ai]; if (!L.length) continue;
+      ctx.globalAlpha = (ai + .7) / NA; ctx.strokeStyle = (A ? this.pals[g] : this.diss[g])[ci]; ctx.lineWidth = .55 * DDP; ctx.beginPath();
+      for (let i = 0; i < L.length; i += 4) { ctx.moveTo(L[i] * DDP, L[i + 1] * DDP); ctx.lineTo(L[i + 2] * DDP + .01, L[i + 3] * DDP); }
+      ctx.stroke();
+    }
+    gx.globalCompositeOperation = 'lighter';
+    for (let gi = 0; gi < 3; gi++) { const L = G[gi]; if (!L.length) continue; gx.globalAlpha = .22; gx.fillStyle = GLOWC[gi]; gx.beginPath();
+      for (let i = 0; i < L.length; i += 2) { gx.moveTo(L[i] * GS + 1.6, L[i + 1] * GS); gx.arc(L[i] * GS, L[i + 1] * GS, 1.6, 0, 6.283); } gx.fill(); }
+    gx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = gx.globalAlpha = 1;
   }
 }
-const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014' }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18' }], { from: 'sun', budget: 2600, dur: 2600 });
-const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'scatter', budget: 1500, dur: 1900 });
-const dustFin = new Dust([{ el: $('#fin .gN'), c: '#fff6e6' }, { el: $('#fin .nm i'), c: '#ecd49c' }, { el: $('#fin .bN'), c: '#fff6e6' }], { from: 'scatter', budget: 2000 });
+const dustFilm = new Dust([{ el: $('#c1 .lab'), c: '#7e5014' }, { el: $('#c1 .gN'), c: '#4a1410' }, { el: $('#c1 .nm i'), c: '#a2701e' }, { el: $('#c1 .bN'), c: '#4a1410' }, { el: $('#c1d'), c: '#5d2a18' }], { from: 'sun', budget: 5200, dur: 3200 });
+const dustCard = new Dust([{ el: $('.face.front .f-name.gN'), c: '#551a10' }, { el: $('.face.front .f-name.bN'), c: '#551a10' }], { from: 'scatter', budget: 3400, dur: 2600 });
+const dustFin = new Dust([{ el: $('#fin .gN'), c: '#fff6e6' }, { el: $('#fin .nm i'), c: '#ecd49c' }, { el: $('#fin .bN'), c: '#fff6e6' }], { from: 'scatter', budget: 4200 });
 window.dustCard = dustCard;
 const DUSTS = [dustFilm, dustCard, dustFin];
 let dustWas = false;
 function dustLoop(now) {
   let any = false; for (const d of DUSTS) if (d.step(now)) any = true;
-  if (any) { if (!DW) dustSize(); dctx.clearRect(0, 0, DW, DH); const col = dustCv.getBoundingClientRect(); for (const d of DUSTS) if (d.step(now)) d.draw(dctx, col); dustWas = true; }
-  else if (dustWas) { dctx.clearRect(0, 0, DW, DH); dustWas = false; }
+  if (any) { if (!DW) dustSize(); dctx.clearRect(0, 0, DW, DH); gctx.clearRect(0, 0, glowCv.width, glowCv.height); const col = dustCv.getBoundingClientRect(); for (const d of DUSTS) if (d.step(now)) d.draw(dctx, gctx, col); dustWas = true; }
+  else if (dustWas) { dctx.clearRect(0, 0, DW, DH); gctx.clearRect(0, 0, glowCv.width, glowCv.height); dustWas = false; }
   requestAnimationFrame(dustLoop);
 }
 addEventListener('resize', () => { dustSize(); DUSTS.forEach(d => d.parts = null); });
@@ -764,14 +785,17 @@ const early = ['card', 'swoosh'].map(getA);
 function initAudio() {
   if (ac) return; ac = new AC(); master = ac.createGain(); master.connect(ac.destination);
   musicG = ac.createGain(); musicG.gain.value = 0; musicG.connect(master);
-  const rest = ['bed', 'paper', 'reveal', 'amb_court', 'amb_hall', 'amb_dusk'].map(getA);
+  try { ac.createMediaElementSource($('#bgm')).connect(musicG); } catch (e) {}
+  const rest = ['paper', 'reveal', 'amb_court', 'amb_hall', 'amb_dusk'].map(getA);
   const dec = ([n, b]) => b ? new Promise(r => ac.decodeAudioData(b, d => { buf[n] = d; r(); }, () => r())) : null;
   Promise.all(early).then(l => Promise.all(l.map(dec))); Promise.all(rest).then(l => Promise.all(l.map(dec))).then(startBeds);
 }
-const LOOP = 77.2, XF = 2, MUSIC = .3;
-function musicLoop(at) { const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf.bed; s.connect(gn); gn.connect(musicG); gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(1, at + XF); gn.gain.setValueAtTime(1, at + LOOP - .01); gn.gain.linearRampToValueAtTime(0, at + LOOP + XF); s.start(at); s.stop(at + LOOP + XF + .1); setTimeout(() => musicLoop(at + LOOP), Math.max(0, (at + LOOP - ac.currentTime - 4) * 1000)); }
-function startBeds() { const now = ac.currentTime; if (buf.bed) musicLoop(now + .05); musicG.gain.setValueAtTime(0, now); musicG.gain.linearRampToValueAtTime(MUSIC, now + 3.5); ['amb_court', 'amb_hall', 'amb_dusk'].forEach(n => { if (!buf[n]) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; s.loop = true; gn.gain.value = 0; s.connect(gn); gn.connect(master); s.start(now + Math.random()); amb[n] = gn; }); }
-function sfx(n, vol = 1, duck = true) { if (!ac || !buf[n] || muted) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; gn.gain.value = vol; s.connect(gn); gn.connect(master); s.start(); if (duck) { const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setTargetAtTime(MUSIC * .62, t, .08); musicG.gain.setTargetAtTime(MUSIC, t + Math.min(1.5, buf[n].duration), .5); } }
+const MUSIC = .55; let intro = true;
+/* Ik Onkar starts from its first word on the tap, fades in over ~1.4 s, then settles under the scene */
+function startMusic() { const b = $('#bgm'); try { b.currentTime = 0; } catch (e) {} b.play().catch(() => {}); if (!ac) return; const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setValueAtTime(0, t); musicG.gain.linearRampToValueAtTime(1, t + 1.4); setTimeout(settleMusic, 16000); }
+function settleMusic() { if (!intro || !ac) return; intro = false; const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setValueAtTime(musicG.gain.value, t); musicG.gain.linearRampToValueAtTime(MUSIC, t + 4); }
+function startBeds() { const now = ac.currentTime; ['amb_court', 'amb_hall', 'amb_dusk'].forEach(n => { if (!buf[n]) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; s.loop = true; gn.gain.value = 0; s.connect(gn); gn.connect(master); s.start(now + Math.random()); amb[n] = gn; }); }
+function sfx(n, vol = 1, duck = true) { if (!ac || !buf[n] || muted) return; const s = ac.createBufferSource(), gn = ac.createGain(); s.buffer = buf[n]; gn.gain.value = vol; s.connect(gn); gn.connect(master); s.start(); if (duck && !intro) { const t = ac.currentTime; musicG.gain.cancelScheduledValues(t); musicG.gain.setTargetAtTime(MUSIC * .62, t, .08); musicG.gain.setTargetAtTime(MUSIC, t + Math.min(1.5, buf[n].duration), .5); } }
 let ambT = 0;
 function ambMix() { if (!ac) return; const now = performance.now(); if (now - ambT < 200) return; ambT = now; const court = 1 - sm(153, 163, P), hall = sm(153, 167, P) * (1 - sm(F_BOW, F_DUSK0, P)), dusk = sm(F_BOW, F_DUSK0 + 6, P); const set = (n, v) => amb[n] && amb[n].gain.setTargetAtTime(v, ac.currentTime, .3); set('amb_court', .5 * court); set('amb_hall', .45 * hall); set('amb_dusk', .5 * dusk); }
 $('#mute').addEventListener('click', () => { muted = !muted; if (master) master.gain.setTargetAtTime(muted ? 0 : 1, ac.currentTime, .15); $('#wave').style.opacity = muted ? 0 : 1; });
@@ -804,11 +828,11 @@ function resetSeal() { sealW.classList.remove('press', 'crack', 'split'); }
 function openCard() {
   if (opened) { if (P < 8) { sfx('card', .9, false); scrollTo({ top: yOpen(), behavior: 'smooth' }); } return; }
   if (op.dataset.go) return; op.dataset.go = 1;
-  initAudio(); if (ac && ac.state === 'suspended') ac.resume();
+  initAudio(); if (ac && ac.state === 'suspended') ac.resume(); startMusic();
   loadRange(F_OPEN, F_OPEN + 60); if (op.readyState < 2) op.load();
   sealW.classList.add('press'); if (navigator.vibrate) navigator.vibrate(12); setS(tapHint, 'opacity', '0');
-  setTimeout(() => { sealW.classList.add('crack'); sfx('card', .9, false); if (navigator.vibrate) navigator.vibrate(10); }, 180);
-  setTimeout(() => { sealW.classList.add('split'); burstDust(); $('#seam').classList.add('go'); $('#sheen').classList.add('go'); sfx('swoosh', .35, false); }, 620);
+  setTimeout(() => { sealW.classList.add('crack'); sfx('card', .42, false); if (navigator.vibrate) navigator.vibrate(10); }, 180);
+  setTimeout(() => { sealW.classList.add('split'); burstDust(); $('#seam').classList.add('go'); $('#sheen').classList.add('go'); sfx('swoosh', .2, false); }, 620);
   setTimeout(() => { const go = () => op.play().catch(() => {}); if (op.readyState >= 3) go(); else op.addEventListener('canplay', go, { once: true }); }, 820);
 }
 op.addEventListener('timeupdate', () => { if (op.currentTime > 5.8) endOpening(); });
