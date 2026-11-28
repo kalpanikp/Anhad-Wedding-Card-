@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Twirl test · Toshi & Anhad</title>
+<title>Twirl test v2 · Toshi & Anhad</title>
 <style>
   html,body{margin:0;background:#f3ebe3;color:#5a2a2a;font-family:Georgia,'Times New Roman',serif}
-  #track{height:520vh;position:relative}
+  #track{height:420vh;position:relative}
   #cam{position:sticky;top:0;height:100vh;height:100svh;width:100%;overflow:hidden}
   canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
   .cap{position:absolute;left:0;right:0;text-align:center;letter-spacing:.32em;text-transform:uppercase;font-size:11px;opacity:.75;pointer-events:none;transition:opacity .5s}
@@ -21,7 +21,7 @@
 <div id="track">
   <div id="cam">
     <canvas id="c"></canvas>
-    <div class="cap" id="top">Twirl · scroll test</div>
+    <div class="cap" id="top">Twirl · real spin</div>
     <div class="cap" id="hint">scroll to spin ↓</div>
   </div>
 </div>
@@ -76,18 +76,9 @@ function tick(now){
   const ang=e*Math.PI*2;
   vel+=((ang-prevA)/Math.max(dt,1)*16-vel)*.35; prevA=ang;
   const f=P*(N-1);
-  const full=needScale(ang);
-  const sc=Math.min(full,1.32)*(1+0.03*Math.sin(Math.PI*q));
   cx.setTransform(dpr,0,0,dpr,0,0);cx.globalAlpha=1;cx.fillStyle='#e9d9cc';cx.fillRect(0,0,W,H);
-  // soft fill behind: tiny copy scaled up = natural blur (works in Safari, no ctx.filter)
-  if(full>sc+0.01){const a=imgs[Math.round(f)];if(a&&a.naturalWidth){sx.clearRect(0,0,sm.width,sm.height);sx.drawImage(a,0,0,sm.width,sm.height);
-    const cover=Math.max(W/sm.width,H/sm.height)*full*1.04,dw=sm.width*cover,dh=sm.height*cover;
-    cx.save();cx.translate(W/2,H/2);cx.rotate(ang);cx.imageSmoothingQuality='high';cx.drawImage(sm,-dw/2,-dh/2,dw,dh);cx.restore();}}
-  const m=clamp((full-sc)/0.25,0,1), blur=clamp(Math.abs(vel)*1.2,0,0.10);
-  if(buildLayer(f,m)){
-    drawLayer(ang,sc,1);
-    if(blur>0.004){const steps=4;for(let s=1;s<=steps;s++)drawLayer(ang-Math.sign(vel)*blur*s/steps,sc,0.2);}
-  }
+  if(buildLayer(f,0))drawLayer(0,1,1);
+  const blur=0;
   // soft vignette, stronger while spinning
   const g=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.25,W/2,H/2,Math.hypot(W,H)/2);
   g.addColorStop(0,'rgba(60,25,15,0)');g.addColorStop(1,'rgba(60,25,15,'+(0.18+Math.min(.25,blur*1.6))+')');
