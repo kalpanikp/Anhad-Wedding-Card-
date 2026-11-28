@@ -130,7 +130,7 @@ a{color:inherit}
 #rail .dm.now:before{transform:rotate(45deg) scale(1.25);background:#fff0c4;box-shadow:0 0 8px 2px rgba(255,214,140,.8)}
 #rail .rl{position:absolute;right:13px;top:0;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;white-space:nowrap;padding:14px 0;font:600 9.5px/1 var(--l);letter-spacing:.26em;text-transform:uppercase;color:#fbefd6;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.4);opacity:0;transition:opacity .5s,transform .5s var(--ease)}
 #rail .rl.show{opacity:1}
-#filmZone{height:640vh}
+#filmZone{height:760vh}
 
 /* ── the stationery suite: cotton-paper cards that stack as you scroll ── */
 #suite{position:relative;z-index:1;padding-top:0}
@@ -255,6 +255,51 @@ a{color:inherit}
 #gurC{position:absolute;inset:0;width:100%;height:100%}
 @media (prefers-reduced-motion:reduce){.ch,.wp{opacity:1!important;animation:none!important;filter:none!important;-webkit-mask:none!important;mask:none!important}}
 @media (prefers-reduced-motion:reduce){#sealHalo,#glint,#tapHint,#scrollHint svg,#wax .gl{animation:none}}
+
+/* ── THE ROYAL SCROLL: it descends, the silk tie slips away, the carved rollers turn and the paper unrolls with your finger ── */
+#scrollZone{height:760vh;position:relative;z-index:1}
+#stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;pointer-events:none}
+#scroll{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 9vh);width:100cqw;transform:translate3d(-50%,-130vh,0);will-change:transform}
+.rod{position:relative;width:100%;aspect-ratio:2331/246;z-index:3;filter:drop-shadow(0 1.6cqw 1.6cqw rgba(0,0,0,.55))}
+.rod img{position:absolute;inset:0;width:100%;height:100%}
+.rod .spin{position:absolute;left:13.6%;right:12.8%;top:6%;bottom:4%;background:url(a/rodbody.webp) 0 var(--sp,0px)/100% auto repeat-y;border-radius:3cqw/50%}
+.rod .spin:after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.15) 22%,rgba(255,226,170,.16) 40%,rgba(255,240,205,.28) 46%,rgba(0,0,0,.05) 62%,rgba(0,0,0,.7) 100%)}
+#clip{position:relative;margin:-2.4cqw auto -2.4cqw;width:73cqw;height:0;overflow:hidden;z-index:2}
+#clip:before,#clip:after{content:"";position:absolute;left:0;right:0;height:7cqw;z-index:2;pointer-events:none}
+#clip:before{top:0;background:linear-gradient(180deg,rgba(40,16,6,.55),transparent)}
+#clip:after{bottom:0;background:linear-gradient(0deg,rgba(40,16,6,.6),transparent)}
+#paper{position:absolute;left:0;top:0;width:100%;container-type:inline-size;border-style:solid;border-width:28.8cqw 6.2cqw 23.5cqw;border-image:url(a/scrollpaper.webp) 605 130 495 130 fill / 28.8cqw 6.2cqw 23.5cqw stretch;box-sizing:border-box;will-change:transform;pointer-events:auto}
+#paper .sx{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink);text-shadow:var(--press);padding:8cqw 0}
+#paper .sx+.sx{border-top:0}
+#paper .sg{font:600 3.5cqw/1.2 var(--l);letter-spacing:.2em;text-transform:uppercase;color:#a0761f;margin-top:0}
+#paper .f-bless{font-size:6.3cqw;line-height:1.25;margin-top:1.2cqw;color:#7a1f1a}
+#paper .late{font:italic 400 5.2cqw/1.3 var(--d);color:#5d2a18;margin-top:1.6cqw}
+#paper .f-par{font-size:7.73cqw}
+#paper .f-lab{font-size:4.28cqw}
+#paper .f-ak{font-size:13.25cqw}
+#paper .f-ak:before,#paper .f-ak:after{width:9.66cqw}
+#paper .f-name{font-size:26.22cqw;color:#7a1414;background:linear-gradient(100deg,#7a1414 0%,#7a1414 40%,#c9a24a 50%,#7a1414 60%,#7a1414 100%);background-size:300% 100%;background-position:var(--fn,100%) 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#paper .f-with{font-size:7.45cqw}
+#paper .k-lab{font-size:4.28cqw;color:#a0761f}
+#paper .d-day{font-size:9.11cqw}#paper .d-date{font-size:13.25cqw;color:#7a1414}
+#paper .d-time{font-size:30.36cqw;color:#7a1414}#paper .d-time small{font-size:5.52cqw}
+#paper .d-pres{font-size:6.35cqw}#paper .d-after{font-size:7.18cqw}
+#paper .roll{width:15cqw;height:13cqw;font-size:11.5cqw;line-height:13cqw;color:#7a1414}
+#paper .cnt .lab{font-size:3.31cqw}
+#paper #count{gap:3.6cqw}
+#paper .v-name{font-size:10.49cqw}#paper .v-city{font-size:7.45cqw}#paper .v-note{font-size:6.07cqw;max-width:92%}
+#paper .btnP{height:16.56cqw;padding:0 9.66cqw}#paper .btnP .lab{font-size:4.14cqw}#paper .btnP svg{width:6.35cqw;height:6.35cqw}
+#paper .r-h{font-size:12cqw;color:#7a1414;white-space:nowrap}
+#paper #wax{width:71.76cqw;aspect-ratio:878/900}
+#paper #wax img{filter:drop-shadow(0 .11.04cqw .11.04cqw rgba(60,6,6,.45)) drop-shadow(0 3.31cqw 4.14cqw rgba(60,6,6,.3))}
+#paper .r-hint{font-size:6.07cqw}#paper #cal{font-size:4.14cqw}
+#paper .orn{width:46%;margin:6.90cqw auto}#paper .orn b{width:2.48cqw;height:2.48cqw;background:#b8233c}
+#paper .orn:before{background:linear-gradient(90deg,transparent,#a0761f)}#paper .orn:after{background:linear-gradient(270deg,transparent,#a0761f)}
+#tie{position:absolute;left:50%;top:0;width:15cqw;height:100%;transform:translateX(-50%);z-index:4}
+#tie .band{position:absolute;left:0;right:0;top:-2cqw;bottom:-2cqw;background:linear-gradient(90deg,#5a0a14,#a3172a 25%,#d43a4c 48%,#a3172a 70%,#5a0a14);box-shadow:0 0 2cqw rgba(0,0,0,.5);border-radius:1cqw}
+#tie .band:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px)}
+#tie img{position:absolute;left:50%;top:70%;width:30cqw;transform:translateX(-50%);filter:drop-shadow(0 1cqw 1cqw rgba(0,0,0,.5))}
+#rolled{position:relative}
 </style>
 </head>
 <body class="locked">
@@ -279,85 +324,76 @@ a{color:inherit}
     <div id="tapHint"><span class="lab">Touch the seal</span></div>
     <canvas id="dust" class="L"></canvas>
     <div class="cap" id="c1"><div class="lab">The Anand Karaj of</div><div class="nm"><span class="bN">Toshi</span><i>&amp;</i><span class="gN">Anhad</span></div><div class="dt" id="c1d"></div></div>
-    <div class="cap" id="c2"><div class="tr">With her father’s blessing,<br>a new beginning</div><div class="lab">The palla</div></div>
+    <div class="cap" id="c2"><div class="tr">With her mother’s blessing,<br>a new beginning</div><div class="lab">The palla</div></div>
     <div id="scrollHint"><svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg><span class="lab">Scroll to enter</span></div>
   </div>
 
   <div id="filmZone"></div>
 
-  <div id="suite">
-    <div class="sheet" id="sh1" style="--i:0;--r:-.6deg">
-      <div class="pp"><div id="cardWrap"><div id="card">
-        <div class="face front"><div class="inner">
-          <div class="f-bless">With the blessings of Shree Ganesh</div>
-          <div class="gapM"></div>
-          <div class="f-par" id="hosts"></div>
-          <div class="lab f-lab" style="margin-top:1.8cqw">invite you to the</div>
-          <div class="f-ak"><span class="foil">Anand Karaj</span></div>
-          <div class="lab f-lab">of their daughter</div>
-          <div class="gapS"></div>
-          <div class="f-name bN">Toshi</div>
-          <div class="f-with">with</div>
-          <div class="f-name gN">Anhad</div>
-          <div class="gapS"></div>
-          <div class="lab f-lab">son of</div>
-          <div class="f-par" id="bpar"></div>
-        </div></div>
-      </div></div></div>
-      <div class="shade" style="-webkit-mask-image:url(a/paper.webp);mask-image:url(a/paper.webp)"></div>
-    </div>
-
-    <div class="gap"></div>
-    <div class="sheet" id="sh2" style="--i:1;--r:.7deg">
-      <div class="pp"><div class="bgp"></div><div class="ct">
-        <div class="lab k-lab rv">The day</div>
-        <div class="d-day rv d1" id="dDay"></div>
-        <div class="d-date rv d1" id="dDate"></div>
-        <div class="orn rv d2"><b></b></div>
-        <div class="d-time rv d2" id="dTime"></div>
-        <div class="k-ak rv d3"><span class="foil">Anand Karaj</span></div>
-        <div class="d-pres rv d3">in the presence of Sri Guru Granth Sahib Ji</div>
-        <div class="d-after rv d4" id="dAfter"></div>
-        <div class="orn rv d4"><b></b></div>
-        <div class="lab k-lab rv d5" style="margin-bottom:2.2cqw">Counting the days</div>
-        <div id="count" class="rv d5">
-          <div class="cnt"><div class="roll" id="cd" style="width:16cqw"></div><span class="lab">Days</span></div>
-          <div class="cnt"><div class="roll" id="ch"></div><span class="lab">Hours</span></div>
-          <div class="cnt"><div class="roll" id="cm"></div><span class="lab">Mins</span></div>
-          <div class="cnt"><div class="roll" id="cs"></div><span class="lab">Secs</span></div>
+  <div id="scrollZone">
+    <div id="stage">
+      <div id="scroll">
+        <div id="rolled">
+          <div class="rod" id="rodT"><img src="a/roller.webp" alt=""><div class="spin"></div></div>
+          <div id="clip">
+            <div id="paper">
+              <section class="sx" id="sx0" style="padding-top:16cqw">
+                <div class="sg">Shree Ganeshaya Namah</div>
+                <div class="orn"><b></b></div>
+                <div class="f-bless">With the blessings of Shree Ganesh</div>
+                <div class="late">and the late Shri Rajendra Darode</div>
+              </section>
+              <section class="sx" id="sx1">
+                <div class="f-par" id="hosts"></div>
+                <div class="lab f-lab" style="margin-top:2cqw">requests the honour of your presence<br>at the</div>
+                <div class="f-ak"><span class="foil">Anand Karaj</span></div>
+                <div class="lab f-lab">of her daughter</div>
+                <div class="f-name bN">Toshi</div>
+                <div class="f-with">with</div>
+                <div class="f-name gN">Anhad</div>
+                <div class="lab f-lab" style="margin-top:2cqw">son of</div>
+                <div class="f-par" id="bpar"></div>
+                <div class="orn"><b></b></div>
+              </section>
+              <section class="sx" id="sx2">
+                <div class="lab k-lab">The day</div>
+                <div class="d-day" id="dDay"></div>
+                <div class="d-date" id="dDate"></div>
+                <div class="d-time" id="dTime"></div>
+                <div class="d-pres">in the presence of Sri Guru Granth Sahib Ji</div>
+                <div class="d-after" id="dAfter"></div>
+                <div class="lab k-lab" style="margin:5cqw 0 2.4cqw">Counting the days</div>
+                <div id="count">
+                  <div class="cnt"><div class="roll" id="cd" style="width:22cqw"></div><span class="lab">Days</span></div>
+                  <div class="cnt"><div class="roll" id="ch"></div><span class="lab">Hours</span></div>
+                  <div class="cnt"><div class="roll" id="cm"></div><span class="lab">Mins</span></div>
+                  <div class="cnt"><div class="roll" id="cs"></div><span class="lab">Secs</span></div>
+                </div>
+                <div class="orn"><b></b></div>
+              </section>
+              <section class="sx" id="sx3">
+                <div class="lab k-lab">The venue</div>
+                <div class="v-name" id="vName"></div>
+                <div class="v-city" id="vCity"></div>
+                <div class="v-note" style="margin-top:3cqw">Kindly keep your head covered in the Darbar Sahib. Rumals will be available.</div>
+                <a class="btnP" id="aMap" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span class="lab">Directions</span></a>
+                <div class="orn"><b></b></div>
+              </section>
+              <section class="sx" id="sx4">
+                <div class="lab k-lab">Kindly respond</div>
+                <div class="r-h">Will you <i class="foil">join us?</i></div>
+                <a id="wax" target="_blank" rel="noopener" aria-label="Confirm on WhatsApp"><img src="a/lac.webp" alt=""><span class="gl"></span></a>
+                <div class="r-hint">Touch the seal to confirm</div>
+                <a id="cal" class="lab" target="_blank" rel="noopener">Add to calendar</a>
+              </section>
+            </div>
+          </div>
+          <div class="rod" id="rodB"><img src="a/roller.webp" alt=""><div class="spin"></div></div>
+          <div id="tie"><div class="band"></div><img src="a/tassel.webp" alt=""></div>
         </div>
-      </div></div>
-      <div class="shade"></div>
+      </div>
     </div>
-
-    <div class="gap"></div>
-    <div class="sheet" id="sh3" style="--i:2;--r:-.5deg">
-      <div class="pp"><div class="bgp"></div><div class="ct">
-        <div class="lab k-lab rv">The venue</div>
-        <div id="gurW"><img src="a/gurill.webp" alt="" loading="lazy"><div id="gurSheen"></div><canvas id="gurC"></canvas></div>
-        <div class="v-name rv d2" id="vName"></div>
-        <div class="v-city rv d2" id="vCity"></div>
-        <div class="orn rv d3"><b></b></div>
-        <div class="v-note rv d3">Kindly keep your head covered in the Darbar Sahib. Rumals will be available.</div>
-        <a class="btnP rv d4" id="aMap" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span class="lab">Directions</span></a>
-      </div></div>
-      <div class="shade"></div>
-    </div>
-
-    <div class="gap"></div>
-    <div class="sheet" id="sh4" style="--i:3;--r:.5deg">
-      <div class="pp"><div class="bgp"></div><div class="ct">
-        <div class="lab k-lab rv">Kindly respond</div>
-        <div class="r-h rv d1">Will you <i class="foil">join us?</i></div>
-        <a id="wax" class="rv d2" target="_blank" rel="noopener" aria-label="Confirm on WhatsApp"><img src="a/seal.webp" alt=""><span class="gl"></span></a>
-        <div class="r-hint rv d3">Touch the seal to confirm on WhatsApp</div>
-        <a id="cal" class="lab rv d4" target="_blank" rel="noopener">Add to calendar</a>
-      </div></div>
-      <div class="shade"></div>
-    </div>
-  <div class="gap end"></div>
   </div>
-
   <div id="closeZone">
     <div id="fin">
       <div class="fx"><div class="lab kick">The Anand Karaj of</div><div class="nm"><span class="bN">Toshi</span><i>&amp;</i><span class="gN">Anhad</span></div><div class="dt" id="finDate"></div></div>
@@ -377,7 +413,7 @@ a{color:inherit}
 const INFO = {
   groom: 'Anhad', bride: 'Toshi',
   groomParents: ['S. Ram Gopal Singh', 'Sardarni Shakuntla Kaur'],
-  brideParents: ['Shri Rajendra Darode', 'Smt. Laxmi Darode'],
+  brideMother: 'Smt. Laxmi Darode', brideLateFather: 'Shri Rajendra Darode',
   start: '2027-03-27T13:00:00+05:30', end: '2027-03-27T16:00:00+05:30',
   timeText: 'one o’clock in the afternoon',
   after: 'followed by lunch',
@@ -391,8 +427,9 @@ const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 
 (function fill() {
-  const g = INFO.groomParents, b = INFO.brideParents;
-  $('#hosts').innerHTML = b[0] + '<br>&amp; ' + b[1]; $('#bpar').innerHTML = g[0] + '<br>&amp; ' + g[1];
+  const g = INFO.groomParents;
+  $('#hosts').textContent = INFO.brideMother; $('#bpar').innerHTML = g[0] + '<br>&amp; ' + g[1];
+  $('.late').textContent = 'and the late ' + INFO.brideLateFather;
   $$('.gN').forEach(e => e.textContent = INFO.groom); $$('.bN').forEach(e => e.textContent = INFO.bride);
   const d = new Date(INFO.start), f1 = o => d.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', ...o });
   const wd = f1({ weekday: 'long' }), dd = f1({ day: 'numeric' }), mo = f1({ month: 'long' }), yr = f1({ year: 'numeric' });
@@ -402,6 +439,7 @@ const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 
   $('#c1d').textContent = `${wd} · ${dd} ${mo} ${yr}`; $('#vName').textContent = INFO.venue; $('#vCity').textContent = INFO.city; $('#finDate').textContent = `${wd}, ${dd} ${mo} ${yr}`;
   $('#aMap').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(INFO.mapsQuery);
   if (INFO.rsvpPhone) $('#wax').href = 'https://wa.me/' + INFO.rsvpPhone + '?text=' + encodeURIComponent(`Namaste! I will be attending the Anand Karaj of ${INFO.bride} & ${INFO.groom}.`); else { $('#wax').removeAttribute('target'); $('#wax').addEventListener('click', e => { e.preventDefault(); $('.r-hint').textContent = 'RSVP details coming soon'; }); }
+  $('#wax .gl').style.cssText = '-webkit-mask-image:url(a/lac.webp);mask-image:url(a/lac.webp)';
   const f = x => new Date(x).toISOString().replace(/[-:]|\.\d{3}/g, '');
   $('#cal').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(`Anand Karaj · ${INFO.bride} & ${INFO.groom}`) + '&dates=' + f(INFO.start) + '/' + f(INFO.end) + '&location=' + encodeURIComponent(INFO.venue + ', ' + INFO.city);
 })();
@@ -411,9 +449,9 @@ const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 
    LO (540px) for the whole film, always ready, smooth while moving;
    HI (1080px AVIF) streamed around the camera, takes over as it slows.
    ========================================================= */
-const J_N = 399, F_OPEN = 54, F_BOW = 350, F_DUSK0 = 351, F_END = 398, F_GUR = 296, OPEN_SHARE = .15;
-/* one continuous shot: box 0–54 · her room & mother 54–114 · into her eyes 114–125 · twirl 120–179 · Ganesh 179–290 · palla 290–350 · finale 351–398 */
-const F_TW0 = 120, F_TW1 = 179, F_POV = 179, F_PAL = 290, F_MID = 150;
+const J_N = 456, F_OPEN = 54, F_BOW = 407, F_DUSK0 = 408, F_END = 455, F_GUR = 356, OPEN_SHARE = .13;
+/* one continuous shot: box 0–54 · pull back to her room 54–114 · mother lowers the chunni 114–173 · into her veil 173–182 · twirl 178–236 · Ganesh 236–348 · mother's palla 348–407 · finale 408–455 */
+const F_TW0 = 180, F_TW1 = 236, F_POV = 236, F_PAL = 348, F_MID = 150;
 const pad = i => String(i).padStart(3, '0');
 const LO = { a: new Array(J_N), q: [], fl: 0, max: 5, src: i => `a/j/${pad(i)}.webp` };
 const HI = { a: new Array(J_N), q: [], fl: 0, max: 3, src: i => `a/k/${pad(i)}.avif`, on: false };
@@ -469,13 +507,13 @@ function render() {
    SCROLL → CAMERA. The phone's own scrolling drives everything;
    the camera eases toward the scroll position every frame.
    ========================================================= */
-const filmZone = $('#filmZone'), closeZone = $('#closeZone'), suite = $('#suite');
+const filmZone = $('#filmZone'), closeZone = $('#closeZone'), suite = $('#scrollZone');
 let opened = false, vh = innerHeight, zF0 = 0, zF1 = 1, zC0 = 0, zC1 = 1, suiteTop = 0;
 function measure() {
   vh = innerHeight; const y = scrollY;
   const fr = filmZone.getBoundingClientRect(); zF0 = fr.top + y; zF1 = zF0 + fr.height - vh * .55;
   const cr = closeZone.getBoundingClientRect(); zC0 = cr.top + y - vh * .6; zC1 = cr.top + y + cr.height - vh;
-  suiteTop = suite.getBoundingClientRect().top + y;
+  suiteTop = suite.getBoundingClientRect().top + y; if (typeof scMeasure === 'function') scMeasure();
   if (typeof chMeasure === 'function' && window.sheetsReady) chMeasure();
 }
 const yOpen = () => zF0 + (zF1 - zF0) * OPEN_SHARE;
@@ -532,7 +570,7 @@ function hdShow(on) {
 
 /* captions, backdrop, seal, stacked sheets, foil — all from scroll position */
 const c1 = $('#c1'), c2 = $('#c2'), veil = $('#veil'), scrimB = $('#scrimB'), bk = $('#bk'), sealW = $('#sealW'), tapHint = $('#tapHint');
-const sheets = $$('.sheet'), shades = sheets.map(s => s.querySelector('.shade')), landed = sheets.map(() => false);
+const sheets = [];
 const Lc = {};
 function setS(el, k, v) { const key = (el.id || el.className) + k; if (Lc[key] === v) return; Lc[key] = v; el.style[k] = v; }
 function layers(y) {
@@ -549,20 +587,55 @@ function layers(y) {
   petalsT = P > F_TW0 + 4 && P < F_TW1 - 2 ? 1 : 0;
   setS($('#scrollHint'), 'opacity', Math.abs(P - F_OPEN) < .5 && Math.abs(y - yOpen()) < 30 ? '1' : '0');
   if (!wasCut && P > F_BOW + .5) { wasCut = true; flash(); } if (P < F_BOW + .2) wasCut = false;
-  // stacked stationery: a sheet sinks back as the next one slides over it
-  if (y > zF1 - vh && y < zC1) {
-    for (let i = 0; i < sheets.length; i++) {
-      const s = sheets[i], r = s.getBoundingClientRect(), sH = s.offsetHeight, stick = vh / 2 - sH / 2 + i * .013 * vh;
-      if (!landed[i] && r.top <= stick + 2 && r.top > stick - vh * .3) { landed[i] = true; sfx('paper', .28, false); } if (r.top > stick + vh * .25) landed[i] = false;
-      let p = 0; if (i < sheets.length - 1) { const n = sheets[i + 1].getBoundingClientRect().top, ns = vh / 2 - sH / 2 + (i + 1) * .013 * vh; p = clamp(1 - (n - ns) / (vh * .85)); }
-      setS(s, 'transform', p ? `translateY(${(-p * 3.2).toFixed(2)}cqw) scale(${(1 - p * .06).toFixed(4)})` : 'none');
-      setS(shades[i], 'opacity', (p * .42).toFixed(3));
-      const sh = clamp(1 - (r.top - stick) / vh); const shv = sh.toFixed(2); if (s._sh !== shv) { s._sh = shv; s.style.setProperty('--sh', shv); if (i === 2) s.style.setProperty('--sh3', (1.15 - sh * 1.3).toFixed(2)); }
-    }
-  }
+  scrollStep(y);
   $('#fin').classList.toggle('in', y > zC0 + vh * .7);
   ambMix();
 }
+
+/* =========================================================
+   THE ROYAL SCROLL — p runs 0→1 through #scrollZone:
+   descend · the silk tie slips off · unroll to full height · read on (both rollers turn)
+   ========================================================= */
+const SC = { D: .07, T0: .075, T1: .13, U0: .14, U1: .36, R1: .93 };
+const scEl = $('#scroll'), clipEl = $('#clip'), paperEl = $('#paper'), tieEl = $('#tie'), rodT = $('#rodT .spin'), rodB = $('#rodB .spin');
+const secs = $$('#paper .sx');
+let scMaxH = 300, scScroll = 0, tieSnd = false, unrollSnd = false;
+function scMeasure() {
+  const rodH = $('#rodT').offsetHeight, top = scEl.offsetTop;
+  scMaxH = Math.max(200, vh - top - rodH * 2 + 4.8 * $('#col').clientWidth / 100 - vh * .06);
+  scScroll = Math.max(0, paperEl.offsetHeight - scMaxH);
+}
+function scP(y) { return clamp((y - suiteTop) / (suite.offsetHeight - vh)); }
+function yForP(p) { return suiteTop + p * (suite.offsetHeight - vh); }
+function yForOff(off) { // scroll position at which a section reaches the top of the open paper
+  if (off < scMaxH * .55) return yForP(SC.U0 + (SC.U1 - SC.U0) * clamp((off + scMaxH * .45) / scMaxH));
+  return yForP(SC.U1 + (SC.R1 - SC.U1) * clamp((off - scMaxH * .12) / Math.max(1, scScroll)));
+}
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function scrollStep(y) {
+  const p = scP(y), live = y > suiteTop - vh && y < suiteTop + suite.offsetHeight;
+  if (!live) { setS(scEl, 'visibility', 'hidden'); return; }
+  setS(scEl, 'visibility', 'visible');
+  // 1 · descend into the frame, settling with a slight sway
+  const d = ease(clamp(p / SC.D));
+  setS(scEl, 'transform', `translate3d(-50%,${((1 - d) * -130).toFixed(2)}vh,0) rotate(${((1 - d) * -5).toFixed(2)}deg)`);
+  // 2 · the silk tie slides off sideways and the tassel drops away
+  const t = ease(clamp((p - SC.T0) / (SC.T1 - SC.T0)));
+  setS(tieEl, 'transform', `translateX(calc(-50% + ${(t * 120).toFixed(1)}cqw)) rotate(${(t * 18).toFixed(1)}deg)`); setS(tieEl, 'opacity', (1 - sm(.6, 1, t)).toFixed(3));
+  if (t > .15 && !tieSnd) { tieSnd = true; sfx('swoosh', .18, false); } if (t < .05) tieSnd = false;
+  // 3 · unroll: the bottom roller travels down, the paper opens between them
+  const u = ease(clamp((p - SC.U0) / (SC.U1 - SC.U0)));
+  const h = u * scMaxH; setS(clipEl, 'height', h.toFixed(1) + 'px');
+  if (u > .02 && !unrollSnd) { unrollSnd = true; sfx('paper', .35, false); } if (u < .01) unrollSnd = false;
+  // 4 · read on: the paper travels up through the open scroll, both rollers turning
+  const r = clamp((p - SC.U1) / (SC.R1 - SC.U1)), off = r * scScroll;
+  setS(paperEl, 'transform', `translate3d(0,${(-off).toFixed(1)}px,0)`);
+  const spin = (h + off) * .9; rodT.style.setProperty('--sp', (-off * .9).toFixed(1) + 'px'); rodB.style.setProperty('--sp', (spin).toFixed(1) + 'px');
+  // reveal each section as it comes into the open paper; foil names catch the light
+  for (const sx of secs) { const top = sx.offsetTop - off; if (!sx.classList.contains('in') && top < h - scMaxH * .12) { sx.classList.add('in'); play(sx); } if (top > h + 40 && sx.classList.contains('in') && u < .99) { sx.classList.remove('in', 'play'); } }
+  const fn = clamp(1 - ($('#sx1').offsetTop - off + 200) / Math.max(1, h)); $$('#paper .f-name').forEach(e => e.style.setProperty('--fn', (100 - fn * 100).toFixed(1) + '%'));
+}
+
 function flash() { const b = $('#bloom'); b.style.opacity = .9; setTimeout(() => b.style.opacity = 0, 260); }
 
 /* =========================================================
@@ -608,8 +681,7 @@ function prepType(root) {
   root.querySelectorAll('.foil').forEach(f => { if (!f.style.getPropertyValue('--dl')) f.style.setProperty('--dl', '600ms'); });
 }
 function play(root) { root.classList.remove('play'); void root.offsetWidth; root.classList.add('play'); }
-const front = $('.face.front .inner');
-[front, ...$$('.sheet .ct'), $('#c1')].forEach(prepType);
+[$('#c1'), ...$$('#paper .sx')].forEach(prepType);
 // the foil spans inside wiped lines inherit the line's delay
 $$('.f-ak .foil,.k-ak .foil').forEach(f => { const p = f.closest('.f-ak,.k-ak'); });
 
@@ -623,7 +695,7 @@ CH.forEach((n, i) => { const d = document.createElement('button'); d.className =
 const dms = [...rail.querySelectorAll('.dm')], rl = rail.querySelector('.rl'), rdot = rail.querySelector('.dot'), rfill = rail.querySelector('.fill');
 function chMeasure() {
   const yAt = f => yOpen() + (f - F_OPEN) / (F_BOW - F_OPEN) * (zF1 - yOpen());
-  chY = [yOpen(), yAt(F_POV), ...sheets.map((sh, i) => suiteTop + sh.offsetTop - (vh / 2 - sh.offsetHeight / 2 + i * .013 * vh) + 2)];
+  chY = [yOpen(), yAt(F_POV), yForP(SC.U0 + .01), yForOff($('#sx2').offsetTop), yForOff($('#sx3').offsetTop), yForOff($('#sx4').offsetTop)];
 }
 function railUpdate(y, now) {
   if (!chY.length) return; rail.classList.toggle('on', P > 10);
@@ -636,10 +708,6 @@ function railUpdate(y, now) {
     rl.textContent = RN[n] + ' · ' + CH[n]; rl.style.top = (n / (CH.length - 1) * 100) + '%'; rl.classList.add('show'); rlT = now; }
   else if (rl.classList.contains('show') && now - rlT > 1800) rl.classList.remove('show');
 }
-
-/* reveal sheet contents as each arrives */
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !e.target.classList.contains('in')) { e.target.classList.add('in'); if (e.target.id === 'sh1') play(front); else { const ct = e.target.querySelector('.ct'); if (ct) play(ct); } if (e.target.id === 'sh3') gold.start(); } }), { threshold: .35 });
-sheets.forEach(s => io.observe(s));
 
 /* gold seal confirm: press, ripple, buzz — WhatsApp opens only from this seal */
 $('#wax').addEventListener('click', () => { const w = $('#wax'); w.classList.add('press'); setTimeout(() => w.classList.remove('press'), 180); const r = document.createElement('span'); r.className = 'rip'; w.appendChild(r); setTimeout(() => r.remove(), 850); if (navigator.vibrate) navigator.vibrate(18); sfx('reveal', .5, false); });
@@ -655,54 +723,7 @@ tick(); setInterval(tick, 1000);
    relief map: raised foil with moving studio light, a cast shadow,
    the paper pressed around it, and hot foil laid from the ground up
    ========================================================= */
-const gold = (() => {
-  const c = $('#gurC'), gl = c.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
-  if (!gl) { c.remove(); return { start() {} }; }
-  const vs = 'attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}';
-  const fs = `precision mediump float;varying vec2 v;uniform sampler2D T;uniform vec2 L;uniform float R,S,K;
-  void main(){
-    vec4 t=texture2D(T,v);float a=smoothstep(.08,.6,t.b);
-    vec3 N=normalize(vec3(t.r*2.-1.,t.g*2.-1.,.55));
-    float y=1.-v.y,n=fract(sin(dot(floor(v*vec2(90.,68.)),vec2(12.9898,78.233)))*43758.5453)*.025;
-    float e=R-y+n,vis=smoothstep(0.,.05,e),hot=exp(-e*e/.0011)*step(-.02,e)*step(R,1.12);
-    vec3 l=normalize(vec3(L,.62));float d=max(dot(N,l),0.);
-    float sp=pow(max(dot(N,normalize(l+vec3(0.,0.,1.))),0.),42.);
-    float env=smoothstep(.22,0.,abs(N.x*.72+N.y*.72-S))*(1.-N.z*.6);
-    vec3 g=mix(vec3(.36,.22,.06),vec3(.93,.76,.42),d)+vec3(1.,.93,.74)*sp*1.25+vec3(1.,.9,.66)*env*.75;
-    g+=vec3(1.,.82,.5)*hot*1.6;
-    float A=a*vis;
-    float sh=texture2D(T,v+L*vec2(.007,.0093)).b;
-    float m=smoothstep(.05,.16,length(N.xy/N.z));float pd=(dot(N,l)-l.z)*1.4*(1.-a)*m;
-    vec4 paper=pd<0.?vec4(0.,0.,0.,-pd*.5):vec4(pd*.4);
-    paper+=vec4(0.,0.,0.,smoothstep(.15,.6,sh)*.22*(1.-a));
-    paper*=vis;
-    gl_FragColor=vec4(g*A,A)+paper*(1.-A)+vec4(vec3(1.,.8,.45),1.)*hot*.5*a*K;
-  }`;
-  const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.warn(gl.getShaderInfoLog(s)); return s; };
-  const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr); gl.useProgram(pr);
-  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  const pl = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
-  const U = n => gl.getUniformLocation(pr, n), uL = U('L'), uR = U('R'), uS = U('S'), uK = U('K');
-  const tex = gl.createTexture(); let ready = false, t0 = 0, running = false, vis = false;
-  const img = new Image(); img.onload = () => { gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-    [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR)); [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
-    ready = true; $('#gurW img').style.display = 'none'; $('#gurSheen').style.display = 'none'; };
-  img.src = 'a/gurn.webp';
-  function fit() { const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1), w = Math.round(r.width * d), h = Math.round(r.height * d); if (w && (c.width !== w || c.height !== h)) { c.width = w; c.height = h; gl.viewport(0, 0, w, h); } }
-  const ease = x => 1 - Math.pow(1 - clamp(x), 3);
-  function frame(now) {
-    if (!vis) { running = false; return; }
-    fit(); const t = (now - t0) / 1000, R = sm(0, 4.2, t) * 1.18;
-    const sc = clamp((innerHeight / 2 - c.getBoundingClientRect().top) / innerHeight, -1, 1);
-    gl.uniform2f(uL, Math.cos(t * .55) * .62 + sc * .35, -.5 + Math.sin(t * .41) * .32);
-    gl.uniform1f(uR, R); gl.uniform1f(uK, R < 1.15 ? 1 : 0);
-    const gp = ((t - 3.6) % 5.5) / 5.5; gl.uniform1f(uS, t > 3.6 && gp < .45 ? -1.3 + gp / .45 * 2.6 : 9.);
-    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(frame);
-  }
-  new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis && t0 && !running && ready) { running = true; requestAnimationFrame(frame); } }).observe(c);
-  return { start() { const go = () => { if (!ready) return setTimeout(go, 100); t0 = performance.now() + 450; vis = true; if (!running) { running = true; requestAnimationFrame(frame); } }; go(); } };
-})();
+const gold = { start() {} };
 
 /* audio — Shree Ganesh bed (to be added) + ambiences + foley */
 const AC = window.AudioContext || window.webkitAudioContext;
