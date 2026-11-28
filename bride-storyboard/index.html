@@ -12,11 +12,9 @@
 @font-face{font-family:'CG';font-weight:500;src:url(../a/f2/cormorant-garamond-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'CZ';font-weight:500;src:url(../a/f2/cinzel-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'CZ';font-weight:600;src:url(../a/f2/cinzel-latin-600-normal.woff2) format('woff2')}
-@font-face{font-family:'DV';font-weight:500;src:url(../a/f2/noto-serif-devanagari-devanagari-500-normal.woff2) format('woff2')}
-@font-face{font-family:'DV';font-weight:600;src:url(../a/f2/noto-serif-devanagari-devanagari-600-normal.woff2) format('woff2')}
-:root{--W:min(100vw,56.25vh);--red:#8b0f1a;--red2:#5e0a12;--gold:#c9973f;--gold-l:#f1d48f;--ivory:#fbf3e3;--teal:#0f5e63;--sand:#c98b55;--d:'CG',Georgia,serif;--l:'CZ',Georgia,serif;--v:'DV',serif}
+:root{--W:min(100vw,56.25vh);--red:#6e2a35;--red2:#4a1c24;--gold:#b8955a;--gold-l:#e8d3a6;--ivory:#f6efe2;--teal:#5f7f7a;--sand:#d9b99a;--d:'CG',Georgia,serif;--l:'CZ',Georgia,serif}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#1a0806;color:var(--ivory);font-family:var(--d);-webkit-font-smoothing:antialiased}
+html,body{background:#15100d;color:var(--ivory);font-family:var(--d);-webkit-font-smoothing:antialiased}
 #col{position:relative;width:var(--W);margin:0 auto;container-type:inline-size}
 .lab{font:600 2.3cqw/1.6 var(--l);letter-spacing:.26em;text-transform:uppercase}
 #stage{position:sticky;top:0;height:100vh;overflow:hidden;margin-bottom:-100vh}
@@ -25,8 +23,8 @@ html,body{background:#1a0806;color:var(--ivory);font-family:var(--d);-webkit-fon
 #note{position:absolute;left:4cqw;right:4cqw;bottom:calc(env(safe-area-inset-bottom) + 4cqw);padding:3cqw 3.6cqw;border-radius:3cqw;background:rgba(20,6,4,.62);border:1px solid rgba(241,212,143,.3);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font:italic 400 3.5cqw/1.38 var(--d);color:#f6e7c8;opacity:0;transition:opacity .4s}
 #note b{font:600 1.9cqw/1 var(--l);letter-spacing:.22em;text-transform:uppercase;color:var(--gold-l);display:block;margin-bottom:1.4cqw;font-style:normal}
 #track{height:960vh}
-section{position:relative;z-index:2;padding:16cqw 7cqw;text-align:center;background:#1a0806}
-.intro{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(ellipse at 50% 35%,#4a0e10,#1a0806 70%)}
+section{position:relative;z-index:2;padding:16cqw 7cqw;text-align:center;background:#15100d}
+.intro{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(ellipse at 50% 35%,#3a2a22,#15100d 70%)}
 .intro h1{font:300 11cqw/1.05 var(--d);margin-top:3cqw}
 .intro h1 i{color:var(--gold-l)}
 .intro p{font:italic 400 4.2cqw/1.45 var(--d);color:#e9d5b0;margin-top:5cqw;max-width:86%}
@@ -39,22 +37,24 @@ h2 i{color:var(--gold-l)}
 .sw div{aspect-ratio:1;border-radius:2.4cqw;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2cqw;font:600 1.8cqw/1.2 var(--l);letter-spacing:.14em;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .tex{display:grid;grid-template-columns:repeat(2,1fr);gap:3cqw;margin-top:3cqw}
 .tex div{aspect-ratio:1.4;border-radius:2.4cqw;display:flex;align-items:flex-end;padding:2.4cqw;font:600 1.8cqw/1 var(--l);letter-spacing:.16em;text-transform:uppercase;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);overflow:hidden}
-.bandhej{background:radial-gradient(circle,#fff3c4 18%,transparent 22%) 0 0/4cqw 4cqw,radial-gradient(circle,#ffd36b 14%,transparent 18%) 2cqw 2cqw/4cqw 4cqw,#a0101d}
-.leheriya{background:repeating-linear-gradient(135deg,#c2141f 0 1.6cqw,#f0a21b 1.6cqw 2.4cqw,#7d0b14 2.4cqw 3.4cqw,#f6d36a 3.4cqw 4cqw)}
-.mirror{background:radial-gradient(circle at 50% 45%,#fff 0 6%,#cfd6dc 9%,#7f8b94 22%,transparent 24%) 0 0/5cqw 5cqw,radial-gradient(circle,#c9973f 0 28%,transparent 30%) 2.5cqw 2.5cqw/5cqw 5cqw,#3a0b0e}
-.sandstone{background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%),repeating-linear-gradient(0deg,rgba(90,40,10,.18) 0 1px,transparent 1px 3.2cqw),linear-gradient(160deg,#d89a62,#b06e3c)}
+._b{background:radial-gradient(circle,#fff3c4 18%,transparent 22%) 0 0/4cqw 4cqw,radial-gradient(circle,#ffd36b 14%,transparent 18%) 2cqw 2cqw/4cqw 4cqw,#a0101d}
+._l{background:repeating-linear-gradient(135deg,#c2141f 0 1.6cqw,#f0a21b 1.6cqw 2.4cqw,#7d0b14 2.4cqw 3.4cqw,#f6d36a 3.4cqw 4cqw)}
+.mirror{background:radial-gradient(circle at 50% 45%,#fff 0 6%,#e3e1dc 9%,#9a958c 22%,transparent 24%) 0 0/5cqw 5cqw,radial-gradient(circle,#c8a96a 0 26%,transparent 28%) 2.5cqw 2.5cqw/5cqw 5cqw,#e9dfcf;color:#3a2a22!important;text-shadow:none!important}
+.silver{background:radial-gradient(circle,#fff 0 10%,#c9c6bf 30%,#8d8981 60%,transparent 62%) 0 0/3.4cqw 3.4cqw,linear-gradient(135deg,#d9d6cf,#9c988f 50%,#e6e3dc)}
+.marble{background:radial-gradient(circle at 50% 50%,transparent 0 30%,#c8a96a 31% 33%,transparent 34%) 0 0/8cqw 8cqw,linear-gradient(160deg,#f7f1e6,#e6dccb);color:#3a2a22!important;text-shadow:none!important}
+.gota{background:repeating-linear-gradient(90deg,transparent 0 3cqw,rgba(232,211,166,.9) 3cqw 3.5cqw),#c99a94}
+._s{background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%),repeating-linear-gradient(0deg,rgba(90,40,10,.18) 0 1px,transparent 1px 3.2cqw),linear-gradient(160deg,#d89a62,#b06e3c)}
 .card{position:relative;width:88cqw;aspect-ratio:720/1021;margin:4cqw auto 0;background:url(../a/blank.webp) center/100% 100%;color:#3b0d0a;padding:7cqw 6.5cqw}
 .card .bd{position:absolute;inset:5.5cqw;border:1.2cqw solid var(--red);outline:.5cqw solid var(--gold);outline-offset:-2.2cqw;background:
   radial-gradient(circle at 50% 50%,var(--gold) 0 .45cqw,transparent .55cqw) 0 0/3.2cqw 3.2cqw;-webkit-mask:linear-gradient(#000,#000) content-box exclude,linear-gradient(#000,#000);mask:linear-gradient(#000,#000) content-box exclude,linear-gradient(#000,#000);padding:2.6cqw}
-.card .bd2{position:absolute;inset:5.5cqw;border:1.2cqw solid var(--red);box-shadow:inset 0 0 0 .5cqw var(--gold),inset 0 0 0 1.6cqw var(--ivory),inset 0 0 0 1.9cqw var(--gold)}
-.card .cnr{position:absolute;width:9cqw;height:9cqw;border-radius:50%;background:radial-gradient(circle,#f1d48f 0 18%,#c9973f 19% 30%,var(--red) 31% 52%,#c9973f 53% 58%,transparent 60%)}
+.card .bd2{position:absolute;inset:5.5cqw;border:.35cqw solid #b8955a;box-shadow:inset 0 0 0 1.4cqw #f6efe2,inset 0 0 0 1.55cqw #c8a96a,0 0 0 1.2cqw rgba(200,169,106,.12)}
+.card .cnr{position:absolute;width:8cqw;height:8cqw;border-radius:50%;background:radial-gradient(circle,#efe0bd 0 16%,#c8a96a 17% 26%,transparent 27% 38%,#b8955a 39% 42%,transparent 43%)}
 .card .in{position:absolute;inset:15cqw 13cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.dv{font:600 4.2cqw/1.4 var(--v);color:var(--red)}
 .gan{width:20cqw;height:20cqw;border-radius:50%;margin:2.6cqw 0;border:1px dashed #b48a3e;display:flex;align-items:center;justify-content:center;font:600 1.6cqw/1.4 var(--l);letter-spacing:.16em;text-transform:uppercase;color:#9a6c24;background:radial-gradient(circle,rgba(201,151,63,.18),transparent 70%)}
 .c-bl{font:italic 400 3.3cqw/1.3 var(--d);color:#6a2416}
 .c-par{font:500 3.6cqw/1.35 var(--d);margin-top:2.6cqw}
 .c-lab{font:600 1.95cqw/1.7 var(--l);letter-spacing:.24em;text-transform:uppercase;color:#9a6c24;margin-top:1.2cqw}
-.c-nm{font:300 12.5cqw/.98 var(--d);color:var(--red)}
+.c-nm{font:300 12.5cqw/.98 var(--d);color:#5a2a2c}
 .c-w{font:italic 400 3.6cqw/1 var(--d);color:#a07634;margin:1cqw 0}
 .type{display:flex;flex-direction:column;gap:3cqw;margin-top:2cqw}
 .type div{padding:4cqw;border-radius:2.4cqw;background:rgba(255,255,255,.04);border:1px solid rgba(241,212,143,.15)}
@@ -78,26 +78,27 @@ h2 i{color:var(--gold-l)}
     <div class="lab kick">Moodboard</div>
     <h2>Pure <i>Rajputana</i></h2>
     <div class="sw">
-      <div style="background:#8b0f1a">Rajputana red</div>
-      <div style="background:#5e0a12">Deep maroon</div>
-      <div style="background:#c9973f;color:#2a0a06">Saffron gold</div>
-      <div style="background:#fbf3e3;color:#3b0d0a">Ivory</div>
-      <div style="background:#0f5e63">Peacock teal</div>
-      <div style="background:#c98b55;color:#2a0a06">Sandstone</div>
+      <div style="background:#f6efe2;color:#3a2a22">Ivory marble</div>
+      <div style="background:#c8a96a;color:#2a1d12">Champagne gold</div>
+      <div style="background:#a8843f;color:#1d140b">Antique gold</div>
+      <div style="background:#d8b4ad;color:#3a2224">Dusty rose</div>
+      <div style="background:#e4cdb4;color:#3a2a22">Pale sandstone</div>
+      <div style="background:#6e2a35">Wine · accent only</div>
     </div>
     <div class="tex">
-      <div class="bandhej">Bandhej</div><div class="leheriya">Leheriya</div>
-      <div class="mirror">Mirror work</div><div class="sandstone">Sandstone</div>
+      <div class="silver">Silver repoussé doors</div><div class="marble">Ivory marble inlay</div>
+      <div class="mirror">Thikri mirror work</div><div class="gota">Gota-patti on rose</div>
     </div>
+    <p style="font:italic 400 3.6cqw/1.4 var(--d);color:#cdbb9c;margin-top:5cqw">Think the City Palace and Lake Palace at Udaipur: ivory marble, soft champagne light, old gold. Colour comes from her lehenga, not from the backgrounds.</p>
   </section>
 
   <section>
     <div class="lab kick">The invitation card</div>
-    <h2>Mewar border, <i>gold foil</i></h2>
+    <h2>Ivory &amp; <i>old gold</i></h2>
     <div class="card"><div class="bd2"></div>
       <div class="cnr" style="left:2cqw;top:2cqw"></div><div class="cnr" style="right:2cqw;top:2cqw"></div><div class="cnr" style="left:2cqw;bottom:2cqw"></div><div class="cnr" style="right:2cqw;bottom:2cqw"></div>
       <div class="in">
-        <div class="dv">॥ श्री गणेशाय नमः ॥</div>
+        <div class="c-lab" style="margin:0">Shree Ganeshaya Namah</div>
         <div class="gan">Shree Ganesh<br>gold foil</div>
         <div class="c-bl">With the blessings of Shree Ganesh</div>
         <div class="c-par">Shri Rajendra Darode<br>&amp; Smt. Laxmi Darode</div>
@@ -108,14 +109,13 @@ h2 i{color:var(--gold-l)}
         <div class="c-lab" style="margin-top:2cqw">Date &amp; venue to be shared</div>
       </div>
     </div>
-    <p style="font:italic 400 3.6cqw/1.4 var(--d);color:#d9c39c;margin-top:5cqw">In the real build: the border is a hand-painted Mewar miniature frame (generated), and Shree Ganesh is raised gold foil with the same live light as the Gurdwara drawing.</p>
+    <p style="font:italic 400 3.6cqw/1.4 var(--d);color:#d9c39c;margin-top:5cqw">In the real build: a fine antique-gold border with a pichwai-style lotus corner (generated), and Shree Ganesh in raised gold foil with the same live light as the Gurdwara drawing. Ivory and gold only.</p>
   </section>
 
   <section>
     <div class="lab kick">Type &amp; sound</div>
-    <h2>Same family, <i>new world</i></h2>
+    <h2>Same type, <i>new world</i></h2>
     <div class="type">
-      <div><div class="dv" style="color:#f1d48f">शुभ विवाह</div><div class="lab" style="color:#b9a07a;font-size:1.8cqw;margin-top:1cqw">Noto Serif Devanagari · invocations</div></div>
       <div><div style="font:300 10cqw/1 var(--d)">Toshi <i style="color:#f1d48f">&amp;</i> Anhad</div><div class="lab" style="color:#b9a07a;font-size:1.8cqw;margin-top:1cqw">Cormorant Garamond · names (same as the groom's)</div></div>
       <div><div class="lab" style="font-size:3cqw;color:#f1d48f">The Wedding of</div><div class="lab" style="color:#b9a07a;font-size:1.8cqw;margin-top:1cqw">Cinzel · labels (same as the groom's)</div></div>
     </div>
@@ -136,12 +136,12 @@ addEventListener('resize', size); size();
 const seal = new Image(); seal.src = '../a/seal.webp';
 const rnd = s => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 const SC = [
-  ['I · The gate', 'Real build', 'Generated still + clip of a carved sandstone gate with brass studs. Your gold A&T seal lifts off whole and the doors swing open to a nagada beat.'],
-  ['II · The courtyard', 'Real build', 'A Rajput haveli courtyard at golden hour with diyas and marigolds, the camera gliding in. The names appear in the sky, as in the groom\'s invite.'],
-  ['III · Ghoomar, from above', 'Real build', 'One sharp generated still of her lehenga in a full circle, veiled, seen from directly above. Your scroll spins her; flick faster and the ghera flares.'],
+  ['I · The gate', 'Real build', 'Generated still + clip of tall silver repoussé palace doors in an ivory marble arch. Your gold A&T seal lifts off whole and the doors swing open to a nagada beat.'],
+  ['II · The courtyard', 'Real build', 'An ivory marble palace courtyard in soft champagne light, diyas and white florals, the camera gliding in. The names appear in the sky, as in the groom\'s invite.'],
+  ['III · Ghoomar', 'Real build', 'A high, close camera looking down at her, the angle of your reference, as she twirls with her arms up and waving like a film song. Generated clip; your scroll drives the twirl and the camera cranes around her.'],
   ['IV · The sheesh mahal', 'Real build', 'A walk into a mirror palace, candlelight multiplying in every mirror. Generated still + clip, driven by your scroll.'],
-  ['V · Palla & gathbandhan', 'Real build', 'Close-up: his pink palla tied to her red bandhej chunri, mehendi hands. In the Anand Karaj she holds his palla; in the pheras it is tied to her chunri.'],
-  ['VI · Dusk at the fort', 'Real build', 'A fort on the hill at dusk, lit windows, a lake, sky lanterns rising. The closing blessing and the names.']
+  ['V · Palla & gathbandhan', 'Real build', 'Close-up: his pink palla tied to her rose-and-wine chunri, mehendi hands. In the Anand Karaj she holds his palla; in the pheras it is tied to her chunri.'],
+  ['VI · Dusk at the lake palace', 'Real build', 'An ivory palace on a still lake at dusk, its windows lit, lanterns drifting up. The closing blessing and the names.']
 ];
 const N = SC.length;
 let lastY = scrollY, vel = 0, flare = 0, spin = 0;
@@ -157,100 +157,108 @@ function chhatri(x, y, s, c) { cx.fillStyle = c; cx.beginPath(); cx.ellipse(x, y
 function petals(t, n, seed, col) { for (let i = 0; i < n; i++) { const r1 = rnd(seed + i), r2 = rnd(seed + i + .5), y = ((r2 + t * .25 + performance.now() / 9000 * (.5 + r1)) % 1.1 - .05) * H, x = (r1 + Math.sin(y / H * 6 + i) * .03) * W, s = (3 + r1 * 4) * D; cx.save(); cx.translate(x, y); cx.rotate(y / 40 + i); cx.fillStyle = col[i % col.length]; cx.beginPath(); cx.ellipse(0, 0, s, s * .55, 0, 0, 6.283); cx.fill(); cx.restore(); } }
 function txt(s, x, y, font, col, a = 1, ls = 0) { cx.globalAlpha = a; cx.font = font; cx.fillStyle = col; cx.textAlign = 'center'; if ('letterSpacing' in cx) cx.letterSpacing = ls + 'px'; cx.fillText(s, x, y); if ('letterSpacing' in cx) cx.letterSpacing = '0px'; cx.globalAlpha = 1; }
 
-/* ── I · the gate ── */
+/* ── I · the gate: silver repoussé doors in an ivory marble arch ── */
 function sGate(t, T) {
-  sky('#b77a46', '#a8693c', '#7d4824');
-  for (let i = 0; i < 40; i++) { cx.fillStyle = 'rgba(70,30,8,.12)'; cx.fillRect(0, (i / 40) * H, W, 1 * D); }
+  sky('#efe5d4', '#e6d9c4', '#cdbba0');
+  for (let i = 0; i < 26; i++) { cx.fillStyle = 'rgba(150,120,80,.07)'; cx.fillRect(0, (i / 26) * H, W, 1 * D); }
   const x0 = W * .12, x1 = W * .88, yt = H * .1, yb = H * .94, open = sm(.28, .92, t), mid = (x0 + x1) / 2;
-  // beyond the gate: the courtyard light
   cx.save(); cuspArch(x0, x1, yb, yt); cx.clip();
-  sky('#f6c48a', '#fbdcae', '#e7b27c'); glow(mid, H * .55, W * .7, 'rgba(255,240,205,.9)', open);
-  // the two doors
+  sky('#f4e3c6', '#f8ecd6', '#e9d6b6'); glow(mid, H * .55, W * .7, 'rgba(255,246,226,.95)', open);
   const dw = (x1 - x0) / 2;
   for (const side of [-1, 1]) {
     const ang = open * 1.25, sc = Math.cos(ang), ox = side < 0 ? x0 : x1; cx.save(); cx.translate(ox, 0); cx.scale(sc * (side < 0 ? 1 : -1), 1);
-    const g = cx.createLinearGradient(0, 0, dw, 0); g.addColorStop(0, '#4a240f'); g.addColorStop(1, '#6b3518'); cx.fillStyle = g; cx.fillRect(0, yt, dw, yb - yt);
-    cx.strokeStyle = 'rgba(30,12,4,.55)'; cx.lineWidth = 2 * D; for (let k = 0; k < 4; k++) cx.strokeRect(dw * .12, yt + H * .12 + k * (yb - yt - H * .16) / 4, dw * .76, (yb - yt - H * .16) / 4 - H * .02);
-    for (let r = 0; r < 14; r++) for (let c = 0; c < 4; c++) { const sx = dw * (.2 + c * .2), sy = yt + H * .08 + r * (yb - yt - H * .1) / 14; const gg = cx.createRadialGradient(sx - D, sy - D, 0, sx, sy, 4.5 * D); gg.addColorStop(0, '#fff2c0'); gg.addColorStop(.5, '#d4a24c'); gg.addColorStop(1, '#6b4412'); cx.fillStyle = gg; cx.beginPath(); cx.arc(sx, sy, 4.5 * D, 0, 6.283); cx.fill(); }
-    cx.fillStyle = 'rgba(0,0,0,' + (open * .5) + ')'; cx.fillRect(0, yt, dw, yb - yt);
+    const g = cx.createLinearGradient(0, yt, dw, yb); g.addColorStop(0, '#d9d6cf'); g.addColorStop(.45, '#a19d94'); g.addColorStop(.7, '#e7e4dd'); g.addColorStop(1, '#8f8b83'); cx.fillStyle = g; cx.fillRect(0, yt, dw, yb - yt);
+    // repoussé panels with a peacock-lotus medallion
+    cx.strokeStyle = 'rgba(80,74,66,.45)'; cx.lineWidth = 1.5 * D;
+    for (let k = 0; k < 3; k++) { const py = yt + H * .1 + k * (yb - yt - H * .14) / 3, ph = (yb - yt - H * .14) / 3 - H * .025; cx.strokeRect(dw * .12, py, dw * .76, ph);
+      const mx = dw * .5, my = py + ph / 2; for (let p = 0; p < 12; p++) { cx.save(); cx.translate(mx, my); cx.rotate(p / 12 * 6.283); cx.beginPath(); cx.ellipse(0, -ph * .17, ph * .05, ph * .15, 0, 0, 6.283); cx.stroke(); cx.restore(); }
+      cx.beginPath(); cx.arc(mx, my, ph * .06, 0, 6.283); cx.stroke(); }
+    for (let r = 0; r < 26; r++) { const sy = yt + H * .07 + r * (yb - yt - H * .09) / 26; for (const sx of [dw * .06, dw * .94]) { cx.fillStyle = 'rgba(255,255,255,.7)'; cx.beginPath(); cx.arc(sx, sy, 2 * D, 0, 6.283); cx.fill(); } }
+    cx.fillStyle = 'rgba(40,30,20,' + (open * .35) + ')'; cx.fillRect(0, yt, dw, yb - yt);
     cx.restore();
   }
   cx.restore();
-  // carved frame
-  cx.lineWidth = 9 * D; cx.strokeStyle = '#d9a26a'; cuspArch(x0, x1, yb, yt); cx.stroke(); cx.lineWidth = 2 * D; cx.strokeStyle = 'rgba(80,35,10,.6)'; cuspArch(x0 - 12 * D, x1 + 12 * D, yb, yt - 12 * D); cx.stroke();
-  // seam light
-  if (open > 0 && open < .6) { cx.globalAlpha = Math.sin(open / .6 * Math.PI); cx.fillStyle = '#fff4d8'; cx.fillRect(mid - 1.5 * D, yt, 3 * D, yb - yt); glow(mid, H * .5, W * .25, 'rgba(255,220,150,.8)'); cx.globalAlpha = 1; }
-  // the seal lifts off whole
-  if (seal.complete) { const lift = sm(.05, .3, t), s = W * .34 * (1 + lift * .08), y = H * .52 - lift * H * .35; cx.globalAlpha = 1 - sm(.18, .32, t); cx.drawImage(seal, mid - s / 2, y - s / 2, s, s * 900 / 878); cx.globalAlpha = 1; }
+  cx.lineWidth = 10 * D; cx.strokeStyle = '#f3ecdf'; cuspArch(x0, x1, yb, yt); cx.stroke(); cx.lineWidth = 1.5 * D; cx.strokeStyle = '#c8a96a'; cuspArch(x0 - 9 * D, x1 + 9 * D, yb, yt - 9 * D); cx.stroke(); cuspArch(x0 + 6 * D, x1 - 6 * D, yb, yt + 6 * D); cx.stroke();
+  if (open > 0 && open < .6) { cx.globalAlpha = Math.sin(open / .6 * Math.PI); cx.fillStyle = '#fffaf0'; cx.fillRect(mid - 1.5 * D, yt, 3 * D, yb - yt); glow(mid, H * .5, W * .25, 'rgba(255,236,200,.8)'); cx.globalAlpha = 1; }
+  if (seal.complete) { const lift = sm(.05, .3, t), s = W * .32 * (1 + lift * .08), y = H * .52 - lift * H * .35; cx.globalAlpha = 1 - sm(.18, .32, t); cx.drawImage(seal, mid - s / 2, y - s / 2, s, s * 900 / 878); cx.globalAlpha = 1; }
 }
 
-/* ── II · the courtyard ── */
+/* ── II · the courtyard: ivory marble palace, champagne light ── */
 function sCourt(t, T) {
-  sky('#f2b77c', '#fbd9a8', '#f7c88e', 0, H * .62); glow(W * .66, H * .5, W * .55, 'rgba(255,236,200,.95)'); glow(W * .66, H * .5, W * .06, '#fffaf0');
+  sky('#e9d8bf', '#f4e8d6', '#f0dcc0', 0, H * .62); glow(W * .64, H * .52, W * .55, 'rgba(255,244,224,.9)'); glow(W * .64, H * .52, W * .05, '#fffaf2');
   const push = 1 + t * .12; cx.save(); cx.translate(W / 2, H * .62); cx.scale(push, push); cx.translate(-W / 2, -H * .62);
-  // palace silhouette with chhatris and jharokhas
-  const base = H * .62; cx.fillStyle = '#d6955c'; cx.fillRect(-W * .1, base - H * .2, W * 1.2, H * .2);
-  for (let i = 0; i < 6; i++) { const x = W * (.06 + i * .18); cx.fillStyle = '#b8743f'; cuspArch(x, x + W * .1, base, base - H * .15); cx.fill(); cx.fillStyle = 'rgba(255,214,150,.45)'; cuspArch(x + W * .015, x + W * .085, base, base - H * .13); cx.fill(); }
-  for (const x of [.08, .5, .92]) chhatri(W * x, base - H * .2, W * .1, '#c7854c');
-  cx.fillStyle = '#e8c9a4'; cx.fillRect(-W * .1, base, W * 1.2, H * .4);
-  // diyas on the floor, in perspective
-  for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) { const p = r / 4, y = base + H * (.05 + p * p * .3), spread = .3 + p * .9, x = W / 2 + (i - 4) / 4 * W * spread * .5; const fl = .7 + .3 * Math.sin(T * 9 + i * 3 + r); glow(x, y - 4 * D, (10 + p * 22) * D, 'rgba(255,180,80,.75)', fl); cx.fillStyle = '#8a4a1c'; cx.beginPath(); cx.ellipse(x, y, (3 + p * 6) * D, (1.4 + p * 2.6) * D, 0, 0, 6.283); cx.fill(); cx.fillStyle = '#fff1b8'; cx.beginPath(); cx.ellipse(x, y - (3 + p * 4) * D, (1 + p) * D, (2 + p * 2) * D, 0, 0, 6.283); cx.fill(); }
+  const base = H * .62; cx.fillStyle = '#f1e9dc'; cx.fillRect(-W * .1, base - H * .2, W * 1.2, H * .2);
+  for (let i = 0; i < 6; i++) { const x = W * (.06 + i * .18); cx.fillStyle = '#ddd0bb'; cuspArch(x, x + W * .1, base, base - H * .15); cx.fill(); cx.fillStyle = 'rgba(255,236,206,.55)'; cuspArch(x + W * .015, x + W * .085, base, base - H * .13); cx.fill(); cx.strokeStyle = 'rgba(184,149,90,.55)'; cx.lineWidth = 1 * D; cuspArch(x, x + W * .1, base, base - H * .15); cx.stroke(); }
+  cx.fillStyle = 'rgba(184,149,90,.5)'; cx.fillRect(-W * .1, base - H * .205, W * 1.2, 1.2 * D);
+  for (const x of [.08, .5, .92]) chhatri(W * x, base - H * .2, W * .1, '#ece2d2');
+  sky('#efe6d8', '#e7dccb', '#d9ccb6', base, H);
+  for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) { const p = r / 4, y = base + H * (.05 + p * p * .3), spread = .3 + p * .9, x = W / 2 + (i - 4) / 4 * W * spread * .5; const fl = .7 + .3 * Math.sin(T * 9 + i * 3 + r); glow(x, y - 4 * D, (10 + p * 22) * D, 'rgba(255,200,120,.55)', fl); cx.fillStyle = '#b39470'; cx.beginPath(); cx.ellipse(x, y, (3 + p * 6) * D, (1.4 + p * 2.6) * D, 0, 0, 6.283); cx.fill(); cx.fillStyle = '#fff3c8'; cx.beginPath(); cx.ellipse(x, y - (3 + p * 4) * D, (1 + p) * D, (2 + p * 2) * D, 0, 0, 6.283); cx.fill(); }
   cx.restore();
-  petals(t, 18, 11, ['#e8742a', '#f2a03a', '#c2243c']);
-  // names in the sky
+  petals(t, 14, 11, ['#f4ece0', '#e8cfc4', '#d9b3a8']);
   const a = sm(.12, .4, t), b = sm(.25, .55, t);
-  txt('॥ श्री गणेशाय नमः ॥', W / 2, H * .13, `600 ${W * .036}px DV`, '#7a1410', a);
-  txt('THE WEDDING OF', W / 2, H * .19, `600 ${W * .024}px CZ`, '#7e5014', a, W * .006);
-  txt('Toshi', W / 2, H * .26 + (1 - b) * 10 * D, `300 ${W * .13}px CG`, '#5e0a12', b);
-  txt('&', W / 2, H * .3, `italic 300 ${W * .065}px CG`, '#a2701e', b);
-  txt('Anhad', W / 2, H * .37 + (1 - b) * 10 * D, `300 ${W * .13}px CG`, '#5e0a12', b);
+  txt('THE WEDDING OF', W / 2, H * .17, `600 ${W * .024}px CZ`, '#8a6a3a', a, W * .006);
+  txt('Toshi', W / 2, H * .25 + (1 - b) * 10 * D, `300 ${W * .13}px CG`, '#5a2a2c', b);
+  txt('&', W / 2, H * .29, `italic 300 ${W * .065}px CG`, '#a8843f', b);
+  txt('Anhad', W / 2, H * .36 + (1 - b) * 10 * D, `300 ${W * .13}px CG`, '#5a2a2c', b);
 }
 
-/* ── III · ghoomar from above ── */
+/* ── III · ghoomar: a high, close camera looking down as she twirls, arms up ── */
 function sGhoomar(t, T) {
-  cx.fillStyle = '#3a120c'; cx.fillRect(0, 0, W, H);
-  const c = [W / 2, H * .5];
-  // marble floor + a faint rangoli
-  for (let i = 0; i < 9; i++) { cx.strokeStyle = 'rgba(255,220,170,' + (.05 + i * .006) + ')'; cx.lineWidth = D; cx.beginPath(); cx.arc(c[0], c[1], W * (.42 + i * .06), 0, 6.283); cx.stroke(); }
-  const R = W * .36 * (1 + flare * .55 + Math.sin(T * 2) * .01), rot = spin;
-  // the ghera — pleated wedges
-  const n = 40; cx.save(); cx.translate(c[0], c[1]); cx.rotate(rot);
-  for (let i = 0; i < n; i++) { const a0 = i / n * 6.283, a1 = (i + 1) / n * 6.283, wv = 1 + Math.sin(i * 1.7 + T) * .015 * (1 + flare * 4);
-    const g = cx.createRadialGradient(0, 0, R * .1, 0, 0, R * wv); g.addColorStop(0, i % 2 ? '#7c0c18' : '#9b111e'); g.addColorStop(1, i % 2 ? '#5e0a12' : '#8b0f1a'); cx.fillStyle = g;
-    cx.beginPath(); cx.moveTo(0, 0); cx.arc(0, 0, R * wv, a0, a1); cx.closePath(); cx.fill(); }
-  // bandhej dot rings
-  for (let ring = 0; ring < 6; ring++) { const rr = R * (.32 + ring * .1), m = Math.floor(18 + ring * 9); cx.fillStyle = ring % 2 ? '#ffd36b' : '#fff3c4'; for (let k = 0; k < m; k++) { const a = k / m * 6.283 + ring * .2; cx.beginPath(); cx.arc(Math.cos(a) * rr, Math.sin(a) * rr, (1.4 + ring * .25) * D, 0, 6.283); cx.fill(); } }
-  // gota-patti border bands
-  for (const [f, w] of [[.9, 3], [.975, 6]]) { cx.strokeStyle = '#e2b55a'; cx.lineWidth = w * D; cx.beginPath(); cx.arc(0, 0, R * f, 0, 6.283); cx.stroke(); }
-  for (let k = 0; k < 64; k++) { const a = k / 64 * 6.283; cx.save(); cx.rotate(a); cx.translate(R * .937, 0); cx.rotate(Math.PI / 4); cx.fillStyle = '#f1d48f'; cx.fillRect(-2.4 * D, -2.4 * D, 4.8 * D, 4.8 * D); cx.restore(); }
-  // arms outstretched, mehendi hands
-  for (const s of [-1, 1]) { cx.save(); cx.rotate(s * 1.35 + .2); cx.fillStyle = '#c98b5e'; cx.beginPath(); cx.ellipse(R * .36, 0, R * .2, R * .028, 0, 0, 6.283); cx.fill(); cx.fillStyle = '#9a4a20'; cx.beginPath(); cx.ellipse(R * .58, 0, R * .05, R * .035, 0, 0, 6.283); cx.fill(); for (let k = 0; k < 5; k++) { cx.fillStyle = '#f1d48f'; cx.fillRect(R * (.26 + k * .02), -R * .03, 1.4 * D, R * .06); } cx.restore(); }
-  // the odhni (veil) — no face, seen from above
-  const g2 = cx.createRadialGradient(-R * .04, -R * .05, 0, 0, 0, R * .3); g2.addColorStop(0, '#d9481a'); g2.addColorStop(1, '#a82a12'); cx.fillStyle = g2; cx.beginPath(); cx.ellipse(0, 0, R * .3, R * .27, 0, 0, 6.283); cx.fill();
-  cx.strokeStyle = '#f1d48f'; cx.lineWidth = 2.5 * D; cx.stroke(); for (let k = 0; k < 30; k++) { const a = k / 30 * 6.283; cx.fillStyle = '#fff3c4'; cx.beginPath(); cx.arc(Math.cos(a) * R * .22, Math.sin(a) * R * .2, 1.6 * D, 0, 6.283); cx.fill(); }
+  // the camera cranes round and down as you scroll
+  const crane = t * .5, tilt = .52 + Math.sin(t * 3.1416) * .06;
+  cx.save(); cx.translate(W / 2, H * .56); cx.rotate(-.12 + crane * .5); cx.scale(1.05 + t * .12, 1.05 + t * .12); cx.translate(-W / 2, -H * .56);
+  // ivory marble floor with an inlaid star, in perspective
+  cx.fillStyle = '#e9e0d1'; cx.fillRect(-W, -H, W * 3, H * 3);
+  const fc = [W / 2, H * .6];
+  for (let i = 1; i < 9; i++) { cx.strokeStyle = 'rgba(168,132,63,' + (.32 - i * .03) + ')'; cx.lineWidth = 1.2 * D; cx.beginPath(); cx.ellipse(fc[0], fc[1], W * .14 * i, W * .14 * i * tilt, 0, 0, 6.283); cx.stroke(); }
+  for (let k = 0; k < 16; k++) { const a = k / 16 * 6.283 + crane; cx.strokeStyle = 'rgba(168,132,63,.16)'; cx.beginPath(); cx.moveTo(fc[0], fc[1]); cx.lineTo(fc[0] + Math.cos(a) * W * 1.3, fc[1] + Math.sin(a) * W * 1.3 * tilt); cx.stroke(); }
+  // her lehenga, flaring as she turns
+  const R = W * .34 * (1 + flare * .5), rot = spin, cxm = W / 2, cy = H * .62;
+  cx.fillStyle = 'rgba(60,30,20,.18)'; cx.beginPath(); cx.ellipse(cxm + 8 * D, cy + 10 * D, R * 1.02, R * tilt * 1.02, 0, 0, 6.283); cx.fill();
+  const n = 36;
+  for (let i = 0; i < n; i++) { const a0 = i / n * 6.283 + rot, a1 = (i + 1) / n * 6.283 + rot, wv = 1 + Math.sin(i * 1.9 + T * 1.5) * .02 * (1 + flare * 4);
+    const g = cx.createRadialGradient(cxm, cy - R * .25, R * .05, cxm, cy, R); g.addColorStop(0, i % 2 ? '#c99a94' : '#d8b4ad'); g.addColorStop(1, i % 2 ? '#a9726f' : '#bc8a84'); cx.fillStyle = g;
+    cx.beginPath(); cx.moveTo(cxm, cy - R * .32); cx.lineTo(cxm + Math.cos(a0) * R * wv, cy + Math.sin(a0) * R * tilt * wv); cx.lineTo(cxm + Math.cos(a1) * R * wv, cy + Math.sin(a1) * R * tilt * wv); cx.closePath(); cx.fill(); }
+  // gota-patti hem
+  cx.strokeStyle = '#e8d3a6'; cx.lineWidth = 4 * D; cx.beginPath(); cx.ellipse(cxm, cy, R * .985, R * tilt * .985, 0, 0, 6.283); cx.stroke();
+  cx.strokeStyle = 'rgba(200,169,106,.8)'; cx.lineWidth = 1.5 * D; cx.beginPath(); cx.ellipse(cxm, cy, R * .9, R * tilt * .9, 0, 0, 6.283); cx.stroke();
+  if (flare > .04) { cx.strokeStyle = 'rgba(255,240,210,' + Math.min(.6, flare * 2.2) + ')'; cx.lineWidth = 2 * D; for (let k = 0; k < 5; k++) { const a = rot + k * 1.3; cx.beginPath(); cx.ellipse(cxm, cy, R * (1 + k * .008), R * tilt * (1 + k * .008), 0, a, a + flare * 2.6); cx.stroke(); } }
+  // her, from above and behind: bodice, veil, arms raised and waving
+  const sh = [cxm, cy - R * .42], wave = Math.sin(T * 2.4), wave2 = Math.sin(T * 2.4 + 1.2);
+  for (const s of [-1, 1]) { const w2 = s < 0 ? wave : wave2, ang = -Math.PI / 2 + s * (.55 + w2 * .16) + Math.sin(rot) * .05;
+    const el = [sh[0] + s * R * .1 + Math.cos(ang) * R * .26, sh[1] + Math.sin(ang) * R * .26], hd = [el[0] + Math.cos(ang - s * (.3 + w2 * .3)) * R * .22, el[1] + Math.sin(ang - s * (.3 + w2 * .3)) * R * .22];
+    cx.strokeStyle = '#d0a17a'; cx.lineCap = 'round'; cx.lineWidth = R * .07; cx.beginPath(); cx.moveTo(sh[0] + s * R * .1, sh[1]); cx.lineTo(el[0], el[1]); cx.lineTo(hd[0], hd[1]); cx.stroke();
+    cx.strokeStyle = '#e8d3a6'; cx.lineWidth = R * .075; cx.beginPath(); const bx = el[0] + (hd[0] - el[0]) * .55, by = el[1] + (hd[1] - el[1]) * .55; cx.moveTo(bx - 2 * D, by); cx.lineTo(bx + 2 * D, by + 3 * D); cx.stroke();
+    cx.fillStyle = '#a5643e'; cx.beginPath(); cx.ellipse(hd[0], hd[1], R * .045, R * .06, ang, 0, 6.283); cx.fill(); }
+  cx.fillStyle = '#7d3a42'; cx.beginPath(); cx.ellipse(sh[0], sh[1] + R * .06, R * .15, R * .13, 0, 0, 6.283); cx.fill();
+  // the odhni: sheer dusty rose, flowing out with the turn
+  cx.save(); cx.globalAlpha = .82; const og = cx.createLinearGradient(sh[0] - R * .3, sh[1], sh[0] + R * .3, sh[1] + R * .4); og.addColorStop(0, '#e6c3bc'); og.addColorStop(1, '#c99a94'); cx.fillStyle = og;
+  cx.beginPath(); cx.moveTo(sh[0], sh[1] - R * .16); cx.bezierCurveTo(sh[0] + R * .25, sh[1] - R * .12, sh[0] + R * (.42 + flare), sh[1] + R * .25, sh[0] + R * (.3 + Math.sin(rot) * .1), sh[1] + R * .5); cx.lineTo(sh[0] - R * .25, sh[1] + R * .42); cx.bezierCurveTo(sh[0] - R * .35, sh[1] + R * .1, sh[0] - R * .2, sh[1] - R * .14, sh[0], sh[1] - R * .16); cx.fill();
+  cx.globalAlpha = 1; cx.strokeStyle = '#e8d3a6'; cx.lineWidth = 2 * D; cx.stroke(); cx.restore();
+  cx.fillStyle = '#d9b3a8'; cx.beginPath(); cx.ellipse(sh[0], sh[1] - R * .08, R * .09, R * .08, 0, 0, 6.283); cx.fill(); cx.strokeStyle = '#e8d3a6'; cx.lineWidth = 1.5 * D; cx.stroke();
   cx.restore();
-  // motion: light streaks on the hem when it spins fast
-  if (flare > .05) { cx.save(); cx.translate(c[0], c[1]); cx.strokeStyle = 'rgba(255,226,160,' + Math.min(.5, flare * 2) + ')'; cx.lineWidth = 2 * D; for (let k = 0; k < 6; k++) { const a = rot + k; cx.beginPath(); cx.arc(0, 0, R * (.95 + k * .01), a, a + flare * 2.4); cx.stroke(); } cx.restore(); }
-  petals(t, 14, 31, ['#e8742a', '#f2a03a', '#c2243c', '#fff3c4']);
+  petals(t, 16, 31, ['#f4ece0', '#e8cfc4', '#d9b3a8', '#e8d3a6']);
+  // a soft cinematic letterbox
+  cx.fillStyle = 'rgba(10,6,4,.55)'; cx.fillRect(0, 0, W, H * .06); cx.fillRect(0, H * .94, W, H * .06);
 }
 
 /* ── IV · the sheesh mahal ── */
 function sMahal(t, T) {
-  cx.fillStyle = '#1a070c'; cx.fillRect(0, 0, W, H);
+  cx.fillStyle = '#2a2018'; cx.fillRect(0, 0, W, H);
   const z = 1 + t * .55; cx.save(); cx.translate(W / 2, H * .5); cx.scale(z, z); cx.translate(-W / 2, -H * .5);
   // every wall is covered in tiny convex mirrors set in gold
   const cell = 15 * D; let k = 0;
   for (let y = -cell; y < H + cell; y += cell * .86) for (let x = -cell + ((y / (cell * .86)) & 1) * cell / 2; x < W + cell; x += cell, k++) {
     const r1 = rnd(k), dx = (x - W / 2) / W, dy = (y - H * .55) / H, cand = Math.exp(-(dx * dx * 6 + dy * dy * 5));
     const fl = Math.pow(Math.max(0, Math.sin(T * (.8 + r1 * 2.2) + k * .7)), 10), b = .18 + cand * .5 + fl * .8;
-    cx.fillStyle = `rgba(${Math.min(255, 150 + b * 120)},${Math.min(255, 140 + b * 110)},${Math.min(255, 135 + b * 90)},${.35 + b * .5})`;
+    cx.fillStyle = `rgba(${Math.min(255, 170 + b * 100)},${Math.min(255, 158 + b * 95)},${Math.min(255, 140 + b * 80)},${.35 + b * .5})`;
     cx.beginPath(); for (let j = 0; j < 6; j++) { const a = j / 6 * 6.283 + Math.PI / 6; cx.lineTo(x + Math.cos(a) * cell * .42, y + Math.sin(a) * cell * .42); } cx.fill();
     cx.strokeStyle = 'rgba(201,151,63,.35)'; cx.lineWidth = .8 * D; cx.stroke();
     if (fl > .55) glow(x, y, cell * 1.6, 'rgba(255,226,170,.9)', (fl - .5) * 1.6);
   }
   // nested cusped arches of the mirror palace
   for (let i = 0; i < 4; i++) { const s2 = Math.pow(.7, i), w = W * .92 * s2, yb = H * .9 - (1 - s2) * H * .22, yt = yb - H * .78 * s2, x0 = W / 2 - w / 2;
-    cx.lineWidth = (10 - i * 2) * D; cx.strokeStyle = 'rgba(30,8,10,.85)'; cuspArch(x0, x0 + w, yb, yt); cx.stroke(); cx.lineWidth = 2 * D; cx.strokeStyle = 'rgba(226,181,90,.75)'; cuspArch(x0, x0 + w, yb, yt); cx.stroke(); }
+    cx.lineWidth = (10 - i * 2) * D; cx.strokeStyle = 'rgba(40,30,22,.85)'; cuspArch(x0, x0 + w, yb, yt); cx.stroke(); cx.lineWidth = 2 * D; cx.strokeStyle = 'rgba(226,181,90,.75)'; cuspArch(x0, x0 + w, yb, yt); cx.stroke(); }
   // candles, their light multiplied in the mirrors
   for (let c = 0; c < 7; c++) { const x = W / 2 + (c - 3) * W * .055, y = H * .8, fl = .75 + .25 * Math.sin(T * 8 + c * 2); glow(x, y - 8 * D, 60 * D, 'rgba(255,180,80,.55)', fl); cx.fillStyle = '#f6e7c8'; cx.fillRect(x - 3 * D, y, 6 * D, 20 * D); cx.fillStyle = '#fff4c8'; cx.beginPath(); cx.ellipse(x, y - 4 * D, 2.4 * D, 6 * D * fl, 0, 0, 6.283); cx.fill(); }
   cx.restore();
@@ -262,35 +270,36 @@ function ribbon(pts, w, c1, c2, dots) { for (let i = 0; i < pts.length - 1; i++)
     if (dots && i % 3 === 0) { cx.fillStyle = '#fff3c4'; cx.beginPath(); cx.arc(x0, y0, 1.6 * D, 0, 6.283); cx.fill(); } }
   cx.strokeStyle = '#e2b55a'; cx.lineWidth = 1.6 * D; for (const s of [1, -1]) { cx.beginPath(); pts.forEach(([x, y], i) => { const [x1, y1] = pts[Math.min(i + 1, pts.length - 1)], dx = x1 - x, dy = y1 - y, l = Math.hypot(dx, dy) || 1; const px = x - dy / l * w / 2 * s, py = y + dx / l * w / 2 * s; i ? cx.lineTo(px, py) : cx.moveTo(px, py); }); cx.stroke(); } }
 function sKnot(t, T) {
-  const g = cx.createRadialGradient(W / 2, H * .5, 0, W / 2, H * .5, H * .7); g.addColorStop(0, '#4a1a10'); g.addColorStop(1, '#14060a'); cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+  const g = cx.createRadialGradient(W / 2, H * .5, 0, W / 2, H * .5, H * .7); g.addColorStop(0, '#4a3628'); g.addColorStop(1, '#17110d'); cx.fillStyle = g; cx.fillRect(0, 0, W, H);
   for (let i = 0; i < 16; i++) glow(rnd(i) * W, rnd(i + .4) * H, (20 + rnd(i + .8) * 40) * D, 'rgba(255,190,110,.35)', .5 + .5 * Math.sin(T + i));
   const k = sm(.05, .7, t), cxm = W / 2, cy = H * .5, w = W * .12;
   const L = [], Rr = []; for (let i = 0; i <= 40; i++) { const u = i / 40; L.push([-W * .1 + (cxm + W * .1) * u * k + (1 - k) * 0, cy + Math.sin(u * 3 + T * .8) * H * .04 * (1 - u * k) - u * H * .03]); Rr.push([W * 1.1 - (W * 1.1 - cxm) * u * k, cy + Math.cos(u * 3 + T * .7) * H * .04 * (1 - u * k) + u * H * .03]); }
-  ribbon(L, w, '#e993a8', '#d0718b', false); ribbon(Rr, w, '#a0101d', '#7c0c18', true);
+  ribbon(L, w, '#e8b7b9', '#d49ea2', false); ribbon(Rr, w, '#7d3a42', '#6a2e36', true);
   // the knot forms
   const kn = sm(.6, .85, t); if (kn > 0) { cx.save(); cx.translate(cxm, cy); cx.scale(kn, kn);
     const loop = (c1, c2, s) => { const p = []; for (let i = 0; i <= 40; i++) { const a = i / 40 * 6.283; p.push([Math.cos(a) * w * .9 * s + s * w * .35, Math.sin(a) * w * .55]); } ribbon(p, w * .55, c1, c2, s < 0); };
-    loop('#e993a8', '#d0718b', 1); loop('#a0101d', '#7c0c18', -1); cx.fillStyle = '#c9973f'; cx.beginPath(); cx.ellipse(0, 0, w * .3, w * .4, 0, 0, 6.283); cx.fill();
-    ribbon([[0, 0], [-w * .3, w * 1.4], [-w * .2, w * 2.4]], w * .45, '#e993a8', '#d0718b', false); ribbon([[0, 0], [w * .3, w * 1.4], [w * .25, w * 2.5]], w * .45, '#a0101d', '#7c0c18', true); cx.restore(); }
+    loop('#e8b7b9', '#d49ea2', 1); loop('#7d3a42', '#6a2e36', -1); cx.fillStyle = '#c8a96a'; cx.beginPath(); cx.ellipse(0, 0, w * .3, w * .4, 0, 0, 6.283); cx.fill();
+    ribbon([[0, 0], [-w * .3, w * 1.4], [-w * .2, w * 2.4]], w * .45, '#e8b7b9', '#d49ea2', false); ribbon([[0, 0], [w * .3, w * 1.4], [w * .25, w * 2.5]], w * .45, '#7d3a42', '#6a2e36', true); cx.restore(); }
   for (let i = 0; i < 22; i++) { const x = cxm + (rnd(i) - .5) * W * .7, y = cy + H * .18 + rnd(i + .2) * H * .1; cx.fillStyle = '#f2d27a'; cx.beginPath(); cx.ellipse(x, y, 2.2 * D, 1 * D, rnd(i) * 3, 0, 6.283); cx.fill(); }
-  const a = sm(.75, .95, t); txt('PALLA  ·  GATHBANDHAN', W / 2, H * .2, `600 ${W * .026}px CZ`, '#f1d48f', a, W * .006); txt('two families, one knot', W / 2, H * .25, `italic 400 ${W * .055}px CG`, '#fbefd6', a);
+  const a = sm(.75, .95, t); txt('PALLA  ·  GATHBANDHAN', W / 2, H * .2, `600 ${W * .026}px CZ`, '#e8d3a6', a, W * .006); txt('two families, one knot', W / 2, H * .25, `italic 400 ${W * .055}px CG`, '#fbefd6', a);
 }
 
-/* ── VI · dusk at the fort ── */
+/* ── VI · dusk at the lake palace ── */
 function sDusk(t, T) {
-  sky('#1b2350', '#6a3a5a', '#e98a4a', 0, H * .62); glow(W * .5, H * .62, W * .7, 'rgba(255,160,90,.55)');
-  for (let i = 0; i < 40; i++) { cx.fillStyle = 'rgba(255,255,240,' + (.3 + .7 * rnd(i)) * (1 - rnd(i + .3) * .5) + ')'; cx.fillRect(rnd(i + .1) * W, rnd(i + .2) * H * .35, 1.2 * D, 1.2 * D); }
-  // the fort on the hill
-  const hb = H * .62; cx.fillStyle = '#2a1018'; cx.beginPath(); cx.moveTo(0, hb); cx.quadraticCurveTo(W * .3, hb - H * .1, W * .55, hb - H * .12); cx.quadraticCurveTo(W * .8, hb - H * .14, W, hb - H * .06); cx.lineTo(W, hb); cx.fill();
-  const fx = W * .2, fw = W * .62, fy = hb - H * .12; cx.fillStyle = '#3a1520'; cx.fillRect(fx, fy - H * .12, fw, H * .12);
-  for (let i = 0; i < 22; i++) cx.fillRect(fx + i * fw / 22, fy - H * .135, fw / 44, H * .016);
-  for (const x of [.22, .4, .6, .78]) { cx.fillRect(W * x - W * .04, fy - H * .2, W * .08, H * .2); chhatri(W * x, fy - H * .2, W * .07, '#3a1520'); }
-  for (let i = 0; i < 26; i++) { const x = fx + rnd(i) * fw, y = fy - H * (.02 + rnd(i + .3) * .14), fl = .6 + .4 * Math.sin(T * 3 + i); cx.fillStyle = `rgba(255,${190 + fl * 40},110,${fl})`; cx.fillRect(x, y, 3 * D, 4 * D); }
-  // the lake and its reflection
-  sky('#3a2440', '#5a3040', '#20101c', hb, H); for (let i = 0; i < 26; i++) { const y = hb + i * H * .014; cx.fillStyle = `rgba(255,170,100,${.12 * (1 - i / 26)})`; cx.fillRect(W * (.25 + Math.sin(i + T) * .02), y, W * .5, 1.2 * D); }
-  // sky lanterns rising with the scroll
-  for (let i = 0; i < 12; i++) { const x = W * (.1 + rnd(i) * .8), y = H * (.9 - ((rnd(i + .5) + t * .9) % 1) * .9), fl = .8 + .2 * Math.sin(T * 4 + i); glow(x, y, 26 * D, 'rgba(255,170,80,.7)', fl); cx.fillStyle = '#ffcf7a'; cx.fillRect(x - 4 * D, y - 6 * D, 8 * D, 11 * D); }
-  const a = sm(.2, .5, t); txt('Toshi & Anhad', W / 2, H * .18, `300 ${W * .11}px CG`, '#fff6e6', a); txt('With the blessings of Shree Ganesh', W / 2, H * .24, `italic 400 ${W * .045}px CG`, '#f6e2ad', a);
+  sky('#4a4a6e', '#b39aa8', '#f0c9a8', 0, H * .6); glow(W * .5, H * .6, W * .7, 'rgba(255,214,170,.5)');
+  for (let i = 0; i < 26; i++) { cx.fillStyle = 'rgba(255,255,240,' + (.25 + .5 * rnd(i)) + ')'; cx.fillRect(rnd(i + .1) * W, rnd(i + .2) * H * .3, 1.1 * D, 1.1 * D); }
+  const hb = H * .6; cx.fillStyle = 'rgba(90,80,100,.45)'; cx.beginPath(); cx.moveTo(0, hb); cx.quadraticCurveTo(W * .25, hb - H * .06, W * .45, hb - H * .04); cx.quadraticCurveTo(W * .8, hb - H * .08, W, hb - H * .03); cx.lineTo(W, hb); cx.fill();
+  // the ivory palace floating on the lake
+  const px = W * .14, pw = W * .72, ph = H * .1, py = hb - ph; cx.fillStyle = '#efe4d4'; cx.fillRect(px, py, pw, ph);
+  for (let i = 0; i < 9; i++) { const x = px + W * .02 + i * pw / 9; cx.fillStyle = 'rgba(255,206,140,' + (.55 + .3 * Math.sin(T * 2 + i)) + ')'; cuspArch(x, x + pw / 14, py + ph * .9, py + ph * .35); cx.fill(); }
+  for (const x of [.22, .5, .78]) chhatri(W * x, py, W * .07, '#efe4d4');
+  cx.fillStyle = 'rgba(184,149,90,.6)'; cx.fillRect(px, py + ph * .25, pw, 1 * D);
+  // still water and its reflection
+  sky('#c9a99c', '#8a7a92', '#3e3a52', hb, H);
+  cx.save(); cx.globalAlpha = .35; cx.translate(0, hb * 2); cx.scale(1, -1); cx.fillStyle = '#efe4d4'; cx.fillRect(px, py, pw, ph); cx.restore();
+  for (let i = 0; i < 30; i++) { cx.fillStyle = `rgba(255,236,210,${.12 * (1 - i / 30)})`; cx.fillRect(W * (.2 + Math.sin(i + T) * .02), hb + i * H * .012, W * .6, 1 * D); }
+  for (let i = 0; i < 10; i++) { const x = W * (.1 + rnd(i) * .8), y = H * (.88 - ((rnd(i + .5) + t * .9) % 1) * .85), fl = .8 + .2 * Math.sin(T * 4 + i); glow(x, y, 22 * D, 'rgba(255,200,130,.6)', fl); cx.fillStyle = '#ffe2a8'; cx.fillRect(x - 3.5 * D, y - 5 * D, 7 * D, 10 * D); }
+  const a = sm(.2, .5, t); txt('Toshi & Anhad', W / 2, H * .18, `300 ${W * .11}px CG`, '#fffaf0', a); txt('With the blessings of Shree Ganesh', W / 2, H * .24, `italic 400 ${W * .045}px CG`, '#f6e6c8', a);
 }
 
 const DRAW = [sGate, sCourt, sGhoomar, sMahal, sKnot, sDusk];
@@ -300,7 +309,7 @@ function frame(now) {
   const T = now / 1000, r = track.getBoundingClientRect(), total = r.height - innerHeight, f = clamp(-r.top / total), y = scrollY;
   vel += ((y - lastY) - vel) * .15; lastY = y; flare += (Math.min(.35, Math.abs(vel) * .006) - flare) * .08;
   const pos = f * N, i = Math.min(N - 1, Math.floor(pos)), t = pos - i;
-  spin = (pos - 2) * 18;           // the ghoomar turns with the scroll (≈3 full turns across her scene)
+  spin = (pos - 2) * 14;           // the ghoomar turns with the scroll (≈3 full turns across her scene)
   cx.save(); DRAW[i](t, T); cx.restore();
   if (t > .9 && i < N - 1) { cx.save(); cx.globalAlpha = sm(.9, 1, t); DRAW[i + 1](0, T); cx.restore(); cx.globalAlpha = 1; }
   // gentle vignette
@@ -310,7 +319,7 @@ function frame(now) {
   chip.style.opacity = note.style.opacity = inTrack ? 1 : 0;
   requestAnimationFrame(frame);
 }
-document.fonts && document.fonts.load('300 20px CG'); document.fonts && document.fonts.load('600 20px DV');
+document.fonts && document.fonts.load('300 20px CG');
 requestAnimationFrame(frame);
 </script>
 </body>
